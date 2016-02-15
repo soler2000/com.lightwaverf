@@ -1,0 +1,248 @@
+{
+    "id": "com.lightwaverf",
+    "version": "0.0.1",
+    "compatibility": "0.x || 1.x",
+    "category": ["appliances", "lights"],
+    "name": {
+        "en": "LightwaveRF",
+		"nl": "LightwaveRF"
+    },
+    "description": {
+		"en": "Give Homey the ability to control your Lightwave devices",
+		"nl": "NA"
+    },
+    "author": {
+        "name" : "Andy Wilde"
+    },
+    "images": {
+		"large": "./assets/images/large.jpg",
+		"small": "./assets/images/small.jpg"
+    },
+    "permissions": [
+	    "homey:wireless:433"
+    ],
+    "drivers": [
+	    {
+		    "id": "lw100",
+		    "name": {
+				"en": "LightwaveRF Remote",
+			    "nl": "LightwaveRF schakelaar"
+		    },
+		    "images": {
+				"large": "../drivers/lw101/assets/images/large.png",
+				"small": "../drivers/lw101/assets/images/small.png"
+		    },
+		    "class": "socket",
+		    "capabilities": [ "onoff" ],
+		    "pair": [
+		    	{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+				    	"prev": "imitate",
+				    	"next": "choose_slave"
+			    	}
+			    },
+				{
+			    	"id": "configure",
+			    	"navigation": {
+						"next": "configure2",
+						"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "configure2",
+			    	"navigation": {
+						"prev": "configure",
+						"next": "choose_slave"
+			    	}
+			    },
+			    {
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+			    {
+			    	"id": "done"
+			    }
+		    ]
+		},
+		
+	    {
+		    "id": "lw101",
+		    "name": {
+				"en": "LW101 Scene Lighting",
+			    "nl": "Impuls stopcontact"
+		    },
+		    "images": {
+				"large": "../drivers/lw101/assets/images/large.png",
+				"small": "../drivers/lw101/assets/images/small.png"
+		    },
+		    "class": "socket",
+		    "capabilities": [ "onoff" ],
+		    	"pair": [
+		    	{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+				    	"prev": "imitate",
+				    	"next": "choose_slave"
+			    	}
+			    },
+				{
+			    	"id": "configure",
+			    	"navigation": {
+						"next": "configure2",
+						"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "configure2",
+			    	"navigation": {
+						"prev": "configure",
+						"next": "choose_slave"
+			    	}
+			    },
+			    {
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+			    {
+			    	"id": "done"
+			    }
+		    ]
+		},
+		
+	    {
+		    "id": "lw200",
+		    "name": {
+				"en": "LWRF Dimmer",
+			    "nl": "LWRF schakelaar"
+		    },
+		    "images": {
+				"large": "../drivers/lw200/assets/images/large.png",
+				"small": "../drivers/lw200/assets/images/small.png"
+		    },
+		    "class": "socket",
+		    "capabilities": [ "onoff" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "imitate1"
+			    	}
+			    },
+				{
+			    	"id": "generate1",
+			    	"navigation": {
+				    	"next": "generate2",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "generate1"
+			    	}
+			    },
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw260",
+		    "name": {
+				"en": "LWRF Socket",
+			    "nl": "LWRF schakelaar"
+		    },
+		    "images": {
+				"large": "../drivers/lw260/assets/images/large.png",
+				"small": "../drivers/lw260/assets/images/small.png"
+		    },
+		    "class": "socket",
+		    "capabilities": [ "onoff" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "imitate1"
+			    	}
+			    },
+				{
+			    	"id": "generate1",
+			    	"navigation": {
+				    	"next": "generate2",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "generate1"
+			    	}
+			    },
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+				{
+			    	"id": "done"
+			    }
+		    ]
+		}
+    ]
+}

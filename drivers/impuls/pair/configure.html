@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <style type="text/css">
+        .dipswitch {
+            display: inline-block;
+            background: #ff1000;
+            overflow: hidden;
+            padding: 5px;
+            border-radius: 2px;
+            box-shadow: inset 0 -4px 15px rgba(0,0,0,0.25);
+        }
+            .dipswitch .item {
+                float: left;    
+                width: 20px;    
+                margin-right: 5px;
+            }
+            .dipswitch .item:last-child {
+                margin-right: 0;
+            }
+                .dipswitch .symbol {
+                    text-align: center;
+                    color: white;
+                    font-size: 12px;
+                    line-height: 20px;
+                    margin-top: 4px;
+                    font-family: sans-serif;
+                    display: block;
+                    text-shadow: 0 2px 1px rgba(0,0,0,0.1);
+                }
+                .dipswitch .switch {
+                    display: block;
+                    position: relative;
+                    width: 20px;
+                    height: 40px;
+                    background: #eee;
+                    overflow: hidden;
+                    border-radius: 2px;
+                    cursor: pointer;
+                    box-shadow: inset 0 0 5px rgba(0,0,0,0.4);
+                }
+                    .dipswitch .switch .knob {
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        width: 100%;
+                        height: 50%;
+                        background: white;
+                        box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 -5px 20px rgba(0,0,0,0.3);
+                        border-radius: 3px;
+                        transition: all 0.2s;
+                    }
+                    .dipswitch .switch:hover .knob {
+                        box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 -5px 20px rgba(0,0,0,0.6);
+                    }
+                    .dipswitch .switch.on .knob {
+                        top: 0;
+                        box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 5px 20px rgba(0,0,0,0.3);
+                    }
+                    .dipswitch .switch.on:hover .knob {
+                        box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 5px 20px rgba(0,0,0,0.6);
+                    }
+        </style>
+        <script type="text/javascript">
+        jQuery.fn.extend({
+            dipswitch: function( opts ) {
+                opts = $.extend({
+                    count: 9,
+                    deviceOffset: 5
+                }, opts);
+                
+                var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+                
+                for( var i = 1; i <= opts.count; i++ ) {
+                    var symbol = i;
+                    if( i > opts.deviceOffset ) symbol = alphabet[i-(opts.deviceOffset+1)].toUpperCase();
+                    this.append('<div class="item">' +
+                        '<span class="switch">' +
+                            '<span class="knob"></span>' +
+                        '</span>' +
+                        '<span class="symbol">' + symbol + '</span>' +
+                    '</div>')                        
+                }
+
+                var getValue = function() {
+                    var value = [];
+                    $(this).find('.item').each(function(){
+                        value.push( $(this).find('.switch').hasClass('on') );
+                    })
+                    return value;
+                }.bind(this);
+                
+                var self = this;
+                $(this).find('.switch').click(function(){
+                    if( $(this).parent().index() >= opts.deviceOffset ) {
+                        $(this).parent().parent().find('.item').each(function(){
+                            if( $(this).index() >= opts.deviceOffset ) {
+                                $(this).find('.switch').removeClass('on');
+                            }
+                        })
+                    }
+                    $(this).toggleClass('on');
+                    if(typeof opts.onchange == 'function') {
+                        opts.onchange.apply(self, [getValue()]);
+                    }
+                });
+
+                return this;
+                
+            }
+        });
+            
+        $(function(){
+            
+            function storeDipValue(value) {
+                console.log('dipsw:', this, value);
+                Homey.emit('Storedata', value);
+
+            }
+            
+            $('.dipswitch').dipswitch({
+                count: 10,
+                deviceOffset: 5,
+                onchange: storeDipValue,
+            });
+            $('.symbol:contains("A")').prev().addClass('on')
+        });
+        </script>
+        
+    </head>
+    <body>
+            <div style="z-index:1; margin: 0 auto; position: relative; max-width: 75vmin; text-align: center;">
+                <img src="socket.svg" alt="socket" style="max-width: 75vmin; display: block; position: absolute; left: 4.4vmin; top: -6vmin; opacity: 0.3; margin: 0; height: 97vh;";>
+                <div style="z-index:2; margin-top: 15vmin;" class="dipswitch"></div>
+                <p data-i18n="pair.dipswitch" style="position: absolute; top: 85vmin; left: 0vmin; right: 0vmin;";></p>
+            </div>
+    </body>
+</html>
