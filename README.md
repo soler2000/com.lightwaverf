@@ -11,4 +11,6 @@
 
  *Remotes 
 
+ *Motion sensor
+
  *Other Lightwave products
