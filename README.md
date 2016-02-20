@@ -6,6 +6,11 @@
  Initial development release 
  
  Future releases will address 
+
  *Dimming 
+
  *Remotes 
+
+ *Motion sensor
+
  *Other Lightwave products

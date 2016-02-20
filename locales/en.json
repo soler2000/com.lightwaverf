@@ -5,7 +5,9 @@
     "title":{
         "eurodomest_switch": "Koppel een Eurodomest stopcontact...",
 		"impuls_switch": "Add a LightwaveRF switch...",
-		"lw200_Lightswitch": "Add a LightwaveRF dimmer..."
+		"lw200_Lightswitch": "Add a LightwaveRF dimmer...",
+		"lw260_Lightswitch": "Add a LightwaveRF plug socket...",
+		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer..."
     		},
     	"start":{
         "sendpaircode": "Put device into pairing mode",
