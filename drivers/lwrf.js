@@ -3,7 +3,7 @@ var deviceList = [];
 var tempdata = {};
 var signal;
 var initFlag = 1;
-var tempdata = {};
+//var tempdata = {};
 
 function createDriver(driver) {
 	var self = {
@@ -59,7 +59,7 @@ function createDriver(driver) {
 				
 				signal.register(function( err, success ){
 				if(err != null){
-				console.log('Somfy: err', err, 'success', success);
+				console.log('LightwaveRF: err', err, 'success', success);
 				}
 				});
 
@@ -68,21 +68,19 @@ function createDriver(driver) {
 	
 				//Start receiving
 				signal.on('payload', function(payload, first){
+					
+					
+					console.log('*****************Pay load recieved****************');
 					console.log('received:', payload);
 					var rxData = parseRXData(payload); //Convert received array to usable data
 				
-				});
-				
-				
-				
-				//signal.on('payload', function(payload, first){
-				
-				//	console.log('received:', payload);
+					//below code works like relaying remote data
 					//if(!first)return; 
 			    //   var rxData = parseRXData(payload); //Convert received array to usable data
 			       
 		        	//if(rxData.unit == "001") { //If the all button is pressed
-		        	//	devices = getDeviceByAddress(rxData);
+					//console.log('TransmitterSubID:',TransmitterSubID);
+		        	//devices = getDeviceByAddress(rxData);
 		        	//	devices.forEach(function(device){
 		        	//		updateDeviceOnOff(self, device, rxData.onoff);
 		        	//	});
@@ -92,7 +90,7 @@ function createDriver(driver) {
 					//	updateDeviceOnOff(self, device, rxData.onoff);
 					//});
 		        //	}
-				//});
+				});
 			}
 		
 			//Refresh deviceList
@@ -107,13 +105,13 @@ function createDriver(driver) {
 		deleted: function( device_data ) {
 			var index = deviceList.indexOf(getDeviceById(device_data))
 			delete deviceList[index];
-			console.log('LWitem: Device deleted,   need to remove Homey from Device')
+			console.log('LWitem: Device deleted,   need to remove Homey from Device');//added semi colon
 		},
 		
 		
 		
 		
-		//Capabitities = need to find out more info on fields
+	
 		capabilities: {
 			onoff: {
 				get: function( device_data, callback ) {
@@ -121,12 +119,60 @@ function createDriver(driver) {
 					callback( null, device.onoff );
 				},
 				set: function( device_data, onoff, callback ) {
-					var devices = getDeviceByAddressAndUnit(device_data);
+				
+				//device data is present
+				console.log('device data, must be comming from front end',device_data );
+					//either data is not being saved or data not retrieved
+					var devices = getDeviceById(device_data);
+					//devices.forEach(function(device){
+					//presumably this is a call to the device to update the front end
+				updateDeviceOnOff(self, device_data, onoff)
+					//});	
+					//console.log('sendOnOff(devices[0], onoff);')
+					//console.log('sendOnOff(devices[0]',devices[0])
+					sendOnOff(device_data, device_data.onoff);
+					console.log('sendOnOff finished;')
+					callback( null, onoff );
+				
+				
+				
+				
+				
+					
+	/*				console.log('capabilities: device_data ID',device_data.id);
+					var devices = getDeviceById(device_data);
+					
+					//console.log('Number of devices returned - not working, always returns null', devices.length); //
+					
+					
+					if(devices == null)
+						{console.log('No devices returned');
+						//console.log('device data',device_data );
+						}
+					else
+						{
+						console.log('Devices returned');
+						console.log('device data',device_data );
+						}
+					
+					
+				
+				
+				
+				
+				
+				
+				
+				
+					
 					devices.forEach(function(device){
-						updateDeviceOnOff(self, device, onoff)
+						//console.log('Running though each for each command');
+						//console.log('capabilities: Device ID',device.id);
+						//console.log('capabilities Transid',device.transID);//devices is array so cannot read just one transid
+						updateDeviceOnOff(self, device, onoff) //added semi colon
 					});	
 					sendOnOff(devices[0], onoff);
-					callback( null, onoff );		
+					callback( null, onoff );	*/	
 				}
 			}
 		},
@@ -150,11 +196,21 @@ function createDriver(driver) {
 				var transID3 = getRandomInt(0,15);
 				var transID4 = getRandomInt(0,15);
 				var transID5 = getRandomInt(0,15);
-
-				console.log('transID Array',transID1,transID2,transID3,transID4,transID5);
+				console.log('transID1',transID1);
+				console.log('transID2',transID2);
+				console.log('transID3',transID3);
+				console.log('transID4',transID4);
+				console.log('transID5',transID5);
+				
+				
+				
+				
+				var transID = Number(transID1).toString(16)+ Number(transID2).toString(16) +Number(transID3).toString(16) +Number(transID4).toString(16) + Number(transID5).toString(16);
+				console.log('transID in Temp data',transID);
 
 				tempdata = {
 					address: address,
+					transID    : transID,
 					transID1   : transID1,
 					transID2   : transID2,
 					transID3   : transID3,
@@ -171,13 +227,15 @@ function createDriver(driver) {
 				signal.on('payload', function(payload, first){
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-			        if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
-						if(rxData.onoff){
-							socket.emit('received_on'); //Send signal to frontend
-						}else{
-							socket.emit('received_off'); //Send signal to frontend
-						}
-					}
+					
+					//no transmitter call back
+			       // if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
+//						if(rxData.onoff){
+//							socket.emit('received_on'); //Send signal to frontend
+//						}else{
+//							socket.emit('received_off'); //Send signal to frontend
+//						}
+//					}
 				});
 				callback(null, tempdata.onoff);
 			});
@@ -187,7 +245,7 @@ function createDriver(driver) {
 					onoff = false;
 				}
 				sendOnOff(tempdata, onoff);
-				var devices = getDeviceByAddressAndUnit(tempdata);
+				var devices = getDeviceBytransIDAndUnit(tempdata);
 				devices.forEach(function(device){
 					updateDeviceOnOff(self, device, onoff)
 				});	
@@ -197,11 +255,12 @@ function createDriver(driver) {
 			//On done this is the call back to the webpage
 			socket.on('done', function( data, callback ){
 				var idNumber = Math.round(Math.random() * 0xFFFF);
-				var id = "" + tempdata.address + tempdata.unit + idNumber; //id is used by Homey-Client
+				var id = tempdata.address;// + idNumber; //id is used by Homey-Client
 				var name = "LWSocket " + __(driver); //__() Is for translation
 				addDevice({
 					id       : id,
 					address  : tempdata.address,
+					transID   : tempdata.transID,
 					transID1   : tempdata.transID1,
 					transID2   : tempdata.transID2,
 					transID3   : tempdata.transID3,
@@ -210,7 +269,7 @@ function createDriver(driver) {
 					onoff    : false,
 					driver   : driver,
 				});
-				console.log('LWSocket: Added device: address',tempdata.address,'unit',tempdata.unit);
+				console.log('LWSocket: Added device: ID',id);
 
 				//Share data to front end
 				callback(null, {
@@ -218,6 +277,7 @@ function createDriver(driver) {
 					data: {
 						id       : id,
 						address  : tempdata.address,
+						transID   : tempdata.transID,
 						transID1   : tempdata.transID1,
 						transID2   : tempdata.transID2,
 						transID3   : tempdata.transID3,
@@ -234,6 +294,16 @@ function createDriver(driver) {
 }
 
 
+//added 20-2
+function getDeviceByTransId(deviceIn) {
+	var matches = deviceList.filter(function(d){
+		return d.transID == deviceIn.transID;
+	});
+	return matches ? matches[0] : null;
+}
+
+
+
 function getDeviceById(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.id == deviceIn.id;
@@ -241,9 +311,9 @@ function getDeviceById(deviceIn) {
 	return matches ? matches[0] : null;
 }
 
-function getDeviceByAddressAndUnit(deviceIn) {
+function getDeviceBytransIDAndUnit(deviceIn) {
 	var matches = deviceList.filter(function(d){
-		return d.address == deviceIn.address && d.unit == deviceIn.unit; 
+		return d.transID == deviceIn.transID && d.unit == deviceIn.unit; 
 	});
 	return matches ? matches : null;
 }
@@ -256,6 +326,7 @@ function getDeviceByAddress(deviceIn) {
 }
 
 function updateDeviceOnOff(self, device, onoff){
+	console.log('update device called')
 	device.onoff = onoff;
 	self.realtime(device, 'onoff', onoff);
 }
@@ -263,12 +334,12 @@ function updateDeviceOnOff(self, device, onoff){
 function addDevice(deviceIn) {
 	deviceList.push({
 		id       : deviceIn.id,
-		address  : deviceIn.address,
 		transID1   : deviceIn.transID1,
 		transID2   : deviceIn.transID2,
 		transID3   : deviceIn.transID3,
 		transID4   : deviceIn.transID4,
 		transID5   : deviceIn.transID5,
+		transID   : deviceIn.transID1.tostring + deviceIn.transID2.tostring + deviceIn.transID3.tostring + deviceIn.transID4.tostring + deviceIn.transID5.tostring,
 		onoff    : deviceIn.onoff,
 		driver   : deviceIn.driver,
 	});
@@ -290,7 +361,7 @@ function sendOnOff(deviceIn, onoff) {
 	var command =0;
 
 	//if(typeof tempdata.transID1 == whatever)
-	
+	var transID =0;
 	var transID1 =0;
 	var transID2 =0;
 	var transID3 =0;
@@ -299,13 +370,24 @@ function sendOnOff(deviceIn, onoff) {
 	
 	
 	
-	console.log('*********************************');
+	console.log('****************Send on off*****************');
+	//console.log('device in', deviceIn.id);
+	
+	//device is avaliable in pairing but ID is null as it has not been assigned in the temp data
 	if(device === undefined)
-	{ 
+	{
+		console.log('In send on off the device is undefined');
+		//deviceIn = getDeviceById(device);
+	}
+	console.log('device in', device.id);
+	
+	
+	/*{ 
 		if(tempdata === undefined){
 			console.log('tempdata and device data empty');
 			//need to load device 
 			device = getDeviceById(deviceIn);
+			transID =  device.transID1+device.transID2+device.transID3+device.transID4+device.transID5;
 			transID1 =  device.transID1;
 			transID2 =  device.transID2;
 			transID3 =  device.transID3;
@@ -315,6 +397,7 @@ function sendOnOff(deviceIn, onoff) {
 		else
 		{
 		console.log('tempdata avaliable');
+		transID =  tempdata.transID1+tempdata.transID2+tempdata.transID3+tempdata.transID4+tempdata.transID5;
 		transID1 =  tempdata.transID1;
 		transID2 =  tempdata.transID2;
 		transID3 =  tempdata.transID3;
@@ -326,14 +409,16 @@ function sendOnOff(deviceIn, onoff) {
 		else
 		{
 		console.log('device data avaliable');
+		transID =  device.transID1+device.transID2+device.transID3+device.transID4+device.transID5;
 		transID1 =  device.transID1;
 		transID2 =  device.transID2;
 		transID3 =  device.transID3;
 		transID4 =  device.transID4;
 		transID5 =  device.transID5;
-	}
+	}*/
+	console.log('Send On / Off, device:',device);
 	
-	console.log('TransmitterID:',transID1,transID2,transID3,transID4,transID5);
+	console.log('TransmitterID:',device.transID1,device.transID2,device.transID3,device.transID4,device.transID5);
 	
 	
 
@@ -342,18 +427,24 @@ function sendOnOff(deviceIn, onoff) {
 	if( onoff == false){
 		//send off
 		command =0;
+			console.log('LWSocket: Sending off:', command );
 	}
 	else if(onoff == true){
 		//send on
 		command =1;
+		console.log('LWSocket: Sending on:', command );
 	}
 	
 	
 	//var dataToSend = [ 0, 0, 10, 0, 15, 3, 8, 2, 3, 1 ];
-	var dataToSend = [ 0, 0, 10, command, transID1, transID2, transID3, transID4, transID5, 1 ];
+	var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
 	var frame = new Buffer(dataToSend);
+	console.log('LWSocket: Sending Data:', dataToSend );
+	
+	
+	///not sending signal
 	signal.tx( frame, function( err, result ){
-   
+   		console.log('LWSocket: Sending Data:', dataToSend );
    		if(err != null)console.log('LWSocket: Error:', err);
 	})
 	
@@ -363,7 +454,7 @@ function sendOnOff(deviceIn, onoff) {
 
 
 //not sure if temp data exits at this point
-//function not used
+//function is not in use
 function generatTransID(tempdata) {
 			tempdata.transID1 = getRandomInt(0,15);
 			tempdata.transID2 = getRandomInt(0,15);
@@ -405,13 +496,15 @@ function generatTransID(tempdata) {
 //Mood 2 130- Start mood n (param–129). (130=Mood1) Device = 15, most liekly moods use the second nibble
 //Mood 2 2- Define mood n (param–1). (2=Mood1) Device = 15
 
+
+
 function parseRXData(data) {
 
 //received: [ 11, 15, 9, 1, 15, 3, 8, 2, 3, 1 ]
 
 
 	var parameter = data[0];//and 1
-	var parameter1 = data[1];//can ignor the second nibble as we will work with the first one
+	var parameter1 = data[1];
 	var device = data[2];
 	var Command = data[3];
 	
@@ -428,26 +521,38 @@ function parseRXData(data) {
 	
 	var TransmitterSubID = data[9];
 	
-	console.log('*********************************');
+	console.log('*****************Parsing RX Data****************');
 	console.log('Parameter:',parameter);
+	console.log('Parameter1:',parameter1);
 	console.log('device:',device);
 	console.log('Command:',Command);
 	console.log('TransmitterID:',TransmitterID);
 	console.log('TransmitterSubID:',TransmitterSubID);
 	
+	getDeviceByTransId(TransmitterID);
+	
+	console.log('TransmitterSubID:',TransmitterSubID);
+	
 	if(Command == "1")
 		{
 		//Turn On
+		onoff = true;
 		}
 	else
 		{
 		//Turn Off
+		onoff = false;
 		}
 	
 	return { 
-		address: address, 
-		unit   : unit,
-		onoff  : onoff
+		parameter 			: parameter,
+		parameter1 			: parameter1,
+		device				: device,
+		TransID				: TransmitterID, 
+		TransmitterSubID  	: TransmitterSubID,
+		device   			: device,
+		Command  			: Command,
+		onoff    			: onoff
 	};
 }
 

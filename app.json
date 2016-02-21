@@ -26,8 +26,8 @@
 	    {
 		    "id": "lw200",
 		    "name": {
-				"en": "Dimmer",
-			    "nl": "Dimmer"
+				"en": "Wired Dimmer",
+			    "nl": "Wired Dimmer"
 		    },
 		    "images": {
 				"large": "../drivers/lw200/assets/images/large.png",
