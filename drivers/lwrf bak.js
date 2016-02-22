@@ -15,7 +15,7 @@ function createDriver(driver) {
 				//Define signal
 				if(initFlag)
 					{
-					console.log('LightwaveRF: Init')
+					console.log('LightwaveRF Socket: Init')
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					var high1 =300;	//orginal 293	14-15 samples at 48khz				
@@ -84,43 +84,42 @@ function createDriver(driver) {
 			{
 				var index = deviceList.indexOf(getDeviceById(device_data));
 				delete deviceList[index];
-				console.log('LW item: Device deleted,  need to remove Homey from Device');
+				console.log('LWitem: Device deleted,   need to remove Homey from Device');
 			},//end of deleted
 		
 			capabilities: {
-						onoff: {
-							get: function( device_data, callback ) 
-								{
-									console.log('capabilities get onoff');
-									var device = getDeviceById(device_data);
-									callback( null, device.onoff );
-								},//end of get
-							set: function( device_data, onoff, callback ) 
-								{
-									console.log('capabilities set onoff');
-									console.log('device data, must be comming from front end',device_data );
-									var devices = getDeviceById(device_data);
-									//devices.forEach(function(device){
-									updateDeviceOnOff(self, device_data, onoff)
-									sendOnOff(device_data, device_data.onoff);
-									callback( null, onoff );
-								}//end of set
-						},//end of Offon
+					onoff: {
+						get: function( device_data, callback ) 
+							{
+								var device = getDeviceById(device_data);
+								callback( null, device.onoff );
+							},//end of get
+						set: function( device_data, onoff, callback ) 
+							{
+								console.log('device data, must be comming from front end',device_data );
+								//var devices = getDeviceById(device_data); returning null
+								updateDeviceOnOff(self, device_data, onoff)
+								sendOnOff(device_data, device_data.onoff);
+								callback( null, onoff );
+							}//end of set
+						}, //end of Offon
+			
 					dim: {
 						get: function( device_data, callback )
 							{
-								console.log('capabilities get dim');
-								//getDim(device_data, function(err, dimLevel) 
-								//{
+								console.log('dim get: function');
+								getDim(device_data, function(err, dimLevel) 
+								{
 									//Homey.log('Get dim:', dimLevel);
-									module.exports.realtime( device, 'dim', 0.8);//dimLevel );
-									callback( null, 0.8);//dimLevel ) //New state
-								//});
+									//module.exports.realtime( device, 'dim', dimLevel );
+									callback( null, dimLevel ) //New state
+								});
 							},//end of get
 		
 						set: function( device_data, dim, callback )
 							{
-								console.log('capabilities set dim');
+								console.log("arguments", arguments);
+								console.log("device set", device);
 								setDim(device_data, dim, function(err, dimLevel) 
 									{
 										Homey.log('Set dim:', dimLevel);
@@ -128,10 +127,8 @@ function createDriver(driver) {
 										callback( null, dimLevel ) //New state
 									});		
 							}// end of set
-						}// end of dim			
-		}, //end of capabilities
-		
-	
+			
+						},// end of dim
 		
 		pair: function( socket ) {
 			socket.on('generate', function( data, callback )
@@ -154,27 +151,27 @@ function createDriver(driver) {
 					console.log('transID3',transID3);
 					console.log('transID4',transID4);
 					console.log('transID5',transID5);
+					
+					var transID = Number(transID1).toString(16)+ Number(transID2).toString(16) +Number(transID3).toString(16) +Number(transID4).toString(16) + Number(transID5).toString(16);
+					console.log('transID in Temp data',transID);
+					
+					tempdata = 
+						{
+						address: address,
+						transID    	: transID,
+						transID1   	: transID1,
+						transID2   	: transID2,
+						transID3   	: transID3,
+						transID4   	: transID4,
+						transID5   	: transID5,
+						dim			: dim,
+						onoff  		: false,
+						}
+					
+					sendOnOff(tempdata, true);
+					callback();
+				});//end of socket on
 				
-				var transID = Number(transID1).toString(16)+ Number(transID2).toString(16) +Number(transID3).toString(16) +Number(transID4).toString(16) + Number(transID5).toString(16);
-				console.log('transID in Temp data',transID);
-
-				tempdata = 
-					{
-					address: address,
-					transID    : transID,
-					transID1   : transID1,
-					transID2   : transID2,
-					transID3   : transID3,
-					transID4   : transID4,
-					transID5   : transID5,
-					dim		   : dim,
-					onoff  	   : false
-					}	
-
-				sendOnOff(tempdata, true);
-				callback();
-			});//end of socket on
-
 			socket.on('test_device', function( data, callback )
 				{
 					signal.on('payload', function(payload, first)
@@ -212,9 +209,8 @@ function createDriver(driver) {
 				{
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
-					var name = "LW " + __(driver); //__() Is for translation
+					var name = "LWSocket " + __(driver); //__() Is for translation
 					console.log('adding device in socket on');
-					console.log('tempdata.dim',tempdata.dim);
 					addDevice({
 						id       	: id,
 						address  	: tempdata.address,
@@ -249,8 +245,9 @@ function createDriver(driver) {
 								}
 						});// end of call back
 				});//end of socket on
-		},//end of pair
-	};// end of capabilities
+			},//end of pair
+		}// end of capabilities
+		}
 	return self;
 }
 
@@ -307,8 +304,6 @@ function addDevice(deviceIn) {
 		onoff    	: deviceIn.onoff,
 		driver   	: deviceIn.driver,
 	});
-	
-	console.log('Adding Device Dim level', deviceIn.dim);
 	console.log('finished adding');
 }
 
@@ -370,11 +365,11 @@ function sendOnOff(deviceIn, onoff) {
 function getDim( deviceIn, callback ) {
 	//devices.forEach(function(device){ //Loop trough all registered devices
 
-		console.log("GetDim", deviceIn.dim);
-		deviceIn.dim = 1;  //temp holder
+		console.log("GetDim");
+		device.dim =1;  //temp holder
 		//if (active_device.group == device.group) {
-			console.log("getDim callback", deviceIn.dim);
-			callback( null, deviceIn.dim );
+			console.log("getDim callback", device.dim);
+			callback( null, device.dim );
 		//}
 	//});
 }

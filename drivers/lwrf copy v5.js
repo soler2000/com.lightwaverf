@@ -15,7 +15,7 @@ function createDriver(driver) {
 				//Define signal
 				if(initFlag)
 					{
-					console.log('LightwaveRF: Init')
+					console.log('LightwaveRF Socket: Init')
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					var high1 =300;	//orginal 293	14-15 samples at 48khz				
@@ -84,54 +84,31 @@ function createDriver(driver) {
 			{
 				var index = deviceList.indexOf(getDeviceById(device_data));
 				delete deviceList[index];
-				console.log('LW item: Device deleted,  need to remove Homey from Device');
+				console.log('LWitem: Device deleted,   need to remove Homey from Device');
 			},//end of deleted
 		
 			capabilities: {
-						onoff: {
-							get: function( device_data, callback ) 
-								{
-									console.log('capabilities get onoff');
-									var device = getDeviceById(device_data);
-									callback( null, device.onoff );
-								},//end of get
-							set: function( device_data, onoff, callback ) 
-								{
-									console.log('capabilities set onoff');
-									console.log('device data, must be comming from front end',device_data );
-									var devices = getDeviceById(device_data);
-									//devices.forEach(function(device){
-									updateDeviceOnOff(self, device_data, onoff)
-									sendOnOff(device_data, device_data.onoff);
-									callback( null, onoff );
-								}//end of set
-						},//end of Offon
-					dim: {
-						get: function( device_data, callback )
+					onoff: {
+						get: function( device_data, callback ) 
 							{
-								console.log('capabilities get dim');
-								//getDim(device_data, function(err, dimLevel) 
-								//{
-									//Homey.log('Get dim:', dimLevel);
-									module.exports.realtime( device, 'dim', 0.8);//dimLevel );
-									callback( null, 0.8);//dimLevel ) //New state
-								//});
+								var device = getDeviceById(device_data);
+								callback( null, device.onoff );
 							},//end of get
-		
-						set: function( device_data, dim, callback )
+						set: function( device_data, onoff, callback ) 
 							{
-								console.log('capabilities set dim');
-								setDim(device_data, dim, function(err, dimLevel) 
-									{
-										Homey.log('Set dim:', dimLevel);
-										module.exports.realtime( device, 'dim', dimLevel );
-										callback( null, dimLevel ) //New state
-									});		
-							}// end of set
-						}// end of dim			
+								console.log('device data, must be comming from front end',device_data );
+								var devices = getDeviceById(device_data);
+								//devices.forEach(function(device){
+								updateDeviceOnOff(self, device_data, onoff)
+								sendOnOff(device_data, device_data.onoff);
+								callback( null, onoff );
+				}//end of set
+			}//end of Offon
 		}, //end of capabilities
 		
-	
+		// Pairing: I doubt this will work for any Lightwave products as they dont, as far as i know send any command back
+		// giving the item an address it looks to be a 20 digit random number,   
+		
 		
 		pair: function( socket ) {
 			socket.on('generate', function( data, callback )
@@ -149,7 +126,7 @@ function createDriver(driver) {
 					var transID5 = getRandomInt(0,15);
 					console.log('pair about to add');
 					var dim = 1;
-					console.log('transID1',transID1);	
+					console.log('transID1',transID1);
 					console.log('transID2',transID2);
 					console.log('transID3',transID3);
 					console.log('transID4',transID4);
@@ -168,89 +145,80 @@ function createDriver(driver) {
 					transID4   : transID4,
 					transID5   : transID5,
 					dim		   : dim,
-					onoff  	   : false
+					onoff  : false
 					}	
 
 				sendOnOff(tempdata, true);
 				callback();
 			});//end of socket on
 
-			socket.on('test_device', function( data, callback )
-				{
-					signal.on('payload', function(payload, first)
-						{
-							if(!first)return;
-			        		var rxData = parseRXData(payload);
+			socket.on('test_device', function( data, callback ){
+				signal.on('payload', function(payload, first){
+					if(!first)return;
+			        var rxData = parseRXData(payload);
 					
-							//no transmitter call back
-			       			//if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
-							//if(rxData.onoff){
-								//socket.emit('received_on'); //Send signal to frontend
-								//}else{
-								//socket.emit('received_off'); //Send signal to frontend
-							//}
-							//}
-						});
-					callback(null, tempdata.onoff);
-				});// end of socket on
-			
-			socket.on('sendSignal', function( onoff, callback )
-				{
-					if(onoff != true){
-						onoff = false;
-						}
-					sendOnOff(tempdata, onoff);
-					var devices = getDeviceBytransIDAndUnit(tempdata);
-					devices.forEach(function(device){
-						updateDeviceOnOff(self, device, onoff)
-						});	
-					callback();
-				});// end of socket on
-				
-				
-			socket.on('done', function( data, callback )
-				{
-					var idNumber = Math.round(Math.random() * 0xFFFF);
-					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
-					var name = "LW " + __(driver); //__() Is for translation
-					console.log('adding device in socket on');
-					console.log('tempdata.dim',tempdata.dim);
-					addDevice({
-						id       	: id,
-						address  	: tempdata.address,
-						transID   	: tempdata.transID,
-						transID1   	: tempdata.transID1,
-						transID2   	: tempdata.transID2,
-						transID3   	: tempdata.transID3,
-						transID4   	: tempdata.transID4,
-						transID5   	: tempdata.transID5,
-						dim			: tempdata.dim,
-						onoff    	: false,
-						driver   	: driver,
-						});
-					console.log('LWSocket: Added device: ID',id);
-				
-					//Share data to front end
-					callback(null, 
-						{
-							name: name,
-							data: {
-								id       	: id,
-								address  	: tempdata.address,
-								transID   	: tempdata.transID,
-								transID1   	: tempdata.transID1,
-								transID2   	: tempdata.transID2,
-								transID3   	: tempdata.transID3,
-								transID4   	: tempdata.transID4,
-								transID5   	: tempdata.transID5,
-								dim			: tempdata.dim,
-								onoff    	: false,
-								driver   	: driver,
-								}
-						});// end of call back
-				});//end of socket on
-		},//end of pair
-	};// end of capabilities
+					//no transmitter call back
+			       // if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
+//						if(rxData.onoff){
+//							socket.emit('received_on'); //Send signal to frontend
+//						}else{
+//							socket.emit('received_off'); //Send signal to frontend
+//						}
+//					}
+				});
+				callback(null, tempdata.onoff);
+			});
+
+			socket.on('sendSignal', function( onoff, callback ){
+				if(onoff != true){
+					onoff = false;
+				}
+				sendOnOff(tempdata, onoff);
+				var devices = getDeviceBytransIDAndUnit(tempdata);
+				devices.forEach(function(device){
+					updateDeviceOnOff(self, device, onoff)
+				});	
+				callback();
+			});
+
+			//On done this is the call back to the webpage
+			socket.on('done', function( data, callback ){
+				var idNumber = Math.round(Math.random() * 0xFFFF);
+				var id = tempdata.address;// + idNumber; //id is used by Homey-Client
+				var name = "LWSocket " + __(driver); //__() Is for translation
+				addDevice({
+					id       : id,
+					address  : tempdata.address,
+					transID   : tempdata.transID,
+					transID1   : tempdata.transID1,
+					transID2   : tempdata.transID2,
+					transID3   : tempdata.transID3,
+					transID4   : tempdata.transID4,
+					transID5   : tempdata.transID5,
+					onoff    : false,
+					driver   : driver,
+				});
+				console.log('LWSocket: Added device: ID',id);
+
+				//Share data to front end
+				callback(null, {
+					name: name,
+					data: {
+						id       : id,
+						address  : tempdata.address,
+						transID   : tempdata.transID,
+						transID1   : tempdata.transID1,
+						transID2   : tempdata.transID2,
+						transID3   : tempdata.transID3,
+						transID4   : tempdata.transID4,
+						transID5   : tempdata.transID5,
+						onoff    : false,
+						driver   : driver,
+					}
+				});
+			});
+		},
+	};
 	return self;
 }
 
@@ -307,8 +275,6 @@ function addDevice(deviceIn) {
 		onoff    	: deviceIn.onoff,
 		driver   	: deviceIn.driver,
 	});
-	
-	console.log('Adding Device Dim level', deviceIn.dim);
 	console.log('finished adding');
 }
 
@@ -370,11 +336,11 @@ function sendOnOff(deviceIn, onoff) {
 function getDim( deviceIn, callback ) {
 	//devices.forEach(function(device){ //Loop trough all registered devices
 
-		console.log("GetDim", deviceIn.dim);
-		deviceIn.dim = 1;  //temp holder
+		console.log("GetDim");
+		device.dim =1;  //temp holder
 		//if (active_device.group == device.group) {
-			console.log("getDim callback", deviceIn.dim);
-			callback( null, deviceIn.dim );
+			console.log("getDim callback", device.dim);
+			callback( null, device.dim );
 		//}
 	//});
 }
