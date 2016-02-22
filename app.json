@@ -33,8 +33,8 @@
 				"large": "../drivers/lw200/assets/images/large.png",
 				"small": "../drivers/lw200/assets/images/small.png"
 		    },
-		    "class": "socket",
-		    "capabilities": [ "onoff" ],
+		    "class": "light",
+		    "capabilities": [ "onoff", "dim"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -143,8 +143,8 @@
 				"large": "../drivers/lw301/assets/images/large.png",
 				"small": "../drivers/lw301/assets/images/small.png"
 		    },
-		    "class": "socket",
-		    "capabilities": [ "onoff" ],
+		    "class": "light",
+		    "capabilities": [ "onoff", "dim" ],
 	    "pair": [
 				{
 			    	"id": "start"
