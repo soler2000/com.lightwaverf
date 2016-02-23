@@ -26,15 +26,15 @@
 	    {
 		    "id": "lw200",
 		    "name": {
-				"en": "Dimmer",
-			    "nl": "Dimmer"
+				"en": "Wireless Dimmer",
+			    "nl": "Wireless Dimmer"
 		    },
 		    "images": {
 				"large": "../drivers/lw200/assets/images/large.png",
 				"small": "../drivers/lw200/assets/images/small.png"
 		    },
-		    "class": "socket",
-		    "capabilities": [ "onoff" ],
+		    "class": "lights",
+		    "capabilities": ["onoff", "dim"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -143,8 +143,63 @@
 				"large": "../drivers/lw301/assets/images/large.png",
 				"small": "../drivers/lw301/assets/images/small.png"
 		    },
-		    "class": "socket",
-		    "capabilities": [ "onoff" ],
+		    "class": "light",
+		    "capabilities": [ "onoff", "dim" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "imitate1"
+			    	}
+			    },
+				{
+			    	"id": "generate1",
+			    	"navigation": {
+				    	"next": "generate2",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "generate1"
+			    	}
+			    },
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw400",
+		    "name": {
+				"en": "Wired Dimmer",
+			    "nl": "Wired Dimmer"
+		    },
+		    "images": {
+				"large": "../drivers/lw400/assets/images/large.jpg",
+				"small": "../drivers/lw400/assets/images/small.jpg"
+		    },
+		    "class": "lights",
+		    "capabilities": ["onoff", "dim"],
 	    "pair": [
 				{
 			    	"id": "start"
