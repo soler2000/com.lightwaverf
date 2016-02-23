@@ -99,10 +99,19 @@ function createDriver(driver) {
 								{
 									console.log('capabilities set onoff');
 									console.log('device data, must be comming from front end',device_data );
-									var devices = getDeviceById(device_data);
+									
+									
+									//need to make this work
+									// working but either code is revered on dimming is having an effect
+									
+									var device = getDeviceById(device_data);
+									
 									//devices.forEach(function(device){
-									updateDeviceOnOff(self, device_data, onoff)
-									sendOnOff(device_data, device_data.onoff);
+										updateDeviceOnOff(self, device, onoff);
+									//});	
+									
+									//sendOnOff(device_data, device_data.onoff);
+									sendOnOff(device_data, onoff);
 									callback( null, onoff );
 								}//end of set
 						},//end of Offon
@@ -110,11 +119,19 @@ function createDriver(driver) {
 						get: function( device_data, callback )
 							{
 								console.log('capabilities get dim');
+								
+								var device = getDeviceById(device_data);
+								
+								// Changing dim State turns on Lights but does not change light state
+								callback( null, device.dim ); //New state
+								
+								
+								
 								//getDim(device_data, function(err, dimLevel) 
 								//{
-									//Homey.log('Get dim:', dimLevel);
-									//module.exports.realtime( device, 'dim', 0.8);//dimLevel );
-									callback( null, 0.8);//dimLevel ) //New state
+								//	//Homey.log('Get dim:', dimLevel);
+								//	module.exports.realtime( device, 'dim', dimLevel );
+								//	callback( null, dimLevel ) //New state
 								//});
 							},//end of get
 		
@@ -125,6 +142,10 @@ function createDriver(driver) {
 									{
 										Homey.log('Set dim:', dimLevel);
 										//module.exports.realtime( device, 'dim', dimLevel );
+										
+										//var device = getDeviceById(device_data);
+										//updateDeviceDim(self, device, dim);
+										
 										callback( null, dimLevel ) //New state
 									});		
 							}// end of set
@@ -291,9 +312,15 @@ function getDeviceByAddress(deviceIn) {
 }
 
 function updateDeviceOnOff(self, device, onoff){
-	console.log('update device called')
+	console.log('update device OnOff called')
 	device.onoff = onoff;
 	self.realtime(device, 'onoff', onoff);
+}
+
+function updateDeviceDim(self, device, dim){
+	console.log('update device dim called')
+	device.dim = dim;
+	self.realtime(device, 'dim', dim);
 }
 
 function addDevice(deviceIn) {
@@ -346,28 +373,31 @@ function sendOnOff(deviceIn, onoff) {
 	}
 	console.log('device ID', device.id);
 	console.log('Send On / Off, device:',device);
-	console.log('TransmitterID:',device.transID1,device.transID2,device.transID3,device.transID4,device.transID5);
+	
 	
 		
 	if( onoff == false){
 		//send off
 		command =0;
-		//deviceIn.onoff = false;  not working
+		//deviceIn.onoff = true; // not working
 	}
 	else if(onoff == true){
 		//send on
 		command =1;
-		//deviceIn.onoff = true;
+		//deviceIn.onoff = false;
 	}
 	
-
+	//  should look to get last dim level or dim level from app
+	
 	var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
 	var frame = new Buffer(dataToSend);
+	
+	console.log('Data to Send', dataToSend);
 	
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
 		
-		//need to make this work to send data back
+		//need to make this work to send data back,  call back is in capabilities
 		//callback( null, deviceIn.onoff ); //Callback the new dim
 	})
 	
@@ -394,7 +424,12 @@ function getDim( deviceIn, callback ) {
 function setDim( deviceIn, dim, callback ) {
 	
 	console.log("setDim: ", dim);
-
+	
+	//Device In does not contain the correct onoff value
+	console.log("Device In: ", deviceIn);
+	var deviceOnOff = getDeviceById(deviceIn);
+	console.log("Device In On Off: ", deviceOnOff.onoff);
+	
 	//increase dim Parameter: 11  Parameter1: 15
 	// decrease dim Parameter: 10  Parameter1: 0
 	var Para1 = 0;
@@ -432,11 +467,25 @@ function setDim( deviceIn, dim, callback ) {
 			var dataToSend = [ Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 ];
 			var frame = new Buffer(dataToSend);
 	
-			console.log("Data sent", dataToSend);
-	
-			signal.tx( frame, function( err, result ){
+			
+			
+			
+			//Trigger to detect if lights are on or offf
+			//var device = getDeviceById(device_data);
+			if (deviceOnOff.onoff== true)
+			{
+				signal.tx( frame, function( err, result ){
    				if(err != null)console.log('LWSocket: Error:', err);
+				console.log('Light on data sent', dataToSend);
 			})
+			}
+			else if(deviceOnOff.onoff == false)
+			{
+				console.log('Light off so dim level not transmitted', dataToSend);
+				}
+	
+			
+			
 	
 			deviceIn.dim = dim; //Set the new dim
 			console.log("setState callback", deviceIn.dim);
