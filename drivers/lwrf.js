@@ -113,18 +113,18 @@ function createDriver(driver) {
 								//getDim(device_data, function(err, dimLevel) 
 								//{
 									//Homey.log('Get dim:', dimLevel);
-									module.exports.realtime( device, 'dim', 0.8);//dimLevel );
+									//module.exports.realtime( device, 'dim', 0.8);//dimLevel );
 									callback( null, 0.8);//dimLevel ) //New state
 								//});
 							},//end of get
 		
 						set: function( device_data, dim, callback )
 							{
-								console.log('capabilities set dim');
+								console.log('capabilities set dim', device_data);
 								setDim(device_data, dim, function(err, dimLevel) 
 									{
 										Homey.log('Set dim:', dimLevel);
-										module.exports.realtime( device, 'dim', dimLevel );
+										//module.exports.realtime( device, 'dim', dimLevel );
 										callback( null, dimLevel ) //New state
 									});		
 							}// end of set
@@ -168,7 +168,7 @@ function createDriver(driver) {
 					transID4   : transID4,
 					transID5   : transID5,
 					dim		   : dim,
-					onoff  	   : false
+					onoff  	   : true,
 					}	
 
 				sendOnOff(tempdata, true);
@@ -200,10 +200,14 @@ function createDriver(driver) {
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceBytransIDAndUnit(tempdata);
-					devices.forEach(function(device){
-						updateDeviceOnOff(self, device, onoff)
-						});	
+					var devices = getDeviceByTransId(tempdata);
+					//commented out as cannot find devices???
+					//devices.forEach(function(device){
+					//	updateDeviceOnOff(self, device, onoff)
+						//});	
+						
+						updateDeviceOnOff(self, tempdata, onoff);
+						
 					callback();
 				});// end of socket on
 				
@@ -348,10 +352,12 @@ function sendOnOff(deviceIn, onoff) {
 	if( onoff == false){
 		//send off
 		command =0;
+		//deviceIn.onoff = false;  not working
 	}
 	else if(onoff == true){
 		//send on
 		command =1;
+		//deviceIn.onoff = true;
 	}
 	
 
@@ -360,6 +366,9 @@ function sendOnOff(deviceIn, onoff) {
 	
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
+		
+		//need to make this work to send data back
+		//callback( null, deviceIn.onoff ); //Callback the new dim
 	})
 	
 }
@@ -371,7 +380,7 @@ function getDim( deviceIn, callback ) {
 	//devices.forEach(function(device){ //Loop trough all registered devices
 
 		console.log("GetDim", deviceIn.dim);
-		deviceIn.dim = 1;  //temp holder
+		deviceIn.dim = deviceIn.dim;  //temp holder
 		//if (active_device.group == device.group) {
 			console.log("getDim callback", deviceIn.dim);
 			callback( null, deviceIn.dim );
@@ -392,54 +401,85 @@ function setDim( deviceIn, dim, callback ) {
 	var Para2 = 0;
 	var command =0;
 	
-			if (dim < 0.1) { //Totally off
+			if (dim < 0.05) { //Totally off
 				//device.bridge.sendCommands(commands.white.off(device.group));
 				Para1 = 0;
-				Para1 = 0;
+				Para2 = 0;
 				command = 0;
-			} else if (dim > 0.9) { //Totally on
+			} else if (dim > 0.95) { //Totally on
 				//device.bridge.sendCommands(commands.white.maxBright(device.group));
 				Para1 = 0;
-				Para1 = 0;
+				Para2 = 0;
 				command = 1;
 			} else {
-				var dim_dif = Math.round((dim - device.dim) * 10);
-				console.log("dim_dif", dim_dif, "last_dim", device.dim, "dim", dim);
+				//var dim_dif = Math.round((dim - device.dim) * 10);
+				
+				var dim_new = Math.round((dim*31) );
+				dim_new= dim_new + 192;
+				
+				console.log("dim_dif", dim_new, "last_dim", deviceIn.dim);
+				//0-32 in hex,  first digit para1 second digit para2
+				
+				var dArray = createHexString(dim_new);
+				
+				Para1 = parseInt(dArray[0],16);
+				Para2 = parseInt(dArray[1],16);
+				command = 1;
 
-				if (dim_dif > 0 ) { //Brighness up
-					for (var x = 0; x < dim_dif; x++) {
-						console.log("Brightness up");
-					    //device.bridge.sendCommands(commands.white.on(device.group), commands.white.brightUp());;
-					    //device.bridge.pause(pauseSpeed);
-						Para1 = 11;
-						Para1 = 15;
-						command = 1;
-					}
-				} else if (dim_dif < 0) { //Brighness down
-					for (var x = 0; x < -dim_dif; x++) {
-						console.log("Brightness down");
-						//device.bridge.sendCommands(commands.white.on(device.group), commands.white.brightDown())
-					    //device.bridge.pause(pauseSpeed);
-						Para1 = 10;
-						Para1 = 0;
-						command = 0;
-					}
-				}
+				
 			}
 
-			var dataToSend = [ Para1, Para2, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
+			var dataToSend = [ Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 ];
 			var frame = new Buffer(dataToSend);
+	
+			console.log("Data sent", dataToSend);
 	
 			signal.tx( frame, function( err, result ){
    				if(err != null)console.log('LWSocket: Error:', err);
 			})
 	
-			device.dim = dim; //Set the new dim
-			console.log("setState callback", device.dim);
-			callback( null, device.dim ); //Callback the new dim
+			deviceIn.dim = dim; //Set the new dim
+			console.log("setState callback", deviceIn.dim);
+			callback( null, deviceIn.dim ); //Callback the new dim
 	
 
 }
+
+
+
+function createHexString(intToHexArray) {
+ //   var result = [];
+ 
+        var str = intToHexArray.toString(16);
+        // Pad to two digits, truncate to last two if too long.  Again,
+        // I'm not sure what your needs are for the case, you may want
+        // to handle errors in some other way.
+        str = str.length == 1 ? "0" + str : 
+              str.length == 2 ? str :
+              str.substring(str.length-2, str.length);
+			  var result = [str.substring(0, 1), str.substring(1, 2)];
+			  
+		console.log("input String", intToHexArray );	 	  
+		console.log("Hex String", str );	  
+		console.log("array 1", str.substring(0, 1) );
+	 	console.log("array 2", str.substring(1, 2));
+	 
+	 	
+     	console.log("array 1", result[0] );
+	 	console.log("array 2", result[1] );
+
+
+    return result;
+}
+
+
+
+
+
+
+
+
+
 
 
 //not sure if temp data exits at this point
