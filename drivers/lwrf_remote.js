@@ -66,12 +66,7 @@ function createDriver(driver) {
 						{
 							console.log('*****************Pay load received****************');
 							console.log('received:', payload);
-							
 							var rxData = parseRXData(payload); //Convert received array to usable data
-							console.log('RXdata:', rxData);
-							
-							Homey.manager('flow').trigger('remoteOn');			
-							
 						});
 					}
 							
@@ -579,36 +574,8 @@ function generatTransID(tempdata) {
 //Mood 2 130- Start mood n (param–129). (130=Mood1) Device = 15, most liekly moods use the second nibble
 //Mood 2 2- Define mood n (param–1). (2=Mood1) Device = 15
 
-		Homey.manager('flow').on('trigger.remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
-		console.log('fired in flow');
-		//args.device.transid = f4f9f;
-		
-		if(args.unit == "22"){
-	    	args.unit = "00";
-	    	args.device.group = true;
-	    }
-	    if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
-		    callback( null, true ); // true to make the flow continue, or false to abort
-		}else{
-			//callback( null, false );
-		}
-		
-		callback( null, true );
-	});
 
-	Homey.manager('flow').on('trigger.remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
-		if(args.unit == "22"){
-	    	args.unit = "00";
-	    	args.device.group = true;
-	    }
-	    if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && !lastTriggered.onoff ){
-		    callback( null, true ); // true to make the flow continue, or false to abort
-		}else{
-			callback( null, false );
-		}
-	});
 
-		
 function parseRXData(data) {
 
 //received: [ 11, 15, 9, 1, 15, 3, 8, 2, 3, 1 ]

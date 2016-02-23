@@ -22,7 +22,6 @@
 	    "homey:wireless:433"
     ],
     "drivers": [
-
 	    {
 		    "id": "lw200",
 		    "name": {
@@ -33,8 +32,8 @@
 				"large": "../drivers/lw200/assets/images/large.png",
 				"small": "../drivers/lw200/assets/images/small.png"
 		    },
-		    "class": "lights",
-		    "capabilities": ["onoff", "dim"],
+		    "class": "remote",
+		    "capabilities": ["onoff"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -298,5 +297,78 @@
 			    }
 		    ]
 		}
-    ]
+    ],
+	"flow": {
+	    "triggers": [
+	        {
+	            "id": "remoteOn",
+	            "title": {
+	                "en": "On is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=remote",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Channel: I" } },
+		                    { "id": "01", "label": { "en": "Channel: II" } },
+		                    { "id": "10", "label": { "en": "Channel: III" } }, 
+		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Button: 1" } },
+		                    { "id": "01", "label": { "en": "Button: 2" } },
+		                    { "id": "10", "label": { "en": "Button: 3" } }, 
+		                    { "id": "11", "label": { "en": "Button: 4" } }, 
+		                    { "id": "22", "label": { "en": "Button: G" } }
+	                    ]
+	                }
+            	]
+	        },
+	        {
+	            "id": "remoteOff",
+	            "title": {"en": "Off is pressed on your remote" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=remote",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Channel: I" } },
+		                    { "id": "01", "label": { "en": "Channel: II" } },
+		                    { "id": "10", "label": { "en": "Channel: III" } }, 
+		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Button: 1" } },
+		                    { "id": "01", "label": { "en": "Button: 2" } },
+		                    { "id": "10", "label": { "en": "Button: 3" } }, 
+		                    { "id": "11", "label": { "en": "Button: 4" } }, 
+		                    { "id": "22", "label": { "en": "Button: G" } }
+	                    ]
+	                }
+            	]
+	        }
+		]
+}	
+	
 }
