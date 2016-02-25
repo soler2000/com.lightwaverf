@@ -5,28 +5,32 @@
     "title":{
         "eurodomest_switch": "Koppel een Eurodomest stopcontact...",
 		"impuls_switch": "Add a LightwaveRF switch...",
-		"lw200_Lightswitch": "Add a LightwaveRF dimmer...",
-		"lw260_Lightswitch": "Add a LightwaveRF plug socket...",
-		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer..."
+		"lw200_Lightswitch": "Add a LightwaveRF wireless dimmer...",
+		"lw260_socket": "Add a LightwaveRF plug socket...",
+		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
+		"lw321_Lightswitch": "Add a LightwaveRF Plug in...",
+		"lw400_Lightswitch": "Add a LightwaveRF Wired Dimmer..."
     		},
     	"start":{
         "sendpaircode": "Put device into pairing mode",
-  			"has_remote": "Copy a remote",
-  			"has_no_remote": "Set up device Pariing"
+  			"has_remote": "Getting ready to listen to your remote device",
+  			"has_no_remote": "Set up device Pairing"
   		},
       "dipswitches": "set address and unit",
       "configure2":{
-        "testIfWorking": "Use your remote or the switch above to test your device - will not be available as there is no remote needs a button"
+        "testIfWorking": "Use your remote or the switch above to test your device - will not be avaliable as there is no remote needs a button"
       },
   		"imitate":"Press the on button on your remote",
   		"imitate2":{
-  			"testIfWorking": "Use your remote or the switch above to test your device - will not be available as there is no remote needs a button"
+  			"testIfWorking": "Use your remote or the switch above to test your device - will not be avaliable as there is no remote needs a button"
   		},
   		"generate1":{
-  			"pressprogram": "Press and hold both buttons on your device until the blue and red LED’s start to blink"
+  			"pressprogram": "Press and hold both buttons on your device untill the blue and red leds start to blink",
+			"presson": "Press and hold both buttons on your device untill the blue and red leds start to blink"
   		},
   		"generate2":{
-  			"testIfWorking": "Use the switch above to test your device"
+  			"testIfWorking": "Use the switch above to test your device",
+			"testIfrecieving": "Pressing the On & Off buttons on you remote,  the switch should move accordingly"
   		}
     }
 }
