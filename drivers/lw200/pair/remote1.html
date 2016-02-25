@@ -38,36 +38,64 @@ body.on .onoff:before {
 
 
 <script type="text/javascript">
-	console.log('*****************Start - remote HTML****************');
 	
 	
-	Homey.emit('generate', function(err, onoff) { //Send signal was generate
-	});	
+	Homey.emit('remote', function(err, onoff) { //Send signal
+	
+	}
+	);	
 
-	Homey.on('received_on', function() { //Set dipswitch to on
+	Homey.on('received_on', function() { //Receieved from Homey -Set toggleswitch to on
+		foundcontroller();
 		updateState(true);
+
 	});
 
-	Homey.on('received_off', function() { //Set dipswitch to off
+	Homey.on('received_off', function() { //Receieved from Homey -Set toggleswitch to off
 		updateState(false);
 	});
 
-	Homey.emit('test_device', function(err, onoff) { //Get device status
+	Homey.emit('remote', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
 
 	document.querySelector('.onoff').addEventListener('click', function(){
-		Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
+		
+		// Sending back to homey
+		Homey.emit('saveRemote', !state, function(err, onoff) { //Send signal
 		});	
 		updateState(!state);
 	});
+	
+	
+	var remoteCheck =0;
+	
+function foundcontroller() {
 
-	function updateState( value ) {
+		if(remoteCheck >5){
+			//documentgetElementById("tick").style.display = 'block'; //show tick
+				Homey.emit('saveRemote', !state, function(err, onoff) { //Send signal
+		});	
+			//Homey.addDevice(device, function(){
+				//Homey.done();	
+				//});
+			//Homey.emit('remote_done', function(function(err, device)) { });	
+			remoteCheck = remoteCheck+1;
+			}
+		else{
+			document.getElementById("tick").style.display = 'none'; //
+			remoteCheck = remoteCheck+1;
+			}
+		document.getElementById('span1').innerHTML=remoteCheck;
+	}
+	
+	
+function updateState( value ) {
 	if(value){
 		document.getElementById("onoff").style.display = 'block'; //Should also be done when the dipswitch is set to on
 	}else{
 		document.getElementById("onoff").style.display = 'none'; //Should also be done when the dipswitch is set to on
-
+	
 	}
 
 	// add animating class to show something has changed externally
@@ -85,8 +113,9 @@ body.on .onoff:before {
 
 
 </script>
-<h1>Generate 2</h1>
+<h1>Remote 1 <span id="span1"></span></h1>
 <img src="light.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <img id="onoff" src="light_on.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
+<img id="tick" src="tick.svg" alt="" style="z-index: 2; width: 12vw; left: 80vw; position: absolute; margin: 0; display: none;"/>
 <div class="onoff"></div>
 <p data-i18n="pair.generate2.testIfrecieving" style="position: relative; top: 80vh; text-align: center; font-size: 3.5vh;"></p>

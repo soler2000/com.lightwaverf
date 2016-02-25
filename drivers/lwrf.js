@@ -65,7 +65,6 @@ function createDriver(driver) {
 					signal.on('payload', function(payload, first)
 						{
 							console.log('*****************Pay load received****************');
-							console.log('received:', payload);
 							
 							var rxData = parseRXData(payload); //Convert received array to usable data
 							console.log('RXdata:', rxData);
@@ -78,7 +77,7 @@ function createDriver(driver) {
 				//Refresh deviceList
 				devices.forEach(function(device)
 					{
-						console.log('Refresh device list');
+					console.log('Refresh device list', device.id);
 					addDevice(device);
 					});
 				callback();
@@ -104,10 +103,7 @@ function createDriver(driver) {
 								{
 									console.log('capabilities set onoff');
 									console.log('device data, must be comming from front end',device_data );
-									
-									
-									//need to make this work
-									// working but either code is revered on dimming is having an effect
+									 
 									
 									var device = getDeviceById(device_data);
 									
@@ -160,7 +156,7 @@ function createDriver(driver) {
 	
 		
 		pair: function( socket ) {
-			socket.on('generate', function( data, callback )
+			socket.on('imitate1', function( data, callback )//was imitate1
 				{
 					var address = [];
 					for(var i = 0; i < 20; i++)
@@ -200,28 +196,91 @@ function createDriver(driver) {
 				sendOnOff(tempdata, true);
 				callback();
 			});//end of socket on
-
-			socket.on('test_device', function( data, callback )
+			socket.on('remote', function( data, callback )
 				{
 					signal.on('payload', function(payload, first)
 						{
+							
+							console.log('Pairing Remote Detected');
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
-					
-							//no transmitter call back
-			       			//if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
-							//if(rxData.onoff){
-								//socket.emit('received_on'); //Send signal to frontend
-								//}else{
-								//socket.emit('received_off'); //Send signal to frontend
-							//}
-							//}
+							
+							//added for remote
+							var address = [];
+							for(var i = 0; i < 20; i++)
+								{
+									address.push(Math.round(Math.random()));
+								}	
+							address = bitArrayToString(address);
+							
+							tempdata = 
+								{
+								address		: address,
+								transID    	: rxData.transID,
+								transID1   	: rxData.transID1,
+								transID2   	: rxData.transID2,
+								transID3   	: rxData.transID3,
+								transID4   	: rxData.transID4,
+								transID5   	: rxData.transID5,
+								dim		   	: rxData.dim,
+								onoff  	   	: rxData.onoff,
+								}		
+							
+							///added for remote end
+							console.log('tempdata', tempdata);
+							console.log('rxdata', rxData);
+			       		
+							if(rxData.onoff){
+								//Send signal to frontend
+								socket.emit('received_on');
+								}else{
+								//Send signal to frontend
+								socket.emit('received_off'); 
+							}
+							
 						});
+						
+		
 					callback(null, tempdata.onoff);
 				});// end of socket on
-			
-			socket.on('sendSignal', function( onoff, callback )
+				
+				
+			socket.on('generate', function( data, callback )
 				{
+					signal.on('payload', function(payload, first)
+						{
+							
+							console.log('generate');
+							if(!first)return;
+			        		var rxData = parseRXData(payload);
+							
+							console.log('tempdata', tempdata);
+							
+			       			if(rxData.address == tempdata.address ){
+							if(rxData.onoff){
+								socket.emit('received_on'); //Send signal to frontend
+								}else{
+								socket.emit('received_off'); //Send signal to frontend
+							}
+							}
+						});
+				
+					callback(null, tempdata.onoff);
+				});// end of socket on
+				
+		socket.on('saveRemote', function( onoff, callback )//was send signal
+				{
+					console.log('Socket on - saveRemote');			
+					///added for remote end
+					console.log('tempdata', tempdata);
+							
+					callback();
+				});// end of saveremote
+				
+				
+			socket.on('sendSignal', function( onoff, callback )//was send signal
+				{
+					console.log('Socket on -Send Signal');
 					if(onoff != true){
 						onoff = false;
 						}
@@ -237,9 +296,17 @@ function createDriver(driver) {
 					callback();
 				});// end of socket on
 				
+		socket.on('remote_done', function( data, callback )
+				{
+					console.log('Remote Done');
+
+				});//end of socket on
 				
+				
+							
 			socket.on('done', function( data, callback )
 				{
+					console.log('standard Done');
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
 					var name = "LW " + __(driver); //__() Is for translation
@@ -293,8 +360,12 @@ function getDeviceByTransId(deviceIn) {
 	return matches ? matches[0] : null;
 }
 
-
-
+ function callfromreemotesetup()// does it need a call back
+{
+	console.log('callfromreemotesetup Done');
+	}
+	
+	
 function getDeviceById(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.id == deviceIn.id;
@@ -329,7 +400,6 @@ function updateDeviceDim(self, device, dim){
 }
 
 function addDevice(deviceIn) {
-	//adds device from pairing page
 	console.log('adding device');
 	deviceList.push({
 		id       	: deviceIn.id,
@@ -338,15 +408,13 @@ function addDevice(deviceIn) {
 		transID3   	: deviceIn.transID3,
 		transID4   	: deviceIn.transID4,
 		transID5   	: deviceIn.transID5,
-		transID   	: deviceIn.transID1.tostring + deviceIn.transID2.tostring + deviceIn.transID3.tostring + deviceIn.transID4.tostring + deviceIn.transID5.tostring,
+		//transID   	: deviceIn.transID1.tostring + deviceIn.transID2.tostring + deviceIn.transID3.tostring + deviceIn.transID4.tostring + deviceIn.transID5.tostring,
+		transID   	: deviceIn.transID1 + deviceIn.transID2 + deviceIn.transID3 + deviceIn.transID4 + deviceIn.transID5,
 		dim			: deviceIn.dim,
 		onoff    	: deviceIn.onoff,
 		driver   	: deviceIn.driver,
 	});
-	
-	console.log('Adding Device Dim level', deviceIn.dim);
-	console.log('finished adding');
-}
+	}
 
 
 
@@ -499,15 +567,41 @@ function setDim( deviceIn, dim, callback ) {
 
 }
 
+function createTransIDtoInt(Hexs) {
+	   console.log("input Hex String", Hexs );	
+	   var ns = Hexs.tostring();
+	   
+	   if (ns.length ==5){
+       var trans1 = Hexs.substring(0,1).tostring();
+	   trans1 =parseInt("0x" + trans1,16);
+	   var trans2 = Hexs.substring(1,2).tostring();
+	   trans2 =parseInt("0x" + trans2,16);
+	   var trans3 = Hexs.substring(2,3).tostring();
+	   trans3 =parseInt("0x" + trans3,16);
+	   var trans4 = Hexs.substring(3,4).tostring();
+	   trans4 =parseInt("0x" + trans4,16);   
+       var trans5 = Hexs.substring(4,5).tostring();
+	   trans5 =parseInt("0x" + trans5,16);
+	   
+	   var result = [trans1, trans2, trans3, trans4, trans5];
+	   }
+	   else
+	   {
+		   var result = [];
+	   }
+	   
+	
+		console.log("Int array", result );	  
+		
 
+    return result;
+}
 
 function createHexString(intToHexArray) {
  //   var result = [];
  
         var str = intToHexArray.toString(16);
-        // Pad to two digits, truncate to last two if too long.  Again,
-        // I'm not sure what your needs are for the case, you may want
-        // to handle errors in some other way.
+
         str = str.length == 1 ? "0" + str : 
               str.length == 2 ? str :
               str.substring(str.length-2, str.length);
@@ -579,7 +673,8 @@ function generatTransID(tempdata) {
 //Mood 2 130- Start mood n (param–129). (130=Mood1) Device = 15, most liekly moods use the second nibble
 //Mood 2 2- Define mood n (param–1). (2=Mood1) Device = 15
 
-		Homey.manager('flow').on('trigger.remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
+	Homey.manager('flow').on('trigger.remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
+	
 		console.log('fired in flow');
 		//args.device.transid = f4f9f;
 		
@@ -593,8 +688,11 @@ function generatTransID(tempdata) {
 			//callback( null, false );
 		}
 		
-		callback( null, true );
+		//callback( null, true );
 	});
+
+
+
 
 	Homey.manager('flow').on('trigger.remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
 		if(args.unit == "22"){
@@ -611,38 +709,21 @@ function generatTransID(tempdata) {
 		
 function parseRXData(data) {
 
-//received: [ 11, 15, 9, 1, 15, 3, 8, 2, 3, 1 ]
 
-
-	var parameter = data[0];//and 1
-	var parameter1 = data[1];
+	var para1 = data[0];
+	var para2 = data[1];
 	var device = data[2];
 	var Command = data[3];
 	
 	
-	//static needs to be replaced
 	var TransmitterID = data[4].toString(16);
 	TransmitterID = TransmitterID + data[5].toString(16);
 	TransmitterID = TransmitterID + data[6].toString(16);
 	TransmitterID = TransmitterID + data[7].toString(16);
 	TransmitterID = TransmitterID + data[8].toString(16);
 	
-	//var TransmitterID = data[4]; //and 5,6,7,8
-	
-	
 	var TransmitterSubID = data[9];
-	
-	console.log('*****************Parsing RX Data****************');
-	console.log('Parameter:',parameter);
-	console.log('Parameter1:',parameter1);
-	console.log('device:',device);
-	console.log('Command:',Command);
-	console.log('TransmitterID:',TransmitterID);
-	console.log('TransmitterSubID:',TransmitterSubID);
-	
-	getDeviceByTransId(TransmitterID);
-	
-	console.log('TransmitterSubID:',TransmitterSubID);
+	//var TransIDArray = createTransIDtoInt(TransmitterID);
 	
 	if(Command == "1")
 		{
@@ -656,10 +737,15 @@ function parseRXData(data) {
 		}
 	
 	return { 
-		parameter 			: parameter,
-		parameter1 			: parameter1,
+		para1 				: para1,
+		para2 				: para2,
 		device				: device,
-		TransID				: TransmitterID, 
+		transID				: TransmitterID,
+	 	transID1 			: data[4].toString(),
+	 	transID2 			: data[5].toString(),
+	 	transID3 			: data[6].toString(),
+	 	transID4 			: data[7].toString(),
+	 	transID5 			: data[8].toString(),
 		TransmitterSubID  	: TransmitterSubID,
 		device   			: device,
 		Command  			: Command,

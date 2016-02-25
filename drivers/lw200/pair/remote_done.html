@@ -1,0 +1,17 @@
+<script type="text/javascript">	
+	//var virtualDeviceClass = $('#deviceclasses-list input[name="deviceClass"]:checked');
+	
+	Homey.emit('done', function(err, device) {
+	//	if( virtualDeviceClass.length > 0 ) {
+	//		device.virtualClass = $(virtualDeviceClass).val();
+	//		device.virtualCapabilities = $(virtualDeviceClass).data('capabilities').split(',');
+		//}
+		
+		Homey.addDevice(device, function(){
+			Homey.done();
+		});
+	
+	});
+</script>
+<h1>remote_done</h1>
+<i class="loading fa fa-cog fa-spin"></i>
