@@ -64,11 +64,33 @@ function createDriver(driver) {
 					//Start receiving
 					signal.on('payload', function(payload, first)
 						{
+							//should prevent boucing, but will not capture dim up / down
+							// if(!first)return;
+							 
 							console.log('*****************Pay load received****************');
-							console.log(displayTime);
-							var rxData = parseRXData(payload); //Convert received array to usable data
-							console.log('RXdata:', rxData);
+							console.log(displayTime());
 							
+							var rxData = parseRXData(payload); //Convert received array to usable data
+							
+							
+		        			var devices = getDeviceByEachtransID(rxData);
+							
+							console.log('devices returned', devices.length);
+		        			devices.forEach(function(device){
+										
+								console.log('devices ', device.transID);
+									
+								//need to check for change in brightness
+									
+								//
+								if (rxData.onoff ==rxData.onoff){
+								}
+									
+									
+									updateDeviceOnOff(self, device, rxData.onoff);
+							});
+		        	
+							console.log('RXdata:', rxData);
 							Homey.manager('flow').trigger('remoteOn');			
 							
 						});
@@ -77,7 +99,8 @@ function createDriver(driver) {
 				//Refresh deviceList
 				devices.forEach(function(device)
 					{
-					console.log('Refresh device list', device.id);
+					console.log('Adding Device ID', device.id);
+					console.log('Adding Device transOD', device.transID);
 					addDevice(device);
 					});
 				callback();
@@ -200,9 +223,10 @@ function createDriver(driver) {
 				{
 					signal.once('payload', function(payload, first)// change on to once
 						{
+							if(!first)return;
 							
 							console.log('Pairing Remote Detected');
-							if(!first)return;
+							
 			        		var rxData = parseRXData(payload);
 							
 							//added for remote
@@ -227,10 +251,11 @@ function createDriver(driver) {
 								}		
 							
 							///added for remote end
-							console.log('tempdata', tempdata);
-							console.log('rxdata', rxData);
+							//console.log('tempdata', tempdata);
+							//console.log('rxdata', rxData);
 							
-			       			addDevice(rxData);
+							console.log('Temp Data stored at',displayTime());
+			       			//addDevice(rxData);
 						
 							if(rxData.onoff){
 								//Send signal to frontend
@@ -309,12 +334,13 @@ function createDriver(driver) {
 							
 			socket.on('done', function( data, callback )
 				{
-					console.log('standard Done');
+					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
 					var name = "LW " + __(driver); //__() Is for translation
 					console.log('adding device in socket on');
-					console.log('tempdata.dim',tempdata.dim);
+					
+					//console.log('tempdata.dim',tempdata.dim);
 					addDevice({
 						id       	: id,
 						address  	: tempdata.address,
@@ -324,7 +350,7 @@ function createDriver(driver) {
 						transID3   	: tempdata.transID3,
 						transID4   	: tempdata.transID4,
 						transID5   	: tempdata.transID5,
-						dim			: tempdata.dim,
+						dim			: 0,
 						onoff    	: false,
 						driver   	: driver,
 						});
@@ -361,6 +387,12 @@ function getDeviceByTransId(deviceIn) {
 		return d.transID == deviceIn.transID;
 	});
 	return matches ? matches[0] : null;
+}
+function getDeviceByEachtransID(deviceIn) {
+	var matches = deviceList.filter(function(d){
+		return d.transID1 == deviceIn.transID1 && d.transID2 == deviceIn.transID2 && d.transID3 == deviceIn.transID3 && d.transID4 == deviceIn.transID4 && d.transID5 == deviceIn.transID5; 
+	});
+	return matches ? matches : null;
 }
 
  function callfromreemotesetup()// does it need a call back
@@ -403,20 +435,20 @@ function updateDeviceDim(self, device, dim){
 }
 
 function addDevice(deviceIn) {
-	console.log('adding device');
+	console.log('Adding device - Device Data', deviceIn);
 	deviceList.push({
-		id       	: deviceIn.id,
-		transID1   	: deviceIn.transID1,
-		transID2   	: deviceIn.transID2,
-		transID3   	: deviceIn.transID3,
-		transID4   	: deviceIn.transID4,
-		transID5   	: deviceIn.transID5,
-		//transID   	: deviceIn.transID1.tostring + deviceIn.transID2.tostring + deviceIn.transID3.tostring + deviceIn.transID4.tostring + deviceIn.transID5.tostring,
-		transID   	: deviceIn.transID1 + deviceIn.transID2 + deviceIn.transID3 + deviceIn.transID4 + deviceIn.transID5,
-		dim			: deviceIn.dim,
-		onoff    	: deviceIn.onoff,
-		driver   	: deviceIn.driver,
-	});
+		id       			: deviceIn.id,
+		transID1   			: deviceIn.transID1,
+		transID2   			: deviceIn.transID2,
+		transID3   			: deviceIn.transID3,
+		transID4   			: deviceIn.transID4,
+		transID5   			: deviceIn.transID5,
+		transID   			: deviceIn.transID1 + deviceIn.transID2 + deviceIn.transID3 + deviceIn.transID4 + deviceIn.transID5,
+		TransmitterSubID	: deviceIn.TransmitterSubID,
+		dim					: deviceIn.dim,
+		onoff    			: deviceIn.onoff,
+		driver   			: deviceIn.driver,
+	});	
 	}
 
 
