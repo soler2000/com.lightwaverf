@@ -2,7 +2,7 @@
 
 var self = module.exports = {
 	
-	init: function(){
+	init: function(){	
 		
 	},
 	deleted: function(){

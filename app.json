@@ -22,7 +22,6 @@
 	    "homey:wireless:433"
     ],
     "drivers": [
-
 	    {
 		    "id": "lw200",
 		    "name": {
@@ -33,48 +32,21 @@
 				"large": "../drivers/lw200/assets/images/large.png",
 				"small": "../drivers/lw200/assets/images/small.png"
 		    },
-		    "class": "lights",
+		    "class": "remote",
 		    "capabilities": ["onoff", "dim"],
 	    "pair": [
 				{
 			    	"id": "start"
 			    },
-			    {
-			    	"id": "imitate1",
-			    	"navigation": {
-				    	"prev": "start"
-			    	}
-			    },
-			    {
-			    	"id": "imitate2",
-			    	"navigation": {
-						"next": "choose_slave",
-				    	"prev": "imitate1"
-			    	}
-			    },
 				{
-			    	"id": "generate1",
+			    	"id": "remote1",
 			    	"navigation": {
-				    	"next": "generate2",
+				    	"next": "remote_done",
 				    	"prev": "start"
 			    	}
 			    },
 				{
-			    	"id": "generate2",
-			    	"navigation": {
-						"next": "choose_slave",
-				    	"prev": "generate1"
-			    	}
-			    },
-				{
-					"id": "choose_slave",
-					"template": "choose_slave",
-					"navigation": {
-						"next": "done"
-					}
-				},
-				{
-			    	"id": "done"
+			    	"id": "remote_done"
 			    }
 		    ]
 		},
@@ -189,14 +161,69 @@
 		    ]
 		},
 		{
+		    "id": "lw321",
+		    "name": {
+				"en": "Plug-in On/Off",
+			    "nl": "Plug-in On/Off"
+		    },
+		    "images": {
+				"large": "../drivers/lw321/assets/images/large.png",
+				"small": "../drivers/lw321/assets/images/small.png"
+		    },
+		    "class": "light",
+		    "capabilities": [ "onoff" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "imitate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "imitate1"
+			    	}
+			    },
+				{
+			    	"id": "generate1",
+			    	"navigation": {
+				    	"next": "generate2",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "generate1"
+			    	}
+			    },
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
 		    "id": "lw400",
 		    "name": {
 				"en": "Wired Dimmer",
 			    "nl": "Wired Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw400/assets/images/large.jpg",
-				"small": "../drivers/lw400/assets/images/small.jpg"
+				"large": "../drivers/lw400/assets/images/large.png",
+				"small": "../drivers/lw400/assets/images/small.png"
 		    },
 		    "class": "lights",
 		    "capabilities": ["onoff", "dim"],
@@ -243,5 +270,132 @@
 			    }
 		    ]
 		}
-    ]
+    ],
+	"flow": {
+	    "triggers": [
+	        {
+	            "id": "LW200remoteOn",
+	            "title": {"en": "On button is pressed" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw200",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+					{
+	                    "name": "Command",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "01", "label": { "en": "Channel: I" } }
+	                    ]
+	                }
+            	]
+	        },
+	        {
+	            "id": "Lw200remoteOff",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw200",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Channel: I" } },
+		                    { "id": "01", "label": { "en": "Channel: II" } },
+		                    { "id": "10", "label": { "en": "Channel: III" } }, 
+		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Button: 1" } },
+		                    { "id": "01", "label": { "en": "Button: 2" } },
+		                    { "id": "10", "label": { "en": "Button: 3" } }, 
+		                    { "id": "11", "label": { "en": "Button: 4" } }, 
+		                    { "id": "22", "label": { "en": "Button: G" } }
+	                    ]
+	                }
+            	]
+	        },
+	        {
+	            "id": "remoteOn",
+	            "title": {
+	                "en": "On is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Channel: I" } },
+		                    { "id": "01", "label": { "en": "Channel: II" } },
+		                    { "id": "10", "label": { "en": "Channel: III" } }, 
+		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Button: 1" } },
+		                    { "id": "01", "label": { "en": "Button: 2" } },
+		                    { "id": "10", "label": { "en": "Button: 3" } }, 
+		                    { "id": "11", "label": { "en": "Button: 4" } }, 
+		                    { "id": "22", "label": { "en": "Button: G" } }
+	                    ]
+	                }
+            	]
+	        },
+	        {
+	            "id": "remoteOff",
+	            "title": {"en": "Off is pressed on your remote" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Channel: I" } },
+		                    { "id": "01", "label": { "en": "Channel: II" } },
+		                    { "id": "10", "label": { "en": "Channel: III" } }, 
+		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "00", "label": { "en": "Button: 1" } },
+		                    { "id": "01", "label": { "en": "Button: 2" } },
+		                    { "id": "10", "label": { "en": "Button: 3" } }, 
+		                    { "id": "11", "label": { "en": "Button: 4" } }, 
+		                    { "id": "22", "label": { "en": "Button: G" } }
+	                    ]
+	                }
+            	]
+	        }
+		]
+}	
+	
 }

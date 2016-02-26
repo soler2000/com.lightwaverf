@@ -5,9 +5,7 @@ var signal;
 var initFlag = 1;
 //var tempdata = {};
 var pauseSpeed 		= 500;
-var lastMessage;
-var timeoutPeriod =5000;
-var timeoutflag;
+
 
 function createDriver(driver) {
 	var self = 
@@ -18,12 +16,6 @@ function createDriver(driver) {
 				if(initFlag)
 					{
 					console.log('LightwaveRF: Init')
-					
-					
-					//set time out 
-					var tOut = setInterval(ResetTimeOut, timeoutPeriod);
-					
-					
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					var high1 =300;	//orginal 293	14-15 samples at 48khz				
@@ -72,41 +64,16 @@ function createDriver(driver) {
 					//Start receiving
 					signal.on('payload', function(payload, first)
 						{
-							//should prevent boucing, but will not capture dim up / down
-							// if(!first)return;
-							
 							console.log('*****************Pay load received****************');
-							console.log(displayTime());
-							
+							console.log('received:', payload);
 							var rxData = parseRXData(payload); //Convert received array to usable data
-							
-							if (timeoutflag == false )
-								{
-								//prevents repeat fireing of on / off
-								timeoutflag = true;	
-		        				var devices = getDeviceByEachtransID(rxData);
-		        				devices.forEach(function(device){
-									updateDeviceOnOff(self, device, rxData.onoff);
-									});
-		        			}else
-							{
-								var devices = getDeviceByEachtransID(rxData);
-		        				devices.forEach(function(device){
-									updateDeviceDim(self, device, rxData.onoff);
-									});
-							
-								}
-							console.log('RXdata:', rxData);
-							Homey.manager('flow').trigger('remoteOn');			
-							
 						});
 					}
 							
 				//Refresh deviceList
 				devices.forEach(function(device)
 					{
-					console.log('Adding Device ID', device.id);
-					console.log('Adding Device transOD', device.transID);
+						console.log('Refresh device list');
 					addDevice(device);
 					});
 				callback();
@@ -130,14 +97,20 @@ function createDriver(driver) {
 								},//end of get
 							set: function( device_data, onoff, callback ) 
 								{
-									console.log('Setting device');
-							
-									var devices = getDeviceByEachtransID(device_data);
+									console.log('capabilities set onoff');
+									console.log('device data, must be comming from front end',device_data );
 									
-									devices.forEach(function(device){
+									
+									//need to make this work
+									// working but either code is revered on dimming is having an effect
+									
+									var device = getDeviceById(device_data);
+									
+									//devices.forEach(function(device){
 										updateDeviceOnOff(self, device, onoff);
-									});	
-	
+									//});	
+									
+									//sendOnOff(device_data, device_data.onoff);
 									sendOnOff(device_data, onoff);
 									callback( null, onoff );
 								}//end of set
@@ -182,7 +155,7 @@ function createDriver(driver) {
 	
 		
 		pair: function( socket ) {
-			socket.on('imitate1', function( data, callback )//was imitate1
+			socket.on('generate', function( data, callback )
 				{
 					var address = [];
 					for(var i = 0; i < 20; i++)
@@ -222,130 +195,51 @@ function createDriver(driver) {
 				sendOnOff(tempdata, true);
 				callback();
 			});//end of socket on
-			socket.on('remote', function( data, callback )
-				{
-					console.log('RemoteListen at ',displayTime());
-					signal.on('payload', function(payload, first)
-						{
-							if(!first)return;
-							console.log('Remote Detected at ',displayTime());
-							
-							
-			        		var rxData = parseRXData(payload);
-							
-							//added for remote
-							var address = [];
-							for(var i = 0; i < 20; i++)
-								{
-									address.push(Math.round(Math.random()));
-								}	
-							address = bitArrayToString(address);
-							
-							tempdata = 
-								{
-								address		: address,
-								transID    	: rxData.transID,
-								transID1   	: rxData.transID1,
-								transID2   	: rxData.transID2,
-								transID3   	: rxData.transID3,
-								transID4   	: rxData.transID4,
-								transID5   	: rxData.transID5,
-								dim		   	: rxData.dim,
-								onoff  	   	: rxData.onoff,
-								}		
-							
-							///added for remote end
-							//console.log('tempdata', tempdata);
-							//console.log('rxdata', rxData);
-							
-							console.log('Temp Data stored at',displayTime());
-			       			//addDevice(rxData);
-						
-						//Does not need to be an off off command
-							if(rxData.onoff){
-								//Send signal to frontend
-								socket.emit('received_on');
-								}else{
-								//Send signal to frontend
-								socket.emit('received_off'); 
-							}
-							
-							
-							socket.emit('remote_found');
-						});
-						
-		
-					callback(null, tempdata.onoff);
-				}
-				);// end of socket on
-				
-				
-			socket.on('generate', function( data, callback )
+
+			socket.on('test_device', function( data, callback )
 				{
 					signal.on('payload', function(payload, first)
 						{
-							
-							console.log('generate');
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
-							
-							console.log('tempdata', tempdata);
-							
-			       			if(rxData.address == tempdata.address ){
-							if(rxData.onoff){
-								socket.emit('received_on'); //Send signal to frontend
-								}else{
-								socket.emit('received_off'); //Send signal to frontend
-							}
-							}
+					
+							//no transmitter call back
+			       			//if(rxData.address == tempdata.address && rxData.unit == tempdata.unit){
+							//if(rxData.onoff){
+								//socket.emit('received_on'); //Send signal to frontend
+								//}else{
+								//socket.emit('received_off'); //Send signal to frontend
+							//}
+							//}
 						});
-				
 					callback(null, tempdata.onoff);
 				});// end of socket on
-				
-		socket.on('saveRemote', function( onoff, callback )//was send signal
+			
+			socket.on('sendSignal', function( onoff, callback )
 				{
-					console.log('Socket on - saveRemote');			
-					///added for remote end
-					console.log('tempdata', tempdata);
-							
-					callback();
-				});// end of saveremote
-				
-				
-		socket.on('sendSignal', function( onoff, callback )//was send signal
-				{
-					console.log('Send Signal');
 					if(onoff != true){
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceByEachtransId(tempdata);
-					
-					devices.forEach(function(device){
-						updateDeviceOnOff(self, device, onoff)
-					});	
+					var devices = getDeviceByTransId(tempdata);
+					//commented out as cannot find devices???
+					//devices.forEach(function(device){
+					//	updateDeviceOnOff(self, device, onoff)
+						//});	
+						
+						updateDeviceOnOff(self, tempdata, onoff);
 						
 					callback();
 				});// end of socket on
 				
-		socket.on('remote_done', function( data, callback )
-				{
-					console.log('Remote Done');
-
-				});//end of socket on
 				
-				
-							
-		socket.on('done', function( data, callback )
+			socket.on('done', function( data, callback )
 				{
-					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
 					var name = "LW " + __(driver); //__() Is for translation
 					console.log('adding device in socket on');
-					
-					//console.log('tempdata.dim',tempdata.dim);
+					console.log('tempdata.dim',tempdata.dim);
 					addDevice({
 						id       	: id,
 						address  	: tempdata.address,
@@ -355,7 +249,7 @@ function createDriver(driver) {
 						transID3   	: tempdata.transID3,
 						transID4   	: tempdata.transID4,
 						transID5   	: tempdata.transID5,
-						dim			: 0,
+						dim			: tempdata.dim,
 						onoff    	: false,
 						driver   	: driver,
 						});
@@ -393,19 +287,9 @@ function getDeviceByTransId(deviceIn) {
 	});
 	return matches ? matches[0] : null;
 }
-function getDeviceByEachtransID(deviceIn) {
-	var matches = deviceList.filter(function(d){
-		return d.transID1 == deviceIn.transID1 && d.transID2 == deviceIn.transID2 && d.transID3 == deviceIn.transID3 && d.transID4 == deviceIn.transID4 && d.transID5 == deviceIn.transID5; 
-	});
-	return matches ? matches : null;
-}
 
- function callfromreemotesetup()// does it need a call back
-{
-	console.log('callfromreemotesetup Done');
-	}
-	
-	
+
+
 function getDeviceById(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.id == deviceIn.id;
@@ -440,41 +324,27 @@ function updateDeviceDim(self, device, dim){
 }
 
 function addDevice(deviceIn) {
-	console.log('Adding device - Device Data', deviceIn);
+	//adds device from pairing page
+	console.log('adding device');
 	deviceList.push({
-		id       			: deviceIn.id,
-		transID1   			: deviceIn.transID1,
-		transID2   			: deviceIn.transID2,
-		transID3   			: deviceIn.transID3,
-		transID4   			: deviceIn.transID4,
-		transID5   			: deviceIn.transID5,
-		transID   			: deviceIn.transID1 + deviceIn.transID2 + deviceIn.transID3 + deviceIn.transID4 + deviceIn.transID5,
-		TransmitterSubID	: deviceIn.TransmitterSubID,
-		dim					: deviceIn.dim,
-		onoff    			: deviceIn.onoff,
-		driver   			: deviceIn.driver,
-	});	
-	}
+		id       	: deviceIn.id,
+		transID1   	: deviceIn.transID1,
+		transID2   	: deviceIn.transID2,
+		transID3   	: deviceIn.transID3,
+		transID4   	: deviceIn.transID4,
+		transID5   	: deviceIn.transID5,
+		transID   	: deviceIn.transID1.tostring + deviceIn.transID2.tostring + deviceIn.transID3.tostring + deviceIn.transID4.tostring + deviceIn.transID5.tostring,
+		dim			: deviceIn.dim,
+		onoff    	: deviceIn.onoff,
+		driver   	: deviceIn.driver,
+	});
+	
+	console.log('Adding Device Dim level', deviceIn.dim);
+	console.log('finished adding');
+}
 
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
+
 
 
 function sendOnOff(deviceIn, onoff) {
@@ -624,41 +494,15 @@ function setDim( deviceIn, dim, callback ) {
 
 }
 
-function createTransIDtoInt(Hexs) {
-	   console.log("input Hex String", Hexs );	
-	   var ns = Hexs.tostring();
-	   
-	   if (ns.length ==5){
-       var trans1 = Hexs.substring(0,1).tostring();
-	   trans1 =parseInt("0x" + trans1,16);
-	   var trans2 = Hexs.substring(1,2).tostring();
-	   trans2 =parseInt("0x" + trans2,16);
-	   var trans3 = Hexs.substring(2,3).tostring();
-	   trans3 =parseInt("0x" + trans3,16);
-	   var trans4 = Hexs.substring(3,4).tostring();
-	   trans4 =parseInt("0x" + trans4,16);   
-       var trans5 = Hexs.substring(4,5).tostring();
-	   trans5 =parseInt("0x" + trans5,16);
-	   
-	   var result = [trans1, trans2, trans3, trans4, trans5];
-	   }
-	   else
-	   {
-		   var result = [];
-	   }
-	   
-	
-		console.log("Int array", result );	  
-		
 
-    return result;
-}
 
 function createHexString(intToHexArray) {
  //   var result = [];
  
         var str = intToHexArray.toString(16);
-
+        // Pad to two digits, truncate to last two if too long.  Again,
+        // I'm not sure what your needs are for the case, you may want
+        // to handle errors in some other way.
         str = str.length == 1 ? "0" + str : 
               str.length == 2 ? str :
               str.substring(str.length-2, str.length);
@@ -730,57 +574,42 @@ function generatTransID(tempdata) {
 //Mood 2 130- Start mood n (param–129). (130=Mood1) Device = 15, most liekly moods use the second nibble
 //Mood 2 2- Define mood n (param–1). (2=Mood1) Device = 15
 
-	Homey.manager('flow').on('trigger.remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
-	
-		console.log('fired in flow');
-		//args.device.transid = f4f9f;
-		
-		if(args.unit == "22"){
-	    	args.unit = "00";
-	    	args.device.group = true;
-	    }
-	    if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
-		    callback( null, true ); // true to make the flow continue, or false to abort
-		}else{
-			//callback( null, false );
-		}
-		
-		//callback( null, true );
-	});
 
 
-
-
-	Homey.manager('flow').on('trigger.remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
-		if(args.unit == "22"){
-	    	args.unit = "00";
-	    	args.device.group = true;
-	    }
-	    if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && !lastTriggered.onoff ){
-		    callback( null, true ); // true to make the flow continue, or false to abort
-		}else{
-			callback( null, false );
-		}
-	});
-
-		
 function parseRXData(data) {
 
+//received: [ 11, 15, 9, 1, 15, 3, 8, 2, 3, 1 ]
 
-	var para1 = data[0];
-	var para2 = data[1];
+
+	var parameter = data[0];//and 1
+	var parameter1 = data[1];
 	var device = data[2];
 	var Command = data[3];
 	
 	
+	//static needs to be replaced
 	var TransmitterID = data[4].toString(16);
 	TransmitterID = TransmitterID + data[5].toString(16);
 	TransmitterID = TransmitterID + data[6].toString(16);
 	TransmitterID = TransmitterID + data[7].toString(16);
 	TransmitterID = TransmitterID + data[8].toString(16);
 	
+	//var TransmitterID = data[4]; //and 5,6,7,8
+	
+	
 	var TransmitterSubID = data[9];
-	//var TransIDArray = createTransIDtoInt(TransmitterID);
+	
+	console.log('*****************Parsing RX Data****************');
+	console.log('Parameter:',parameter);
+	console.log('Parameter1:',parameter1);
+	console.log('device:',device);
+	console.log('Command:',Command);
+	console.log('TransmitterID:',TransmitterID);
+	console.log('TransmitterSubID:',TransmitterSubID);
+	
+	getDeviceByTransId(TransmitterID);
+	
+	console.log('TransmitterSubID:',TransmitterSubID);
 	
 	if(Command == "1")
 		{
@@ -794,15 +623,10 @@ function parseRXData(data) {
 		}
 	
 	return { 
-		para1 				: para1,
-		para2 				: para2,
+		parameter 			: parameter,
+		parameter1 			: parameter1,
 		device				: device,
-		transID				: TransmitterID,
-	 	transID1 			: data[4].toString(),
-	 	transID2 			: data[5].toString(),
-	 	transID3 			: data[6].toString(),
-	 	transID4 			: data[7].toString(),
-	 	transID5 			: data[8].toString(),
+		TransID				: TransmitterID, 
 		TransmitterSubID  	: TransmitterSubID,
 		device   			: device,
 		Command  			: Command,
@@ -828,11 +652,6 @@ function bitStringToBitArray(str) {
     return result;
 };
 
-function ResetTimeOut() {
-   	timeoutflag =false;	
-};
-					
-
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
  * Using Math.round() will give you a non-uniform distribution!
@@ -851,29 +670,6 @@ function numberToBitArray(number, bit_count) {
         result[i] = (number >> i) & 1;
     return result;
 };
-
-function displayTime() {
-    var str = "";
-
-    var currentTime = new Date()
-    var hours = currentTime.getHours()
-    var minutes = currentTime.getMinutes()
-    var seconds = currentTime.getSeconds()
-
-    if (minutes < 10) {
-        minutes = "0" + minutes
-    }
-    if (seconds < 10) {
-        seconds = "0" + seconds
-    }
-    str += hours + ":" + minutes + ":" + seconds + " ";
-    if(hours > 11){
-        str += "PM"
-    } else {
-        str += "AM"
-    }
-    return str;
-}
 
 module.exports = {
 	createDriver: createDriver

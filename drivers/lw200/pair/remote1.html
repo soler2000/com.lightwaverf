@@ -38,41 +38,45 @@ body.on .onoff:before {
 
 
 <script type="text/javascript">
+	
+	
 
+	Homey.emit('remote', function(err, onoff) { //Send signal
+	
+	}
+	);	
 
-	Homey.on('received_on', function() { //Set dipswitch to on
+	Homey.on('received_on', function() { //Receieved from Homey -Set toggleswitch to on
+		
 		updateState(true);
+
 	});
 
-	
-	Homey.on('received_off', function() { //Set dipswitch to off
+	Homey.on('received_off', function() { //Receieved from Homey -Set toggleswitch to off
 		updateState(false);
 	});
+
+	Homey.emit('remote', function(err, onoff) { //Get device status
+		updateState(onoff);
+	});			
+
+	document.querySelector('.onoff').addEventListener('click', function(){
+		
+		// Sending back to homey
+		Homey.emit('saveRemote', !state, function(err, onoff) { //Send signal
+		});	
+		updateState(!state);
+	});
 	
-	var isOn = true;
 	
-
-	//Homey.emit('test_device', function(err, onoff) { //Get device status
-	//	updateState(isOn);
-		//updateState(onoff);
-	//});			
-
-	//this should be the part the sends the on off signal,  needs to send a on command
-	//document.querySelector('.onoff').addEventListener('click', function(){
-	//	Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
-	//	});	
-	//	updateState(!isOn);
-		//updateState(!state);
-	//});
-
-	function updateState( value ) {
+	
+	
+function updateState( value ) {
 	if(value){
 		document.getElementById("onoff").style.display = 'block'; //Should also be done when the dipswitch is set to on
-		
-		
 	}else{
-		document.getElementById("onoff").style.display = 'none'; //Should also be done when the dipswitch is set to on--off
-
+		document.getElementById("onoff").style.display = 'none'; //Should also be done when the dipswitch is set to on
+	
 	}
 
 	// add animating class to show something has changed externally
@@ -90,8 +94,8 @@ body.on .onoff:before {
 
 
 </script>
-<h1>Remote 2</h1>
 <img src="light.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <img id="onoff" src="light_on.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
+<img id="tick" src="tick.svg" alt="" style="z-index: 2; width: 12vw; left: 80vw; position: absolute; margin: 0; display: none;"/>
 <div class="onoff"></div>
-<p data-i18n="pair.imitate2.testIfWorking" style="position: relative; top: 80vh; text-align: center; font-size: 3.5vh;"></p>
+<p data-i18n="pair.generate2.testIfrecieving" style="position: relative; top: 80vh; text-align: center; font-size: 3.5vh;"></p>
