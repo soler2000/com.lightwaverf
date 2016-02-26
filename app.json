@@ -23,6 +23,34 @@
     ],
     "drivers": [
 	    {
+		    "id": "lw100",
+		    "name": {
+				"en": "Handheld Remote",
+			    "nl": "Handheld Remote"
+		    },
+		    "images": {
+				"large": "../drivers/lw100/assets/images/large.png",
+				"small": "../drivers/lw100/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+	    {
 		    "id": "lw200",
 		    "name": {
 				"en": "Wireless Dimmer",
@@ -254,17 +282,10 @@
 				{
 			    	"id": "generate2",
 			    	"navigation": {
-						"next": "choose_slave",
+						"next": "done",
 				    	"prev": "generate1"
 			    	}
 			    },
-				{
-					"id": "choose_slave",
-					"template": "choose_slave",
-					"navigation": {
-						"next": "done"
-					}
-				},
 				{
 			    	"id": "done"
 			    }
@@ -282,13 +303,6 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
-					{
-	                    "name": "Command",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "01", "label": { "en": "Channel: I" } }
-	                    ]
 	                }
             	]
 	        },
@@ -303,27 +317,6 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
-	                {
-	                    "name": "channel",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Channel: I" } },
-		                    { "id": "01", "label": { "en": "Channel: II" } },
-		                    { "id": "10", "label": { "en": "Channel: III" } }, 
-		                    { "id": "11", "label": { "en": "Channel: IV" } }  
-	                    ]
-	                },
-	                {
-	                    "name": "unit",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Button: 1" } },
-		                    { "id": "01", "label": { "en": "Button: 2" } },
-		                    { "id": "10", "label": { "en": "Button: 3" } }, 
-		                    { "id": "11", "label": { "en": "Button: 4" } }, 
-		                    { "id": "22", "label": { "en": "Button: G" } }
-	                    ]
 	                }
             	]
 	        },
@@ -341,7 +334,7 @@
 	                },
 	                {
 	                    "name": "channel",
-	                    "type": "dropdown",
+	                    "type": "label",
 	                    "values": 	[ 
 		                    { "id": "00", "label": { "en": "Channel: I" } },
 		                    { "id": "01", "label": { "en": "Channel: II" } },

@@ -735,15 +735,15 @@ function generatTransID(tempdata) {
 		console.log('fired in flow');
 		//args.device.transid = f4f9f;
 		
-		if(args.unit == "22"){
+	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
-	    }
-	    if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
+	    }*/
+	  /*  if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
 		    callback( null, true ); // true to make the flow continue, or false to abort
 		}else{
 			//callback( null, false );
-		}
+		}*/
 		
 		//callback( null, true );
 	});
@@ -752,7 +752,7 @@ function generatTransID(tempdata) {
 
 
 	Homey.manager('flow').on('trigger.remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
-		if(args.unit == "22"){
+	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
 	    }
@@ -760,7 +760,7 @@ function generatTransID(tempdata) {
 		    callback( null, true ); // true to make the flow continue, or false to abort
 		}else{
 			callback( null, false );
-		}
+		}*/
 	});
 
 		
