@@ -3,33 +3,31 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 612 792" style="enable-background:new 0 0 612 792;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;stroke:#000000;stroke-width:4;stroke-miterlimit:10;}
+	.st0{fill:none;stroke:#000000;stroke-width:16;stroke-miterlimit:10;}
 	.st1{fill:none;stroke:#000000;stroke-miterlimit:10;}
-	.st2{fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
-	.st3{fill:none;stroke:#000000;stroke-width:6;stroke-miterlimit:10;}
 </style>
 <path class="st0" d="M564.6,676.1H48.3c-12.7,0-23-10.3-23-23V143c0-12.7,10.3-23,23-23h516.3c12.7,0,23,10.3,23,23v510.1
 	C587.6,665.8,577.3,676.1,564.6,676.1z"/>
 <path class="st0" d="M482.2,610H132.8c-19.2,0-34.8-15.6-34.8-34.8V220.8c0-19.2,15.6-34.8,34.8-34.8h349.4
 	c19.2,0,34.8,15.6,34.8,34.8v354.4C517,594.4,501.4,610,482.2,610z"/>
-<path class="st1" d="M61,120"/>
-<path class="st1" d="M60,120"/>
-<path class="st1" d="M172,76"/>
-<path class="st1" d="M61,120"/>
-<path class="st1" d="M33.8,80"/>
+<path class="st0" d="M61,120"/>
+<path class="st0" d="M60,120"/>
+<path class="st0" d="M172,76"/>
+<path class="st0" d="M61,120"/>
+<path class="st0" d="M33.8,80"/>
 <path class="st1" d="M-77.2,124"/>
 <path class="st1" d="M27-382"/>
-<path class="st1" d="M26,138"/>
+<path class="st0" d="M26,138"/>
 <path class="st1" d="M936,609"/>
-<path class="st1" d="M517,610"/>
+<path class="st0" d="M517,610"/>
 <path class="st1" d="M98-238"/>
-<path class="st1" d="M98,186"/>
-<path class="st0" d="M322.9,171.3h-32.8c-1.9,0-3.4-1.5-3.4-3.4v-12c0-1.9,1.5-3.4,3.4-3.4h32.8c1.9,0,3.4,1.5,3.4,3.4v12
-	C326.3,169.8,324.8,171.3,322.9,171.3z"/>
-<path class="st2" d="M366.5,562h-120c-13.5,0-24.5-11-24.5-24.5v-282c0-13.5,11-24.5,24.5-24.5h120c13.5,0,24.5,11,24.5,24.5v282
+<path class="st0" d="M98,186"/>
+<path class="st0" d="M322.9,162.3h-32.8c-1.9,0-3.4-1.5-3.4-3.4v-12c0-1.9,1.5-3.4,3.4-3.4h32.8c1.9,0,3.4,1.5,3.4,3.4v12
+	C326.3,160.8,324.8,162.3,322.9,162.3z"/>
+<path class="st0" d="M366.5,562h-120c-13.5,0-24.5-11-24.5-24.5v-282c0-13.5,11-24.5,24.5-24.5h120c13.5,0,24.5,11,24.5,24.5v282
 	C391,551,380,562,366.5,562z"/>
-<path id="XMLID_2_" class="st3" d="M344.9,372.9h-75.8c-5.2,0-9.4-4.2-9.4-9.4v-85.7c0-5.2,4.2-9.4,9.4-9.4h75.8
-	c5.2,0,9.4,4.2,9.4,9.4v85.7C354.3,368.7,350.1,372.9,344.9,372.9z"/>
-<path id="XMLID_1_" class="st3" d="M344,527.8h-74.1c-5.7,0-10.2-4.6-10.2-10.2v-84c0-5.7,4.6-10.2,10.2-10.2H344
-	c5.7,0,10.2,4.6,10.2,10.2v84C354.3,523.3,349.7,527.8,344,527.8z"/>
+<path class="st0" d="M344.9,372.9h-75.8c-5.2,0-9.4-4.2-9.4-9.4v-85.7c0-5.2,4.2-9.4,9.4-9.4h75.8c5.2,0,9.4,4.2,9.4,9.4v85.7
+	C354.3,368.7,350.1,372.9,344.9,372.9z"/>
+<path class="st0" d="M344,527.8h-74.1c-5.7,0-10.2-4.6-10.2-10.2v-84c0-5.7,4.6-10.2,10.2-10.2H344c5.7,0,10.2,4.6,10.2,10.2v84
+	C354.3,523.3,349.7,527.8,344,527.8z"/>
 </svg>

@@ -3,8 +3,6 @@
 
   "pair":{
     "title":{
-        "eurodomest_switch": "Koppel een Eurodomest stopcontact...",
-		"impuls_switch": "Add a LightwaveRF switch...",
 		"lw200_Lightswitch": "Add a LightwaveRF wireless dimmer...",
 		"lw260_socket": "Add a LightwaveRF plug socket...",
 		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
@@ -12,9 +10,9 @@
 		"lw400_Lightswitch": "Add a LightwaveRF Wired Dimmer..."
     		},
     	"start":{
-        "sendpaircode": "Put device into pairing mode",
-  			"has_remote": "Getting ready to listen to your remote device",
-  			"has_no_remote": "Set up device Pairing"
+        	"sendpaircode": "Put device into pairing mode",
+  		"has_remote": "Press the On button on your remote",
+  		"has_no_remote": "Set up device Pairing"
   		},
       "dipswitches": "set address and unit",
       "configure2":{
@@ -30,7 +28,7 @@
   		},
   		"generate2":{
   			"testIfWorking": "Use the switch above to test your device",
-			"testIfrecieving": "Pressing the On & Off buttons on you remote,  the switch should move accordingly"
+			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly"
   		}
     }
 }

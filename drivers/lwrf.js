@@ -224,11 +224,12 @@ function createDriver(driver) {
 			});//end of socket on
 			socket.on('remote', function( data, callback )
 				{
-					signal.once('payload', function(payload, first)// change on to once
+					console.log('RemoteListen at ',displayTime());
+					signal.on('payload', function(payload, first)
 						{
 							if(!first)return;
+							console.log('Remote Detected at ',displayTime());
 							
-							console.log('Pairing Remote Detected');
 							
 			        		var rxData = parseRXData(payload);
 							
@@ -260,6 +261,7 @@ function createDriver(driver) {
 							console.log('Temp Data stored at',displayTime());
 			       			//addDevice(rxData);
 						
+						//Does not need to be an off off command
 							if(rxData.onoff){
 								//Send signal to frontend
 								socket.emit('received_on');
@@ -268,6 +270,8 @@ function createDriver(driver) {
 								socket.emit('received_off'); 
 							}
 							
+							
+							socket.emit('remote_found');
 						});
 						
 		
@@ -309,20 +313,18 @@ function createDriver(driver) {
 				});// end of saveremote
 				
 				
-			socket.on('sendSignal', function( onoff, callback )//was send signal
+		socket.on('sendSignal', function( onoff, callback )//was send signal
 				{
-					console.log('Socket on -Send Signal');
+					console.log('Send Signal');
 					if(onoff != true){
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceByTransId(tempdata);
-					//commented out as cannot find devices???
-					//devices.forEach(function(device){
-					//	updateDeviceOnOff(self, device, onoff)
-						//});	
-						
-						updateDeviceOnOff(self, tempdata, onoff);
+					var devices = getDeviceByEachtransId(tempdata);
+					
+					devices.forEach(function(device){
+						updateDeviceOnOff(self, device, onoff)
+					});	
 						
 					callback();
 				});// end of socket on
@@ -335,7 +337,7 @@ function createDriver(driver) {
 				
 				
 							
-			socket.on('done', function( data, callback )
+		socket.on('done', function( data, callback )
 				{
 					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);

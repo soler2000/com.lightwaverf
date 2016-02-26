@@ -40,13 +40,14 @@ body.on .onoff:before {
 <script type="text/javascript">
 	
 	
+
 	Homey.emit('remote', function(err, onoff) { //Send signal
 	
 	}
 	);	
 
 	Homey.on('received_on', function() { //Receieved from Homey -Set toggleswitch to on
-		foundcontroller();
+		
 		updateState(true);
 
 	});
@@ -68,26 +69,6 @@ body.on .onoff:before {
 	});
 	
 	
-	var remoteCheck =0;
-	
-function foundcontroller() {
-
-		if(remoteCheck >5){
-			//documentgetElementById("tick").style.display = 'block'; //show tick
-				Homey.emit('saveRemote', !state, function(err, onoff) { //Send signal
-		});	
-			//Homey.addDevice(device, function(){
-				//Homey.done();	
-				//});
-			//Homey.emit('remote_done', function(function(err, device)) { });	
-			remoteCheck = remoteCheck+1;
-			}
-		else{
-			document.getElementById("tick").style.display = 'none'; //
-			remoteCheck = remoteCheck+1;
-			}
-		document.getElementById('span1').innerHTML=remoteCheck;
-	}
 	
 	
 function updateState( value ) {
@@ -113,7 +94,6 @@ function updateState( value ) {
 
 
 </script>
-<h1>Remote 1 <span id="span1"></span></h1>
 <img src="light.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <img id="onoff" src="light_on.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <img id="tick" src="tick.svg" alt="" style="z-index: 2; width: 12vw; left: 80vw; position: absolute; margin: 0; display: none;"/>
