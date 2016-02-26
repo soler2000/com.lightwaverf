@@ -23,6 +23,34 @@
     ],
     "drivers": [
 	    {
+		    "id": "lw100",
+		    "name": {
+				"en": "Handheld Remote",
+			    "nl": "Handheld Remote"
+		    },
+		    "images": {
+				"large": "../drivers/lw100/assets/images/large.png",
+				"small": "../drivers/lw100/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+	    {
 		    "id": "lw200",
 		    "name": {
 				"en": "Wireless Dimmer",
