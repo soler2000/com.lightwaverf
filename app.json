@@ -303,13 +303,6 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
-					{
-	                    "name": "Command",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "01", "label": { "en": "Channel: I" } }
-	                    ]
 	                }
             	]
 	        },
@@ -324,27 +317,6 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
-	                {
-	                    "name": "channel",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Channel: I" } },
-		                    { "id": "01", "label": { "en": "Channel: II" } },
-		                    { "id": "10", "label": { "en": "Channel: III" } }, 
-		                    { "id": "11", "label": { "en": "Channel: IV" } }  
-	                    ]
-	                },
-	                {
-	                    "name": "unit",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Button: 1" } },
-		                    { "id": "01", "label": { "en": "Button: 2" } },
-		                    { "id": "10", "label": { "en": "Button: 3" } }, 
-		                    { "id": "11", "label": { "en": "Button: 4" } }, 
-		                    { "id": "22", "label": { "en": "Button: G" } }
-	                    ]
 	                }
             	]
 	        },
@@ -362,7 +334,7 @@
 	                },
 	                {
 	                    "name": "channel",
-	                    "type": "dropdown",
+	                    "type": "label",
 	                    "values": 	[ 
 		                    { "id": "00", "label": { "en": "Channel: I" } },
 		                    { "id": "01", "label": { "en": "Channel: II" } },
