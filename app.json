@@ -315,7 +315,7 @@
 	                {
 	                    "name": "device",
 	                    "type": "device",
-	                    "filter": "driver_id= lw200",
+	                    "filter": "driver_id=lw200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                },
 	                {
