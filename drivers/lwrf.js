@@ -5,7 +5,9 @@ var signal;
 var initFlag = 1;
 //var tempdata = {};
 var pauseSpeed 		= 500;
-
+var lastMessage;
+var timeoutPeriod =5000;
+var timeoutflag;
 
 function createDriver(driver) {
 	var self = 
@@ -16,6 +18,12 @@ function createDriver(driver) {
 				if(initFlag)
 					{
 					console.log('LightwaveRF: Init')
+					
+					
+					//set time out 
+					var tOut = setInterval(ResetTimeOut, timeoutPeriod);
+					
+					
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					var high1 =300;	//orginal 293	14-15 samples at 48khz				
@@ -66,30 +74,28 @@ function createDriver(driver) {
 						{
 							//should prevent boucing, but will not capture dim up / down
 							// if(!first)return;
-							 
+							
 							console.log('*****************Pay load received****************');
 							console.log(displayTime());
 							
 							var rxData = parseRXData(payload); //Convert received array to usable data
 							
-							
-		        			var devices = getDeviceByEachtransID(rxData);
-							
-							console.log('devices returned', devices.length);
-		        			devices.forEach(function(device){
-										
-								console.log('devices ', device.transID);
-									
-								//need to check for change in brightness
-									
-								//
-								if (rxData.onoff ==rxData.onoff){
-								}
-									
-									
+							if (timeoutflag == false )
+								{
+								//prevents repeat fireing of on / off
+								timeoutflag = true;	
+		        				var devices = getDeviceByEachtransID(rxData);
+		        				devices.forEach(function(device){
 									updateDeviceOnOff(self, device, rxData.onoff);
-							});
-		        	
+									});
+		        			}else
+							{
+								var devices = getDeviceByEachtransID(rxData);
+		        				devices.forEach(function(device){
+									updateDeviceDim(self, device, rxData.onoff);
+									});
+							
+								}
 							console.log('RXdata:', rxData);
 							Homey.manager('flow').trigger('remoteOn');			
 							
@@ -124,17 +130,14 @@ function createDriver(driver) {
 								},//end of get
 							set: function( device_data, onoff, callback ) 
 								{
-									console.log('capabilities set onoff');
-									console.log('device data, must be comming from front end',device_data );
-									 
+									console.log('Setting device');
+							
+									var devices = getDeviceByEachtransID(device_data);
 									
-									var device = getDeviceById(device_data);
-									
-									//devices.forEach(function(device){
+									devices.forEach(function(device){
 										updateDeviceOnOff(self, device, onoff);
-									//});	
-									
-									//sendOnOff(device_data, device_data.onoff);
+									});	
+	
 									sendOnOff(device_data, onoff);
 									callback( null, onoff );
 								}//end of set
@@ -452,7 +455,24 @@ function addDevice(deviceIn) {
 	}
 
 
-
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
 
 
 function sendOnOff(deviceIn, onoff) {
@@ -805,6 +825,11 @@ function bitStringToBitArray(str) {
         result.push(str.charAt(i) == 1 ? 1 : 0);
     return result;
 };
+
+function ResetTimeOut() {
+   	timeoutflag =false;	
+};
+					
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
