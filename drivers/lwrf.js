@@ -65,7 +65,7 @@ function createDriver(driver) {
 					signal.on('payload', function(payload, first)
 						{
 							console.log('*****************Pay load received****************');
-							
+							console.log(displayTime);
 							var rxData = parseRXData(payload); //Convert received array to usable data
 							console.log('RXdata:', rxData);
 							
@@ -198,7 +198,7 @@ function createDriver(driver) {
 			});//end of socket on
 			socket.on('remote', function( data, callback )
 				{
-					signal.on('payload', function(payload, first)
+					signal.once('payload', function(payload, first)// change on to once
 						{
 							
 							console.log('Pairing Remote Detected');
@@ -229,7 +229,9 @@ function createDriver(driver) {
 							///added for remote end
 							console.log('tempdata', tempdata);
 							console.log('rxdata', rxData);
-			       		
+							
+			       			addDevice(rxData);
+						
 							if(rxData.onoff){
 								//Send signal to frontend
 								socket.emit('received_on');
@@ -242,7 +244,8 @@ function createDriver(driver) {
 						
 		
 					callback(null, tempdata.onoff);
-				});// end of socket on
+				}
+				);// end of socket on
 				
 				
 			socket.on('generate', function( data, callback )
@@ -789,6 +792,29 @@ function numberToBitArray(number, bit_count) {
         result[i] = (number >> i) & 1;
     return result;
 };
+
+function displayTime() {
+    var str = "";
+
+    var currentTime = new Date()
+    var hours = currentTime.getHours()
+    var minutes = currentTime.getMinutes()
+    var seconds = currentTime.getSeconds()
+
+    if (minutes < 10) {
+        minutes = "0" + minutes
+    }
+    if (seconds < 10) {
+        seconds = "0" + seconds
+    }
+    str += hours + ":" + minutes + ":" + seconds + " ";
+    if(hours > 11){
+        str += "PM"
+    } else {
+        str += "AM"
+    }
+    return str;
+}
 
 module.exports = {
 	createDriver: createDriver
