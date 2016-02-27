@@ -62,6 +62,8 @@ body.on .onoff:before {
 
 	//this should be the part the sends the on off signal,  needs to send a on command
 	document.querySelector('.onoff').addEventListener('click', function(){
+		
+		
 		Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
 		});	
 		updateState(!isOn);
