@@ -98,7 +98,8 @@ function createDriver(driver) {
     									case 'LW100':
 										if (rxData.Command == 1){
         									Homey.manager('flow').trigger('LW100remoteOn');	
-										}else{
+										}
+										if(rxData.Command == 0){
 											Homey.manager('flow').trigger('LW100remoteOff');	
 										}
         								break;
@@ -142,12 +143,12 @@ function createDriver(driver) {
 						});
 					}
 							
-				//Refresh deviceList
-				devices.forEach(function(device)
-					{
-					console.log('Adding Device transID', device.transID ,device.driver);
-					addDevice(device);
-					});
+			//Refresh deviceList
+			devices.forEach(function(device)
+				{
+				console.log('Adding Device transID', device.transID ,device.driver);
+				addDevice(device);
+				});
 				callback();
 			},//end if init
 		
@@ -221,7 +222,8 @@ function createDriver(driver) {
 	
 		
 		pair: function( socket ) {
-			socket.on('imitate1', function( data, callback )//was imitate1
+			//This is the first call to set temp data for a socket
+			socket.on('imitate1', function( data, callback )
 				{
 					console.log('imitate1 at ',displayTime());
 					var address = [];
@@ -244,7 +246,7 @@ function createDriver(driver) {
 					console.log('transID5',transID5);
 				
 				var transID = Number(transID1).toString(16)+ Number(transID2).toString(16) +Number(transID3).toString(16) +Number(transID4).toString(16) + Number(transID5).toString(16);
-				console.log('transID in Temp data',transID);
+				
 
 				tempdata = 
 					{
@@ -258,15 +260,17 @@ function createDriver(driver) {
 					dim		   : dim,
 					onoff  	   : true,
 					}	
-
+				console.log('Data in Tempdata',tempdata);
+			
 				sendOnOff(tempdata, true);
+				socket.emit('datasent');//just added
 				callback();
 			});//end of socket on
 			
 	
 			
 			
-			
+			//Testing of Remote
 			socket.on('test_device', function( data, callback ){
 				console.log('test device at ',displayTime());
 				signal.on('payload', function(payload, first){
@@ -283,7 +287,7 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
-			
+			//Testing of Remote
 			socket.on('remote', function( data, callback )
 				{
 				
@@ -341,7 +345,7 @@ function createDriver(driver) {
 				}
 				);// end of socket on
 				
-				
+			//Testing of remote	
 			socket.on('generate', function( data, callback )
 				{
 					signal.on('payload', function(payload, first)
@@ -374,7 +378,7 @@ function createDriver(driver) {
 					callback();
 				});// end of saveremote
 				
-				
+		//Sending Test Data to Socket or Light		
 		socket.on('sendSignal', function( onoff, callback )//was send signal
 				{
 					console.log('Send Signal at ',displayTime());
@@ -382,7 +386,7 @@ function createDriver(driver) {
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceByEachtransId(tempdata);
+					var devices = getDeviceByEachtransID(tempdata);
 					
 					devices.forEach(function(device){
 						updateDeviceOnOff(self, device, onoff)
@@ -403,7 +407,7 @@ function createDriver(driver) {
 					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
-					var name = "LW " + __(driver); //__() Is for translation
+					var name =  __(driver); //__() Is for translation
 					console.log('adding device in socket on');
 					
 					//console.log('tempdata.dim',tempdata.dim);

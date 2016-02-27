@@ -1,11 +1,14 @@
 <script type="text/javascript">
-	Homey.emit('imitate', function() {
-	});
+	
 
-	Homey.on('remote_found', function() {
-		console.log('test');
-		Homey.showView('imitate2');
+	Homey.on('datasent', function() {
+		Homey.showView('generate2');
 	});
+	
+	function generatePair() {
+    	Homey.emit('imitate1', function() {
+	});
+}
 </script>
 
 <style type="text/css">
@@ -13,9 +16,10 @@
 </style>
 
 <center>
-	
-	<p data-i18n="pair.imitate"></p>
-  <img src="../assets/images/large.png" width="500" height="500" alt=""/>
+  <p><img src="../assets/images/large.png" width="500" height="500" alt=""/></p>
+  <p>
+  <button class="button" onclick="generatePair()" data-i18n="pair.generate1.pressprogram"></button>
+  </p>
 </center>
 
 

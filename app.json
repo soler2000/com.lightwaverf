@@ -266,24 +266,10 @@
 			    	}
 			    },
 			    {
-			    	"id": "imitate2",
-			    	"navigation": {
-						"next": "choose_slave",
-				    	"prev": "imitate1"
-			    	}
-			    },
-				{
-			    	"id": "generate1",
-			    	"navigation": {
-				    	"next": "generate2",
-				    	"prev": "start"
-			    	}
-			    },
-				{
 			    	"id": "generate2",
 			    	"navigation": {
 						"next": "done",
-				    	"prev": "generate1"
+				    	"prev": "start"
 			    	}
 			    },
 				{
