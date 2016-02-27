@@ -6,7 +6,7 @@ var initFlag = 1;
 //var tempdata = {};
 var pauseSpeed 		= 500;
 var lastMessage;
-var timeoutPeriod =5000;
+var timeoutPeriod =500;
 var timeoutflag;
 
 function createDriver(driver) {
@@ -82,12 +82,50 @@ function createDriver(driver) {
 							
 							if (timeoutflag == false )
 								{
-								//prevents repeat fireing of on / off
+								//prevents repeat firing of on / off
 								timeoutflag = true;	
 		        				var devices = getDeviceByEachtransID(rxData);
 		        				devices.forEach(function(device){
-									updateDeviceOnOff(self, device, rxData.onoff);
+									
+								
+									
+								updateDeviceOnOff(self, device, rxData.onoff);
+								console.log('RXdata:', rxData);
+								
+								
+								var tet =1
+									switch(device.driver) {
+    									case 'LW100':
+										if (rxData.Command == 1){
+        									Homey.manager('flow').trigger('LW100remoteOn');	
+										}else{
+											Homey.manager('flow').trigger('LW100remoteOff');	
+										}
+        								break;
+										
+										
+    									case 'LW200':
+											console.log('Driver', device.driver);
+											console.log('Trigger flow,  Please -- working');
+										
+											if (rxData.Command == 1){
+        										Homey.manager('flow').trigger('LW200remoteOn');	
+												console.log('LW200remoteOn');
+											}
+											if(rxData.Command == 0){
+											
+												Homey.manager('flow').trigger('LW200remoteOff');	
+												console.log('LW200remoteOff');
+											}
+        								break;		
+																		
+							   			default: 
+											
+									}
+									
 								});
+							
+								
 		        			}else
 							{
 								//to complete later with improved flow handeling for dimmers
@@ -97,9 +135,10 @@ function createDriver(driver) {
 								//	});
 							
 								}
-							console.log('RXdata:', rxData);
-							Homey.manager('flow').trigger('remoteOn');			
-							
+								
+							//Outside of time out window
+							//console.log('RXdata:', rxData);
+					
 						});
 					}
 							
@@ -117,7 +156,7 @@ function createDriver(driver) {
 			{
 				var index = deviceList.indexOf(getDeviceById(device_data));
 				delete deviceList[index];
-				console.log('LW item: Device deleted,  need to remove Homey from Device');
+				console.log('LW item: Device deleted, you will need to manually remove homey from the device');
 			},//end of deleted
 		
 			capabilities: {
@@ -140,8 +179,8 @@ function createDriver(driver) {
 	
 									sendOnOff(device_data, onoff);
 									callback( null, onoff );
-								}//end of set
-						},//end of Offon
+								}
+						},
 					dim: {
 						get: function( device_data, callback )
 							{
@@ -184,6 +223,7 @@ function createDriver(driver) {
 		pair: function( socket ) {
 			socket.on('imitate1', function( data, callback )//was imitate1
 				{
+					console.log('imitate1 at ',displayTime());
 					var address = [];
 					for(var i = 0; i < 20; i++)
 						{
@@ -246,8 +286,8 @@ function createDriver(driver) {
 			
 			socket.on('remote', function( data, callback )
 				{
-					console.log('RemoteListen at ',displayTime());
-					signal.on('payload', function(payload, first)
+				
+					signal.once('payload', function(payload, first)
 						{
 							if(!first)return;
 							console.log('Remote Detected at ',displayTime());
@@ -307,7 +347,7 @@ function createDriver(driver) {
 					signal.on('payload', function(payload, first)
 						{
 							
-							console.log('generate');
+							console.log('generate at ',displayTime());
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
 							
@@ -327,7 +367,7 @@ function createDriver(driver) {
 				
 		socket.on('saveRemote', function( onoff, callback )//was send signal
 				{
-					console.log('Socket on - saveRemote');			
+					console.log('Socket on - saveRemote at ',displayTime());		
 					///added for remote end
 					console.log('tempdata', tempdata);
 							
@@ -337,7 +377,7 @@ function createDriver(driver) {
 				
 		socket.on('sendSignal', function( onoff, callback )//was send signal
 				{
-					console.log('Send Signal');
+					console.log('Send Signal at ',displayTime());
 					if(onoff != true){
 						onoff = false;
 						}
@@ -353,8 +393,7 @@ function createDriver(driver) {
 				
 		socket.on('remote_done', function( data, callback )
 				{
-					console.log('Remote Done');
-
+					console.log('Remote Done at ',displayTime());
 				});//end of socket on
 				
 				
@@ -451,6 +490,15 @@ function getDeviceByAddress(deviceIn) {
 
 function updateDeviceOnOff(self, device, onoff){
 	console.log('Update device OnOff called', device);
+	
+	//Homey.manager('devices')
+	
+	//if(device.driver = 'remote')
+	//{
+	//Homey.manager('flow').trigger('rain_start');
+	//}
+	
+	
 	device.onoff = onoff;
 	self.realtime(device, 'onoff', onoff);
 }
@@ -474,7 +522,7 @@ function addDevice(deviceIn) {
 		TransmitterSubID	: deviceIn.TransmitterSubID,
 		dim					: deviceIn.dim,
 		onoff    			: deviceIn.onoff,
-		driver   			: deviceIn.driver,
+		driver   			: deviceIn.driver
 	});	
 	}
 
@@ -759,13 +807,13 @@ Homey.manager('flow').on('trigger.LW200remoteOn', function( callback, args ){ //
 	
 		console.log('LW200remoteOn fired in flow');
 		
-		if(args.onoff == true){
+		//if(args.onoff == true){
 	    	callback( null, true ); 
 	    	
-	    }else
-		{
-		callback( null, false ); 
-		}
+	   // }else
+		//{
+		//callback( null, false ); 
+		//}
 			
 	  /*  if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
 		    callback( null, true ); // true to make the flow continue, or false to abort
@@ -778,19 +826,14 @@ Homey.manager('flow').on('trigger.LW200remoteOn', function( callback, args ){ //
 	
 Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
 	
-
-		console.log('LW200remoteoff fired in flow');
-		
-		if(args.onoff == false){
+		console.log('LW100remoteOff fired in flow');
+		//if(args.onoff == true){
 	    	callback( null, true ); 
 	    	
-	    }else
-		{
-		callback( null, false ); 
-		}	
-		
-		
-		
+	    //}else
+		//{
+		//callback( null, false ); 
+		//}	 
 	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
@@ -808,13 +851,13 @@ Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){ /
 	Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
 	
 		console.log('LW100remoteOn fired in flow');
-		if(args.onoff == true){
+		//if(args.onoff == true){
 	    	callback( null, true ); 
 	    	
-	    }else
-		{
-		callback( null, false ); 
-		}	 
+	    //}else
+		//{
+		//callback( null, false ); 
+		//}	 
 	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
@@ -833,13 +876,13 @@ Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){ /
 
 	Homey.manager('flow').on('trigger.LW100remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
 		console.log('LW100remoteOff fired in flow');
-		if(args.onoff == false){
+		//if(args.onoff == false){
 	    	callback( null, true ); 
 	    	
-	    }else
-		{
-		callback( null, false ); 
-		}	
+	    //}else
+		//{
+		//callback( null, false ); 
+		//}	
 	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;

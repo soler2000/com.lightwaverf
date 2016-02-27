@@ -1,3 +1,3 @@
 "use strict";
-var lw260 = require('../lwrf.js');
-module.exports = lw260.createDriver('switch');
+var LW260 = require('../lwrf.js');
+module.exports = LW260.createDriver('switch');

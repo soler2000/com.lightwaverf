@@ -23,14 +23,14 @@
     ],
     "drivers": [
 	    {
-		    "id": "lw100",
+		    "id": "LW100",
 		    "name": {
 				"en": "Handheld Remote",
 			    "nl": "Handheld Remote"
 		    },
 		    "images": {
-				"large": "../drivers/lw100/assets/images/large.png",
-				"small": "../drivers/lw100/assets/images/small.png"
+				"large": "../drivers/LW100/assets/images/large.png",
+				"small": "../drivers/LWlw100/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onoff", "dim"],
@@ -51,14 +51,14 @@
 		    ]
 		},
 	    {
-		    "id": "lw200",
+		    "id": "LW200",
 		    "name": {
 				"en": "Wireless Dimmer",
 			    "nl": "Wireless Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw200/assets/images/large.png",
-				"small": "../drivers/lw200/assets/images/small.png"
+				"large": "../drivers/LW200/assets/images/large.png",
+				"small": "../drivers/LW200/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onoff", "dim"],
@@ -79,14 +79,14 @@
 		    ]
 		},
 		{
-		    "id": "lw260",
+		    "id": "LW260",
 		    "name": {
 				"en": "Socket",
 			    "nl": "Schakelaar"
 		    },
 		    "images": {
-				"large": "../drivers/lw260/assets/images/large.png",
-				"small": "../drivers/lw260/assets/images/small.png"
+				"large": "../drivers/LW260/assets/images/large.png",
+				"small": "../drivers/LW260/assets/images/small.png"
 		    },
 		    "class": "socket",
 		    "capabilities": [ "onoff" ],
@@ -134,14 +134,14 @@
 		    ]
 		},
 		{
-		    "id": "lw301",
+		    "id": "LW301",
 		    "name": {
 				"en": "Plug in Dimmer",
 			    "nl": "Plug in Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw301/assets/images/large.png",
-				"small": "../drivers/lw301/assets/images/small.png"
+				"large": "../drivers/LW301/assets/images/large.png",
+				"small": "../drivers/LW301/assets/images/small.png"
 		    },
 		    "class": "light",
 		    "capabilities": [ "onoff", "dim" ],
@@ -189,14 +189,14 @@
 		    ]
 		},
 		{
-		    "id": "lw321",
+		    "id": "LW321",
 		    "name": {
 				"en": "Plug-in On/Off",
 			    "nl": "Plug-in On/Off"
 		    },
 		    "images": {
-				"large": "../drivers/lw321/assets/images/large.png",
-				"small": "../drivers/lw321/assets/images/small.png"
+				"large": "../drivers/LW321/assets/images/large.png",
+				"small": "../drivers/LW321/assets/images/small.png"
 		    },
 		    "class": "light",
 		    "capabilities": [ "onoff" ],
@@ -244,16 +244,16 @@
 		    ]
 		},
 		{
-		    "id": "lw400",
+		    "id": "LW400",
 		    "name": {
 				"en": "Wired Dimmer",
 			    "nl": "Wired Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw400/assets/images/large.png",
-				"small": "../drivers/lw400/assets/images/small.png"
+				"large": "../drivers/LW400/assets/images/large.png",
+				"small": "../drivers/LW400/assets/images/small.png"
 		    },
-		    "class": "lights",
+		    "class": "light",
 		    "capabilities": ["onoff", "dim"],
 	    "pair": [
 				{
@@ -301,7 +301,7 @@
 	                {
 	                    "name": "device",
 	                    "type": "device",
-	                    "filter": "driver_id=lw200",
+	                    "filter": "driver_id=LW200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                }
             	]
@@ -315,7 +315,7 @@
 	                {
 	                    "name": "device",
 	                    "type": "device",
-	                    "filter": "driver_id=lw200",
+	                    "filter": "driver_id=LW200",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                }
             	]
@@ -329,7 +329,7 @@
 	                {
 	                    "name": "device",
 	                    "type": "device",
-	                    "filter": "driver_id=lw100",
+	                    "filter": "driver_id=LW100",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                },
 	                {
@@ -362,7 +362,7 @@
 	                {
 	                    "name": "device",
 	                    "type": "device",
-	                    "filter": "driver_id=lw100",
+	                    "filter": "driver_id=LW100",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                },
 	                {

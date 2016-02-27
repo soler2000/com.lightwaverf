@@ -39,24 +39,16 @@ body.on .onoff:before {
 
 <script type="text/javascript">
 	
-	
-
-	Homey.emit('remote', function(err, onoff) { //Send signal
-	
-	}
-	);	
 
 	Homey.on('received_on', function() { //Receieved from Homey -Set toggleswitch to on
-		
 		updateState(true);
-
 	});
 
 	Homey.on('received_off', function() { //Receieved from Homey -Set toggleswitch to off
 		updateState(false);
 	});
 
-	Homey.emit('remote', function(err, onoff) { //Get device status
+	Homey.emit('test_device', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
 
