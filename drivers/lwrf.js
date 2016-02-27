@@ -763,7 +763,88 @@ function generatTransID(tempdata) {
 		}*/
 	});
 
-		
+function GetChannelandPage(device) {
+	var channel;
+	var page;
+	
+	
+	//need channel and Unit for remote
+	switch(device) {
+    case 0:
+        channel = 1;
+		page = 1;
+        break;
+    case 1:
+        channel = 2;
+		page = 1;
+        break;
+	case 2:
+        channel = 3;
+		page = 1;
+        break;
+	case 3:
+        channel = 4;
+		page = 1;
+        break;
+	case 4:
+        channel = 1;
+		page = 2;
+        break;
+	case 5:
+        channel = 2;
+		page = 2;
+        break;
+	case 6:
+        channel = 3;
+		page = 2;
+        break;
+	case 8:
+        channel = 4;
+		page = 2;
+        break;
+	case 9:
+        channel = 1;
+		page = 3;
+        break;
+	case 10:
+        channel = 2;
+		page = 3;
+        break;
+	case 11:
+        channel = 3;
+		page = 3;
+        break;
+	case 12:
+        channel = 4;
+		page = 3;
+        break;
+	case 13:
+        channel = 1;
+		page = 4;
+        break;
+	case 14:
+        channel = 2;
+		page = 4;
+        break;
+	case 15:
+        channel = 3;
+		page = 4;
+        break;
+	case 16:
+        channel = 4;
+		page = 4;
+        break;
+
+    default: 
+		channel = 5;
+		page = 5;
+}
+var Devarr= [channel, page];
+return Devarr;
+}
+
+
+
 function parseRXData(data) {
 
 
@@ -779,8 +860,12 @@ function parseRXData(data) {
 	TransmitterID = TransmitterID + data[7].toString(16);
 	TransmitterID = TransmitterID + data[8].toString(16);
 	
+	
+	
+	
 	var TransmitterSubID = data[9];
 	//var TransIDArray = createTransIDtoInt(TransmitterID);
+	var Devarr = GetChannelandPage(device);
 	
 	if(Command == "1")
 		{
@@ -805,6 +890,8 @@ function parseRXData(data) {
 	 	transID5 			: data[8].toString(),
 		TransmitterSubID  	: TransmitterSubID,
 		device   			: device,
+		channel				: Devarr[0],
+		page				: Devarr[1],
 		Command  			: Command,
 		onoff    			: onoff
 	};
