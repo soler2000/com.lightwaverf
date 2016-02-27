@@ -307,7 +307,7 @@
             	]
 	        },
 	        {
-	            "id": "Lw200remoteOff",
+	            "id": "LW200remoteOff",
 	            "title": {
 	                "en": "Off is pressed on your remote"
 	            },
@@ -321,7 +321,7 @@
             	]
 	        },
 	        {
-	            "id": "remoteOn",
+	            "id": "LW100remoteOn",
 	            "title": {
 	                "en": "On is pressed on your remote"
 	            },
@@ -336,27 +336,27 @@
 	                    "name": "channel",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Channel: I" } },
-		                    { "id": "01", "label": { "en": "Channel: II" } },
-		                    { "id": "10", "label": { "en": "Channel: III" } }, 
-		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+		                    { "id": "1", "label": { "en": "Channel: I" } },
+		                    { "id": "2", "label": { "en": "Channel: II" } },
+		                    { "id": "3", "label": { "en": "Channel: III" } }, 
+		                    { "id": "4", "label": { "en": "Channel: IV" } }  
 	                    ]
 	                },
 	                {
 	                    "name": "unit",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Button: 1" } },
-		                    { "id": "01", "label": { "en": "Button: 2" } },
-		                    { "id": "10", "label": { "en": "Button: 3" } }, 
-		                    { "id": "11", "label": { "en": "Button: 4" } }, 
-		                    { "id": "22", "label": { "en": "Button: G" } }
+		                    { "id": "1", "label": { "en": "Button: 1" } },
+		                    { "id": "2", "label": { "en": "Button: 2" } },
+		                    { "id": "3", "label": { "en": "Button: 3" } }, 
+		                    { "id": "4", "label": { "en": "Button: 4" } }, 
+		                    { "id": "5", "label": { "en": "Button: G" } }
 	                    ]
 	                }
             	]
 	        },
 	        {
-	            "id": "remoteOff",
+	            "id": "LW100remoteOff",
 	            "title": {"en": "Off is pressed on your remote" },
 	            "args": [
 	                {
@@ -369,21 +369,21 @@
 	                    "name": "channel",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Channel: I" } },
-		                    { "id": "01", "label": { "en": "Channel: II" } },
-		                    { "id": "10", "label": { "en": "Channel: III" } }, 
-		                    { "id": "11", "label": { "en": "Channel: IV" } }  
+		                    { "id": "1", "label": { "en": "Channel: I" } },
+		                    { "id": "2", "label": { "en": "Channel: II" } },
+		                    { "id": "3", "label": { "en": "Channel: III" } }, 
+		                    { "id": "4", "label": { "en": "Channel: IV" } }  
 	                    ]
 	                },
 	                {
 	                    "name": "unit",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "00", "label": { "en": "Button: 1" } },
-		                    { "id": "01", "label": { "en": "Button: 2" } },
-		                    { "id": "10", "label": { "en": "Button: 3" } }, 
-		                    { "id": "11", "label": { "en": "Button: 4" } }, 
-		                    { "id": "22", "label": { "en": "Button: G" } }
+		                    { "id": "1", "label": { "en": "Button: 1" } },
+		                    { "id": "2", "label": { "en": "Button: 2" } },
+		                    { "id": "3", "label": { "en": "Button: 3" } }, 
+		                    { "id": "4", "label": { "en": "Button: 4" } }, 
+		                    { "id": "5", "label": { "en": "Button: G" } }
 	                    ]
 	                }
             	]

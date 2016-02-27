@@ -41,7 +41,7 @@ body.on .onoff:before {
 	
 	
 
-	Homey.emit('remote', function(err, onoff) { //Send signal
+	Homey.emit('test_device', function(err, onoff) { //Send signal
 	
 	}
 	);	
@@ -56,7 +56,7 @@ body.on .onoff:before {
 		updateState(false);
 	});
 
-	Homey.emit('remote', function(err, onoff) { //Get device status
+	Homey.emit('test_device', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
 

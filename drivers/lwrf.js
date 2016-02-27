@@ -73,7 +73,7 @@ function createDriver(driver) {
 					signal.on('payload', function(payload, first)
 						{
 							//should prevent boucing, but will not capture dim up / down
-							// if(!first)return;
+							 if(!first)return;
 							
 							console.log('*****************Pay load received****************');
 							console.log(displayTime());
@@ -87,13 +87,14 @@ function createDriver(driver) {
 		        				var devices = getDeviceByEachtransID(rxData);
 		        				devices.forEach(function(device){
 									updateDeviceOnOff(self, device, rxData.onoff);
-									});
+								});
 		        			}else
 							{
-								var devices = getDeviceByEachtransID(rxData);
-		        				devices.forEach(function(device){
-									updateDeviceDim(self, device, rxData.onoff);
-									});
+								//to complete later with improved flow handeling for dimmers
+								//var devices = getDeviceByEachtransID(rxData);
+		        				//devices.forEach(function(device){
+								//	updateDeviceDim(self, device, rxData.dim);
+								//	});
 							
 								}
 							console.log('RXdata:', rxData);
@@ -105,8 +106,7 @@ function createDriver(driver) {
 				//Refresh deviceList
 				devices.forEach(function(device)
 					{
-					console.log('Adding Device ID', device.id);
-					console.log('Adding Device transOD', device.transID);
+					console.log('Adding Device transID', device.transID ,device.driver);
 					addDevice(device);
 					});
 				callback();
@@ -222,6 +222,28 @@ function createDriver(driver) {
 				sendOnOff(tempdata, true);
 				callback();
 			});//end of socket on
+			
+	
+			
+			
+			
+			socket.on('test_device', function( data, callback ){
+				console.log('test device at ',displayTime());
+				signal.on('payload', function(payload, first){
+					if(!first)return;
+			        var rxData = parseRXData(payload);
+			        if(rxData.address == tempdata.address){
+						if(rxData.onoff){
+							socket.emit('received_on'); //Send signal to frontend
+						}else{
+							socket.emit('received_off'); //Send signal to frontend
+						}
+					}
+				});
+				callback(null, tempdata.onoff);
+			});
+			
+			
 			socket.on('remote', function( data, callback )
 				{
 					console.log('RemoteListen at ',displayTime());
@@ -261,14 +283,14 @@ function createDriver(driver) {
 							console.log('Temp Data stored at',displayTime());
 			       			//addDevice(rxData);
 						
-						//Does not need to be an off off command
+	/*					//Does not need to be an off off command
 							if(rxData.onoff){
 								//Send signal to frontend
 								socket.emit('received_on');
 								}else{
 								//Send signal to frontend
 								socket.emit('received_off'); 
-							}
+							}*/
 							
 							
 							socket.emit('remote_found');
@@ -428,13 +450,13 @@ function getDeviceByAddress(deviceIn) {
 }
 
 function updateDeviceOnOff(self, device, onoff){
-	console.log('update device OnOff called')
+	console.log('Update device OnOff called', device);
 	device.onoff = onoff;
 	self.realtime(device, 'onoff', onoff);
 }
 
 function updateDeviceDim(self, device, dim){
-	console.log('update device dim called')
+	console.log('update device dim called');
 	device.dim = dim;
 	self.realtime(device, 'dim', dim);
 }
@@ -577,12 +599,12 @@ function setDim( deviceIn, dim, callback ) {
 				Para2 = 0;
 				command = 1;
 			} else {
-				//var dim_dif = Math.round((dim - device.dim) * 10);
 				
+				//need to have this in a fuction
 				var dim_new = Math.round((dim*31) );
 				dim_new= dim_new + 192;
 				
-				console.log("dim_dif", dim_new, "last_dim", deviceIn.dim);
+				//console.log("dim_dif", dim_new, "last_dim", deviceIn.dim);
 				//0-32 in hex,  first digit para1 second digit para2
 				
 				var dArray = createHexString(dim_new);
@@ -730,11 +752,69 @@ function generatTransID(tempdata) {
 //Mood 2 130- Start mood n (param–129). (130=Mood1) Device = 15, most liekly moods use the second nibble
 //Mood 2 2- Define mood n (param–1). (2=Mood1) Device = 15
 
-	Homey.manager('flow').on('trigger.remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
+
+
+
+Homey.manager('flow').on('trigger.LW200remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
 	
-		console.log('fired in flow');
-		//args.device.transid = f4f9f;
+		console.log('LW200remoteOn fired in flow');
 		
+		if(args.onoff == true){
+	    	callback( null, true ); 
+	    	
+	    }else
+		{
+		callback( null, false ); 
+		}
+			
+	  /*  if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
+		    callback( null, true ); // true to make the flow continue, or false to abort
+		}else{
+			//callback( null, false );
+		}*/
+		
+		//callback( null, true );
+	});
+	
+Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
+	
+
+		console.log('LW200remoteoff fired in flow');
+		
+		if(args.onoff == false){
+	    	callback( null, true ); 
+	    	
+	    }else
+		{
+		callback( null, false ); 
+		}	
+		
+		
+		
+	/*	if(args.unit == "22"){
+	    	args.unit = "00";
+	    	args.device.group = true;
+	    }*/
+	  /*  if( args.device.address == lastTriggered.address && args.device.group == lastTriggered.group && args.channel == lastTriggered.channel && args.unit == lastTriggered.unit && args.device.driver == "remote" && lastTriggered.onoff){
+		    callback( null, true ); // true to make the flow continue, or false to abort
+		}else{
+			//callback( null, false );
+		}*/
+		
+		//callback( null, true );
+	});
+	
+
+	Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){ //Check of the Flow is triggered by the given device
+	
+		console.log('LW100remoteOn fired in flow');
+		if(args.onoff == true){
+	    	callback( null, true ); 
+	    	
+	    }else
+		{
+		callback( null, false ); 
+		}	 
 	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
@@ -751,7 +831,15 @@ function generatTransID(tempdata) {
 
 
 
-	Homey.manager('flow').on('trigger.remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
+	Homey.manager('flow').on('trigger.LW100remoteOff', function( callback, args ){ //Check of the Flow is triggered by the given device
+		console.log('LW100remoteOff fired in flow');
+		if(args.onoff == false){
+	    	callback( null, true ); 
+	    	
+	    }else
+		{
+		callback( null, false ); 
+		}	
 	/*	if(args.unit == "22"){
 	    	args.unit = "00";
 	    	args.device.group = true;
@@ -890,8 +978,8 @@ function parseRXData(data) {
 	 	transID5 			: data[8].toString(),
 		TransmitterSubID  	: TransmitterSubID,
 		device   			: device,
-		channel				: Devarr[0],
-		unit				: Devarr[1],
+		channel				: Devarr[0].toString(),
+		unit				: Devarr[1].toString(),
 		Command  			: Command,
 		onoff    			: onoff
 	};
