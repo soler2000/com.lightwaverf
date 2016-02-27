@@ -334,7 +334,7 @@
 	                },
 	                {
 	                    "name": "channel",
-	                    "type": "label",
+	                    "type": "dropdown",
 	                    "values": 	[ 
 		                    { "id": "00", "label": { "en": "Channel: I" } },
 		                    { "id": "01", "label": { "en": "Channel: II" } },
