@@ -798,39 +798,39 @@ function GetChannelandPage(device) {
         channel = 3;
 		page = 2;
         break;
-	case 8:
+	case 7:
         channel = 4;
 		page = 2;
         break;
-	case 9:
+	case 8:
         channel = 1;
+		page = 3;
+        break;
+	case 9:
+        channel = 2;
 		page = 3;
         break;
 	case 10:
-        channel = 2;
+        channel = 3;
 		page = 3;
         break;
 	case 11:
-        channel = 3;
-		page = 3;
-        break;
-	case 12:
         channel = 4;
 		page = 3;
         break;
-	case 13:
+	case 12:
         channel = 1;
 		page = 4;
         break;
-	case 14:
+	case 13:
         channel = 2;
 		page = 4;
         break;
-	case 15:
+	case 14:
         channel = 3;
 		page = 4;
         break;
-	case 16:
+	case 15:
         channel = 4;
 		page = 4;
         break;
@@ -891,7 +891,7 @@ function parseRXData(data) {
 		TransmitterSubID  	: TransmitterSubID,
 		device   			: device,
 		channel				: Devarr[0],
-		page				: Devarr[1],
+		unit				: Devarr[1],
 		Command  			: Command,
 		onoff    			: onoff
 	};
