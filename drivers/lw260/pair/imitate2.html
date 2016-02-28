@@ -39,26 +39,31 @@ body.on .onoff:before {
 
 <script type="text/javascript">
 
-	//will not fire as there is no return from scoket
-	//Homey.on('received_on', function() { //Set dipswitch to on
-	//	updateState(true);
+	//fires initial pairing command
+	//Homey.emit('imitate1', function() {
 	//});
+	
+	//Should be no recive 
+	Homey.on('received_on', function() { //Set dipswitch to on
+		updateState(true);
+	});
 
-	//will not fire as there is no remote
-	//Homey.on('received_off', function() { //Set dipswitch to off
-	//	updateState(false);
-	//});
+	
+	Homey.on('received_off', function() { //Set dipswitch to off
+		updateState(false);
+	});
 	
 	var isOn = true;
 	
 
 	Homey.emit('test_device', function(err, onoff) { //Get device status
-		updateState(isOn);
-		//updateState(onoff);
+		updateState(onoff);
 	});			
 
 	//this should be the part the sends the on off signal,  needs to send a on command
 	document.querySelector('.onoff').addEventListener('click', function(){
+		
+		
 		Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
 		});	
 		updateState(!isOn);

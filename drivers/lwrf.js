@@ -832,6 +832,33 @@ Homey.manager('flow').on('trigger.LW100remoteOff', function( callback, args ){
 	});
 
 
+Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callback, args ){
+    var items = searchForItemsByName( args.query );
+    
+    // args can also contain other arguments, so you can specify your autocomplete results
+    
+    /*
+        example items:
+        [
+            {
+                icon: "https://path.to/icon.png",
+                name: 'Item name',
+                description: 'Optional description',
+                some_value_for_myself: 'that i will recognize when fired, such as an ID'
+            },
+            {
+                ...
+            }
+        ]
+    */	
+    
+    callback( null, items ); // err, results
+    
+});
+
+
+
+
 
 
 
