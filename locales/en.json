@@ -4,6 +4,7 @@
   "pair":{
     "title":{
 		"LW100_Remote": "Add a LightwaveRF remote…",
+		"LW107_PIR": "Add a LightwaveRF PIR Switch...",
 		"LW200_Lightswitch": "Add a LightwaveRF wireless dimmer...",
 		"LW260_socket": "Add a LightwaveRF plug socket...",
 		"LW301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",

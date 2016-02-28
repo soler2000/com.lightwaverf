@@ -96,7 +96,8 @@ function createDriver(driver) {
 									
 									updateDeviceOnOff(self, device, rxData.onoff);
 									console.log('RXdata:', rxData);
-								
+									console.log('Device:', device);
+
 								
 								//var tet =1
 									switch(device.driver) {
@@ -106,6 +107,15 @@ function createDriver(driver) {
 										}
 										if(rxData.Command == 0){
 											Homey.manager('flow').trigger('LW100remoteOff');	
+										}
+        								break;
+										
+										case 'LW107':
+										if (rxData.Command == 9){
+        									Homey.manager('flow').trigger('LW100activated');	
+										}
+										if(rxData.Command == 0){
+											Homey.manager('flow').trigger('LW100deactivated');	
 										}
         								break;
 										
@@ -121,6 +131,17 @@ function createDriver(driver) {
 												console.log('LW200remoteOff');
 											}
         								break;		
+													
+										case 'LW2100':
+											if (rxData.Command == 3){
+        										Homey.manager('flow').trigger('LW2100press');	
+												console.log('LW2100press');
+											}
+								
+        								break;				
+													
+													
+													
 																		
 							   			default: 
 											
@@ -741,6 +762,15 @@ function createHexString(intToHexArray) {
 
 ///Flow Section*************************************************************************************************************
 
+
+Homey.manager('flow').on('trigger.LW2100press', function( callback, args ){ 
+	
+		console.log('LW2100press fired in flow');
+		console.log('Flow approved');
+	   	callback( null, true );   	
+	
+	});
+	
 Homey.manager('flow').on('trigger.LW200remoteOn', function( callback, args ){ 
 	
 		console.log('LW200remoteOn fired in flow');

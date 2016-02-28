@@ -50,6 +50,34 @@
 			    }
 		    ]
 		},
+		{
+		    "id": "LW107",
+		    "name": {
+				"en": "Wireless PIR",
+			    "nl": "Wireless PIR"
+		    },
+		    "images": {
+				"large": "../drivers/LW107/assets/images/large.png",
+				"small": "../drivers/LW107/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
 	    {
 		    "id": "LW200",
 		    "name": {
@@ -224,7 +252,7 @@
 				"large": "../drivers/LW2100/assets/images/large.png",
 				"small": "../drivers/LW2100/assets/images/small.png"
 		    },
-		    "class": "button",
+		    "class": "LW2100",
 		    "capabilities": ["onoff"],
 	    "pair": [
 				{
@@ -280,6 +308,42 @@
     ],
 	"flow": {
 	    "triggers": [
+			{
+	            "id": "LW107activate",
+	            "title": {"en": "PIR is activated" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=LW107",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "LW107deactivate",
+	            "title": {"en": "PIR is Deactivated" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=LW107",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "LW2100press",
+	            "title": {"en": "Button is pressed" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=LW2100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
 	        {
 	            "id": "LW200remoteOn",
 	            "title": {"en": "On button is pressed" },
