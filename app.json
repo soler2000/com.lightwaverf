@@ -213,7 +213,70 @@
 			    	"id": "done"
 			    }
 		    ]
+		},
+		{
+		    "id": "LW2100",
+		    "name": {
+				"en": "Wireless DoorBell Button",
+			    "nl": "Wireless DoorBell Button"
+		    },
+		    "images": {
+				"large": "../drivers/LW2100/assets/images/large.png",
+				"small": "../drivers/LW2100/assets/images/small.png"
+		    },
+		    "class": "button",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		{
+		    "id": "LW2101",
+		    "name": {
+				"en": "Wireless DoorBell Ringer",
+			    "nl": "Wireless DoorBell Ringer"
+		    },
+		    "images": {
+				"large": "../drivers/LW2101/assets/images/large.png",
+				"small": "../drivers/LW2101/assets/images/small.png"
+		    },
+		    "class": "doorbell",
+		    "capabilities": ["alarm_generic"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "done"
+			    }
+		    ]
 		}
+		
     ],
 	"flow": {
 	    "triggers": [
@@ -259,10 +322,10 @@
 	                    "name": "channel",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "1", "label": { "en": "Channel: I" } },
-		                    { "id": "2", "label": { "en": "Channel: II" } },
-		                    { "id": "3", "label": { "en": "Channel: III" } }, 
-		                    { "id": "4", "label": { "en": "Channel: IV" } }  
+		                    { "id": "1", "label": { "en": "Channel: a" } },
+		                    { "id": "2", "label": { "en": "Channel: b" } },
+		                    { "id": "3", "label": { "en": "Channel: c" } }, 
+		                    { "id": "4", "label": { "en": "Channel: d" } }  
 	                    ]
 	                },
 	                {
@@ -292,10 +355,10 @@
 	                    "name": "channel",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "1", "label": { "en": "Channel: I" } },
-		                    { "id": "2", "label": { "en": "Channel: II" } },
-		                    { "id": "3", "label": { "en": "Channel: III" } }, 
-		                    { "id": "4", "label": { "en": "Channel: IV" } }  
+		                    { "id": "1", "label": { "en": "Channel: a" } },
+		                    { "id": "2", "label": { "en": "Channel: b" } },
+		                    { "id": "3", "label": { "en": "Channel: c" } }, 
+		                    { "id": "4", "label": { "en": "Channel: d" } }  
 	                    ]
 	                },
 	                {

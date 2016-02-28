@@ -53,8 +53,10 @@ function createDriver(driver) {
 							[high1,			low1,			high1,high2,		high1,		low1,		high1,high2,	high1,high2,	high1,high2,	high1,high2],// 0xF	1+01101111
 							],
 						interval: 10750, 	//Time between repetitions,  this is the time between the total transition of 10 niblets
-						repetitions: 6,   	//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-						sensitivity: 0.5, 
+						repetitions: 1,   	
+						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
+						//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
+						sensitivity: 0.9, 
 						minimalLength: 10,
                     	maximalLength: 10
 						});
@@ -68,12 +70,12 @@ function createDriver(driver) {
 					});
 						
 							
-					console.log('Start listening');
+					console.log('Start listening for Lightwave Commands');
 					
 					//Start receiving
 					signal.on('payload', function(payload, first)
 						{
-							//should prevent boucing, but will not capture dim up / down
+							//should prevent boucing, still bouces after remote changes to dim mode,  will also not catch proper dim messages
 							 if(!first)return;
 							
 							console.log('*****************Pay load received****************');
@@ -83,7 +85,7 @@ function createDriver(driver) {
 							
 							//Make a copy for use with flow commands
 							LastTriggered =  clone(rxData);
-							
+							console.log('RXdata:',rxData);
 							
 							if (timeoutflag == false )
 								{
@@ -92,13 +94,11 @@ function createDriver(driver) {
 		        				var devices = getDeviceByEachtransID(rxData);
 		        				devices.forEach(function(device){
 									
-								
-									
-								updateDeviceOnOff(self, device, rxData.onoff);
-								console.log('RXdata:', rxData);
+									updateDeviceOnOff(self, device, rxData.onoff);
+									console.log('RXdata:', rxData);
 								
 								
-								var tet =1
+								//var tet =1
 									switch(device.driver) {
     									case 'LW100':
 										if (rxData.Command == 1){
@@ -111,9 +111,6 @@ function createDriver(driver) {
 										
 										
     									case 'LW200':
-											console.log('Driver', device.driver);
-											console.log('Trigger flow,  Please -- working');
-										
 											if (rxData.Command == 1){
         										Homey.manager('flow').trigger('LW200remoteOn');	
 												console.log('LW200remoteOn');
@@ -134,7 +131,7 @@ function createDriver(driver) {
 								
 		        			}else
 							{
-								//to complete later with improved flow handeling for dimmers
+								//to be completed  with improved flow handeling for dimmers
 								//var devices = getDeviceByEachtransID(rxData);
 		        				//devices.forEach(function(device){
 								//	updateDeviceDim(self, device, rxData.dim);
@@ -268,9 +265,9 @@ function createDriver(driver) {
 				console.log('Data in Tempdata',tempdata);
 			
 				sendOnOff(tempdata, true);
-				socket.emit('datasent');//just added
+				socket.emit('datasent');
 				callback();
-			});//end of socket on
+			});
 			
 	
 			
@@ -325,30 +322,14 @@ function createDriver(driver) {
 								onoff  	   	: rxData.onoff,
 								}		
 							
-							///added for remote end
-							//console.log('tempdata', tempdata);
-							//console.log('rxdata', rxData);
-							
 							console.log('Temp Data stored at',displayTime());
-			       			//addDevice(rxData);
-						
-	/*					//Does not need to be an off off command
-							if(rxData.onoff){
-								//Send signal to frontend
-								socket.emit('received_on');
-								}else{
-								//Send signal to frontend
-								socket.emit('received_off'); 
-							}*/
-							
-							
 							socket.emit('remote_found');
 						});
 						
 		
 					callback(null, tempdata.onoff);
 				}
-				);// end of socket on
+				);
 				
 			//Testing of remote	
 			socket.on('generate', function( data, callback )
@@ -374,7 +355,7 @@ function createDriver(driver) {
 					callback(null, tempdata.onoff);
 				});// end of socket on
 				
-		socket.on('saveRemote', function( onoff, callback )//was send signal
+		socket.on('saveRemote', function( onoff, callback )
 				{
 					console.log('Socket on - saveRemote at ',displayTime());		
 					///added for remote end
@@ -384,7 +365,7 @@ function createDriver(driver) {
 				});// end of saveremote
 				
 		//Sending Test Data to Socket or Light		
-		socket.on('sendSignal', function( onoff, callback )//was send signal
+		socket.on('sendSignal', function( onoff, callback )
 				{
 					console.log('Send Signal at ',displayTime());
 					if(onoff != true){
@@ -411,11 +392,11 @@ function createDriver(driver) {
 				{
 					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);
-					var id = tempdata.address;// + idNumber; //id is used by Homey-Client
+					var id = tempdata.address;
 					var name =  __(driver); //__() Is for translation
 					console.log('adding device in socket on');
 					
-					//console.log('tempdata.dim',tempdata.dim);
+				
 					addDevice({
 						id       	: id,
 						address  	: tempdata.address,
@@ -448,15 +429,14 @@ function createDriver(driver) {
 								onoff    	: false,
 								driver   	: driver,
 								}
-						});// end of call back
-				});//end of socket on
-		},//end of pair
-	};// end of capabilities
+						});
+				});
+		},
+	};
 	return self;
 }
 
 
-//added 20-2
 function getDeviceByTransId(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.transID == deviceIn.transID;
@@ -503,14 +483,6 @@ function updateDeviceOnOff(self, device, onoff){
  	Homey.manager('insights').createEntry( 'LightwaveRF', onoff, new Date(), function(err, success){
         if( err ) return Homey.error(err);
     })
-	//Homey.manager('devices')
-	
-	//if(device.driver = 'remote')
-	//{
-	//Homey.manager('flow').trigger('rain_start');
-	//}
-	
-	
 	device.onoff = onoff;
 	self.realtime(device, 'onoff', onoff);
 }
@@ -536,22 +508,7 @@ function addDevice(deviceIn) {
 		onoff    			: deviceIn.onoff,
 		driver   			: deviceIn.driver
 	});	
-	
-	
-	
-	
-	 //Get a log, made by this app
- //	var lg = Homey.manager('insights').getLog( 'LightwaveRF' , function callback( err ,  logs ));
- 	//if (lg.length > 0)
- 	//	{
-	
-		Homey.manager('insights').createLog( 'LightwaveRF', { 'en':'Power Usage' }, 'boolean', { 'en': 'on/off' } , function callback(err , success){
-    	if( err ) return Homey.error(err);
-    
-		});
- //}
-	
-	}
+}
 
 
 // Returns a function, that, as long as it continues to be invoked, will not
@@ -720,7 +677,7 @@ function setDim( deviceIn, dim, callback ) {
 			
 	
 			deviceIn.dim = dim; //Set the new dim
-			console.log("setState callback", deviceIn.dim);
+			//console.log("setState callback", deviceIn.dim);
 			callback( null, deviceIn.dim ); //Callback the new dim
 	
 			}
@@ -803,7 +760,7 @@ Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){
 
 Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){
 	
-		console.log('LW100remoteOn fired in flow');
+		console.log('LW100remoteOn fired in flow. arg:', args);
 		
 		if(args.channel == LastTriggered.channel && args.unit == LastTriggered.unit ){
 			console.log('Flow approved');
@@ -921,73 +878,73 @@ function GetChannelandPage(device) {
 	//need channel and Unit for remote
 	switch(device) {
     case 0:
-        channel = 1;
-		page = 1;
+        page = 1;
+		channel = 1;
         break;
     case 1:
-        channel = 2;
-		page = 1;
+        page = 2;
+		channel = 1;
         break;
 	case 2:
-        channel = 3;
-		page = 1;
+        page = 3;
+		channel = 1;
         break;
 	case 3:
-        channel = 4;
-		page = 1;
+        page = 4;
+		channel = 1;
         break;
 	case 4:
-        channel = 1;
-		page = 2;
+        page = 1;
+		channel = 2;
         break;
 	case 5:
-        channel = 2;
-		page = 2;
+        page = 2;
+		channel = 2;
         break;
 	case 6:
-        channel = 3;
-		page = 2;
+        page = 3;
+		channel = 2;
         break;
 	case 7:
-        channel = 4;
-		page = 2;
+        page = 4;
+		channel = 2;
         break;
 	case 8:
-        channel = 1;
-		page = 3;
+        page = 1;
+		channel = 3;
         break;
 	case 9:
-        channel = 2;
-		page = 3;
+        page = 2;
+		channel = 3;
         break;
 	case 10:
-        channel = 3;
-		page = 3;
+        page = 3;
+		channel = 3;
         break;
 	case 11:
-        channel = 4;
-		page = 3;
+        page = 4;
+		channel = 3;
         break;
 	case 12:
-        channel = 1;
-		page = 4;
+        page = 1;
+		channel = 4;
         break;
 	case 13:
-        channel = 2;
-		page = 4;
+        page = 2;
+		channel = 4;
         break;
 	case 14:
-        channel = 3;
-		page = 4;
+        page = 3;
+		channel = 4;
         break;
 	case 15:
-        channel = 4;
-		page = 4;
+        page = 4;
+		channel = 4;
         break;
 
     default: 
-		channel = 5;
 		page = 5;
+		channel = 5;
 }
 var Devarr= [channel, page];
 return Devarr;
