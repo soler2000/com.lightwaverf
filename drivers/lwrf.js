@@ -34,7 +34,7 @@ function createDriver(driver) {
 					signal = new Signal(
 						{   
 						sof: [high1,high2], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
-   						eof: [high1], //high1, with high2???   End of frame,Ending 1 added to words due to some ending words ending on a low
+   						eof: [high1], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low
 						words: [
 							[high1,high2,	high1,high2,  	high1,high2,		high1,high2,	high1,		low1,  		high1,high2,	high1,		low1],// 0x0	1+11110110
 							[high1,high2,  	high1,high2,		high1,high2,  	high1,		low1,		high1,high2,  	high1,high2,	high1,		low1],// 0x1	1+11101110
@@ -76,7 +76,7 @@ function createDriver(driver) {
 						//Start receiving
 						signal.on('payload', function(payload, first)
 							{
-							//should prevent boucing, but need dim value
+							//should prevent boucing, but need dim value therefore used alternative method
 							 //if(!first)return;
 			
 							//Convert received array to usable data
@@ -113,7 +113,7 @@ function createDriver(driver) {
 									console.log('capabilities get onoff');
 									var device = getDeviceById(device_data);
 									callback( null, device.onoff );
-								},//end of get
+								},
 							set: function( device_data, onoff, callback ) 
 								{
 									console.log('Setting device');
@@ -139,14 +139,7 @@ function createDriver(driver) {
 								callback( null, device.dim ); //New state
 								
 								
-								
-								//getDim(device_data, function(err, dimLevel) 
-								//{
-								//	//Homey.log('Get dim:', dimLevel);
-								//	module.exports.realtime( device, 'dim', dimLevel );
-								//	callback( null, dimLevel ) //New state
-								//});
-							},//end of get
+							},
 		
 						set: function( device_data, dim, callback )
 							{
@@ -161,10 +154,9 @@ function createDriver(driver) {
 										
 										callback( null, dimLevel ) //New state
 									});		
-							}// end of set
-						}// end of dim			
-		}, //end of capabilities
-		
+							}
+						}		
+		}, 
 	
 		
 		pair: function( socket ) {
@@ -351,7 +343,7 @@ function createDriver(driver) {
 					console.log('tempdata', tempdata);
 							
 					callback();
-				});// end of saveremote
+				});
 				
 		//Sending Test Data to Socket or Light		
 		socket.on('sendSignal', function( onoff, callback )
@@ -368,12 +360,12 @@ function createDriver(driver) {
 					});	
 						
 					callback();
-				});// end of socket on
+				});
 				
 		socket.on('remote_done', function( data, callback )
 				{
 					console.log('Remote Done at ',displayTime());
-				});//end of socket on
+				});
 				
 				
 							
@@ -459,7 +451,7 @@ function ManageIncoming(self, rxData){
 				
 			lastTXMessage = device.transID;
 			
-			//clears the last value in 2 seconds
+			//clears the last value after 2 seconds
 			setTimeout(function(){lastTXMessageID =''; }, 2000);
 		}else{
 			//Act on Dim Value
@@ -713,11 +705,11 @@ function setDim( deviceIn, dim, callback ) {
 				command = 1;
 			} else {
 				
-				//need to have this in a fuction
+				
 				var dim_new = Math.round((dim*31) );
 				dim_new= dim_new + 192;
 				
-				//console.log("dim_dif", dim_new, "last_dim", deviceIn.dim);
+			
 				//0-32 in hex,  first digit para1 second digit para2
 				
 				var dArray = createHexString(dim_new);
@@ -767,23 +759,23 @@ function createTransIDtoInt(Hexs) {
 	   var ns = Hexs.tostring();
 	   
 	   if (ns.length ==5){
-       var trans1 = Hexs.substring(0,1).tostring();
-	   trans1 =parseInt("0x" + trans1,16);
-	   var trans2 = Hexs.substring(1,2).tostring();
-	   trans2 =parseInt("0x" + trans2,16);
-	   var trans3 = Hexs.substring(2,3).tostring();
-	   trans3 =parseInt("0x" + trans3,16);
-	   var trans4 = Hexs.substring(3,4).tostring();
-	   trans4 =parseInt("0x" + trans4,16);   
-       var trans5 = Hexs.substring(4,5).tostring();
-	   trans5 =parseInt("0x" + trans5,16);
+       	var trans1 = Hexs.substring(0,1).tostring();
+	   	trans1 =parseInt("0x" + trans1,16);
+	   	var trans2 = Hexs.substring(1,2).tostring();
+	   	trans2 =parseInt("0x" + trans2,16);
+	   	var trans3 = Hexs.substring(2,3).tostring();
+	   	trans3 =parseInt("0x" + trans3,16);
+	   	var trans4 = Hexs.substring(3,4).tostring();
+	   	trans4 =parseInt("0x" + trans4,16);   
+       	var trans5 = Hexs.substring(4,5).tostring();
+	   	trans5 =parseInt("0x" + trans5,16);
 	   
-	   var result = [trans1, trans2, trans3, trans4, trans5];
-	   }
+	   	var result = [trans1, trans2, trans3, trans4, trans5];
+	   	}
 	   else
-	   {
+	   	{
 		   var result = [];
-	   }
+	   	}
 	   
 	
 		console.log("Int array", result );	  
@@ -793,7 +785,6 @@ function createTransIDtoInt(Hexs) {
 }
 
 function createHexString(intToHexArray) {
- //   var result = [];
  
         var str = intToHexArray.toString(16);
 
@@ -884,12 +875,12 @@ Homey.manager('flow').on('trigger.LW100remoteOff', function( callback, args ){
 	});
 
 
-Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callback, args ){
+/*Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callback, args ){
     var items = searchForItemsByName( args.query );
     
     // args can also contain other arguments, so you can specify your autocomplete results
     
-    /*
+    
         example items:
         [
             {
@@ -902,11 +893,11 @@ Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callb
                 ...
             }
         ]
-    */	
+   
     
     callback( null, items ); // err, results
     
-});
+});*/
 
 ///END Flow Section*************************************************************************************************************
 
@@ -970,7 +961,7 @@ function GetChannelandPage(device) {
 	var page;
 	
 	
-	//need channel and Unit for remote
+	//need channel and Unit for remote with multiple buttons
 	switch(device) {
     case 0:
         page = 1;
