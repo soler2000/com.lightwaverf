@@ -4,7 +4,6 @@ var tempdata = {};
 var LastTriggered = {};
 var signal;
 var initFlag = 1;
-//var tempdata = {};
 var pauseSpeed 	= 500;
 var lastMessage = '';
 var timeoutPeriod =500;
@@ -611,27 +610,6 @@ function addDevice(deviceIn) {
 	});	
 }
 
-/*
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-}*/;
-
-
 function sendOnOff(deviceIn, onoff) {
 	
 	var device = clone(deviceIn);
@@ -1091,12 +1069,6 @@ if (data != undefined) {
 	var para2 = data[1];
 	var device = data[2];
 	var Command = data[3];
-	
-//	var TransmitterID = data[4].toString(16);
-//	TransmitterID = TransmitterID + data[5].toString(16);
-//	TransmitterID = TransmitterID + data[6].toString(16);
-//	TransmitterID = TransmitterID + data[7].toString(16);
-//	TransmitterID = TransmitterID + data[8].toString(16);
 
 	var TransmitterID = HextoTransID(data[4].toString(16), 
 									data[5].toString(16),
