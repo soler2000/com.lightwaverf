@@ -1,4 +1,4 @@
-# Lightwave RF
+# Homey App for Lightwave RF / Siemens
 
 
  This app supports LightwaveRF devices, further functionality will be added however this currently supports switching of sockets and lamps.
@@ -22,7 +22,7 @@
   
   Possible support for however these are not tested.
   LW800 Series in line dimmers 
-  
+  Some Siemens devices have been tested and should work based as they are use the same protocol 
  
  Future releases will address 
 
