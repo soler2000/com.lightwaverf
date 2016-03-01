@@ -5,10 +5,13 @@ var LastTriggered = {};
 var signal;
 var initFlag = 1;
 //var tempdata = {};
-var pauseSpeed 		= 500;
-var lastMessage;
+var pauseSpeed 	= 500;
+var lastMessage = '';
 var timeoutPeriod =500;
-var timeoutflag;
+var incomingtimeoutflag = true;
+var inmessageQ = [];
+var incomingQueTimer;
+var lastTXMessageID;
 
 function createDriver(driver) {
 	var self = 
@@ -21,8 +24,7 @@ function createDriver(driver) {
 					console.log('LightwaveRF: Init')
 					
 					
-					//set time out 
-					var tOut = setInterval(ResetTimeOut, timeoutPeriod);
+					
 					
 					
 					initFlag = 0;
@@ -52,117 +54,39 @@ function createDriver(driver) {
 							[high1,			low1,			high1,high2,		high1,high2,	high1,		low1,		high1,high2,	high1,high2,	high1,high2],// 0xE	1+01110111
 							[high1,			low1,			high1,high2,		high1,		low1,		high1,high2,	high1,high2,	high1,high2,	high1,high2],// 0xF	1+01101111
 							],
-						interval: 10750, 	//Time between repetitions,  this is the time between the total transition of 10 niblets
-						repetitions: 1,   	
+						interval: 10750, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
+						repetitions: 4,   	
 						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
 						//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-						sensitivity: 0.9, 
+						sensitivity: 0.8, 
 						minimalLength: 10,
                     	maximalLength: 10
 						});
 					
 						
-					signal.register(function( err, success ){
-					if(err != null)
-						{
-						console.log('LightwaveRF: err', err, 'success', success);
-						}
-					});
-						
-							
-					console.log('Start listening for Lightwave Commands');
-					
-					//Start receiving
-					signal.on('payload', function(payload, first)
-						{
-							//should prevent boucing, still bouces after remote changes to dim mode,  will also not catch proper dim messages
-							 if(!first)return;
-							
-							console.log('*****************Pay load received****************');
-							console.log(displayTime());
-							
-							var rxData = parseRXData(payload); //Convert received array to usable data
-							
-							//Make a copy for use with flow commands
-							LastTriggered =  clone(rxData);
-							console.log('RXdata:',rxData);
-							
-							if (timeoutflag == false )
+						signal.register(function( err, success ){
+							if(err != null)
 								{
-								//prevents repeat firing of on / off
-								timeoutflag = true;	
-		        				var devices = getDeviceByEachtransID(rxData);
-		        				devices.forEach(function(device){
-									
-									updateDeviceOnOff(self, device, rxData.onoff);
-									console.log('RXdata:', rxData);
-									console.log('Device:', device);
-
-								
-								//var tet =1
-									switch(device.driver) {
-    									case 'LW100':
-										if (rxData.Command == 1){
-        									Homey.manager('flow').trigger('LW100remoteOn');	
-										}
-										if(rxData.Command == 0){
-											Homey.manager('flow').trigger('LW100remoteOff');	
-										}
-        								break;
-										
-										case 'LW107':
-										if (rxData.Command == 9){
-        									Homey.manager('flow').trigger('LW100activated');	
-										}
-										if(rxData.Command == 0){
-											Homey.manager('flow').trigger('LW100deactivated');	
-										}
-        								break;
-										
-										
-    									case 'LW200':
-											if (rxData.Command == 1){
-        										Homey.manager('flow').trigger('LW200remoteOn');	
-												console.log('LW200remoteOn');
-											}
-											if(rxData.Command == 0){
-											
-												Homey.manager('flow').trigger('LW200remoteOff');	
-												console.log('LW200remoteOff');
-											}
-        								break;		
-													
-										case 'LW2100':
-											if (rxData.Command == 3){
-        										Homey.manager('flow').trigger('LW2100press');	
-												console.log('LW2100press');
-											}
-								
-        								break;				
-													
-													
-													
-																		
-							   			default: 
-											
-									}
-									
-								});
-							
-								
-		        			}else
-							{
-								//to be completed  with improved flow handeling for dimmers
-								//var devices = getDeviceByEachtransID(rxData);
-		        				//devices.forEach(function(device){
-								//	updateDeviceDim(self, device, rxData.dim);
-								//	});
-							
+								console.log('LightwaveRF: err', err, 'success', success);
 								}
-								
-							//Outside of time out window
-							//console.log('RXdata:', rxData);
+						});
+							
+							
+						console.log('Start listening for Lightwave Commands');
 					
+						//Start receiving
+						signal.on('payload', function(payload, first)
+							{
+							//should prevent boucing, but need dim value
+							 //if(!first)return;
+			
+							//Convert received array to usable data
+							var rxData = parseRXData(payload); 
+							
+							console.log('RXdata:', rxData);
+							
+							ManageIncoming(self, rxData)
+							
 						});
 					}
 							
@@ -245,6 +169,7 @@ function createDriver(driver) {
 	
 		
 		pair: function( socket ) {
+			console.log('pair socket at ',displayTime());
 			//This is the first call to set temp data for a socket
 			socket.on('imitate1', function( data, callback )
 				{
@@ -268,7 +193,11 @@ function createDriver(driver) {
 					console.log('transID4',transID4);
 					console.log('transID5',transID5);
 				
-				var transID = Number(transID1).toString(16)+ Number(transID2).toString(16) +Number(transID3).toString(16) +Number(transID4).toString(16) + Number(transID5).toString(16);
+				var transID = Number(transID1).toString(16)+ 
+						Number(transID2).toString(16) +
+						Number(transID3).toString(16) +
+						Number(transID4).toString(16) + 
+						Number(transID5).toString(16);
 				
 
 				tempdata = 
@@ -297,9 +226,16 @@ function createDriver(driver) {
 			socket.on('test_device', function( data, callback ){
 				console.log('test device at ',displayTime());
 				signal.on('payload', function(payload, first){
+					console.log('test device - payload recieved ',displayTime());
+					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-			        if(rxData.address == tempdata.address){
+					
+					console.log('rxData.transID',rxData.transID);
+					console.log('tempdata.transID)',tempdata.transID);
+					
+					
+			        if(rxData.transID == tempdata.transID){
 						if(rxData.onoff){
 							socket.emit('received_on'); //Send signal to frontend
 						}else{
@@ -310,12 +246,42 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
+			
+			//Testing of Remote
+			socket.on('test_device_pir', function( data, callback ){
+				console.log('test device pir at ',displayTime());
+				signal.on('payload', function(payload, first){
+					console.log('test device pir- payload recieved ',displayTime());
+					
+					if(!first)return;
+			        var rxData = parseRXData(payload);
+					
+					console.log('rxData.transID',rxData.transID);
+					console.log('tempdata.transID)',tempdata.transID);
+					
+					
+			        if(rxData.transID == tempdata.transID){
+						if(rxData.command = 9){
+							socket.emit('received_on'); //Send signal to frontend
+						}else{
+							socket.emit('received_off'); //Send signal to frontend
+						}
+					}
+				});
+				callback(null, tempdata.onoff);
+			});
+			
+			
+			
+			
+						
 			//Testing of Remote
 			socket.on('remote', function( data, callback )
 				{
-				
+				console.log('remote socket at ',displayTime());
 					signal.once('payload', function(payload, first)
 						{
+							console.log('remote payload at ',displayTime());
 							if(!first)return;
 							console.log('Remote Detected at ',displayTime());
 							
@@ -342,6 +308,8 @@ function createDriver(driver) {
 								dim		   	: rxData.dim,
 								onoff  	   	: rxData.onoff,
 								}		
+							console.log('Trans ID ',rxData.transID);
+							console.log('Trans ID ',rxData.transID1, rxData.transID2, rxData.transID3, rxData.transID4, rxData.transID5);
 							
 							console.log('Temp Data stored at',displayTime());
 							socket.emit('remote_found');
@@ -355,10 +323,11 @@ function createDriver(driver) {
 			//Testing of remote	
 			socket.on('generate', function( data, callback )
 				{
+					console.log('generate at ',displayTime());
 					signal.on('payload', function(payload, first)
 						{
 							
-							console.log('generate at ',displayTime());
+							console.log('generate payload at ',displayTime());
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
 							
@@ -378,7 +347,7 @@ function createDriver(driver) {
 				
 		socket.on('saveRemote', function( onoff, callback )
 				{
-					console.log('Socket on - saveRemote at ',displayTime());		
+					console.log('SaveRemote at ',displayTime());		
 					///added for remote end
 					console.log('tempdata', tempdata);
 							
@@ -388,7 +357,7 @@ function createDriver(driver) {
 		//Sending Test Data to Socket or Light		
 		socket.on('sendSignal', function( onoff, callback )
 				{
-					console.log('Send Signal at ',displayTime());
+					console.log('SendSignal at ',displayTime());
 					if(onoff != true){
 						onoff = false;
 						}
@@ -458,6 +427,117 @@ function createDriver(driver) {
 }
 
 
+
+
+
+function ManageIncoming(self, rxData){
+	// if message was the same no action
+	// if not the action
+	
+	
+	var devices = getDeviceByEachtransID(rxData);
+					
+	devices.forEach(function(device){
+		
+		console.log('*****************Pay load received****************');
+		console.log(displayTime());
+	
+		console.log('Devices Found:', devices.length);
+		console.log('transID rxdata:', rxData.transID);
+		console.log('transID device:', device.transID);
+		
+		if (lastTXMessageID != device.transID  && devices.length ==1){
+			Homey.log('New message, taking action');	
+			console.log('Newmessage:P1', rxData.para1, 
+								' P2:',rxData.para2 , 
+								' SubID:', rxData.TransmitterSubID, 
+								' Cmd:', rxData.Command,
+								' TransID:', rxData.transID);
+				
+
+			updateDeviceOnOff(self, device, rxData.onoff);					
+			flowselection(device, rxData);
+				
+			lastTXMessage = device.transID;
+			
+			//clears the last value in 2 seconds
+			setTimeout(function(){lastTXMessageID =''; }, 2000);
+		}else{
+			//Act on Dim Value
+		}
+		lastTXMessageID = device.transID;
+	});
+	
+	
+
+}
+
+
+	
+
+
+
+function flowselection(device,rxData){
+	console.log('Flow device D', device);
+	console.log('Flow device RX', device);
+	switch(device.driver) {					
+		case 'LW100':
+			console.log('Flow LW100');
+			console.log('Command', rxData.Command);
+			if (rxData.Command == 1){
+				Homey.manager('flow').trigger('LW100remoteOn');	
+	
+			}
+			if(rxData.Command == 0){
+				Homey.manager('flow').trigger('LW100remoteOff');	
+			}
+		break;
+		
+		case 'LW107':
+		
+			console.log('LW107 case');
+			console.log('Command', rxData.Command);
+		
+			if (rxData.Command == 9){
+				Homey.manager('flow').trigger('LW107activate');	
+				console.log('LW107activate condition');
+				}
+			if(rxData.Command == 6){
+				Homey.manager('flow').trigger('LW107deactivate');	
+				console.log('LW107deactivate condition');
+				}
+		break;
+		
+		
+		case 'LW200':
+		console.log('Flow LW200');
+		console.log('Command', rxData.Command);
+			if (rxData.Command == 1){
+				Homey.manager('flow').trigger('LW200remoteOn');	
+				console.log('LW200remoteOn');
+			}
+			if(rxData.Command == 0){
+			
+				Homey.manager('flow').trigger('LW200remoteOff');	
+				console.log('LW200remoteOff');
+			}
+		break;		
+					
+		case 'LW2100':
+			console.log('Flow LW2100');
+			console.log('Command', rxData.Command);
+			if (rxData.Command == 3){
+				Homey.manager('flow').trigger('LW2100press');	
+				console.log('LW2100press');
+			}
+
+		break;												
+		default: 
+			
+	}
+}
+
+
 function getDeviceByTransId(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.transID == deviceIn.transID;
@@ -499,7 +579,7 @@ function getDeviceByAddress(deviceIn) {
 }
 
 function updateDeviceOnOff(self, device, onoff){
-	console.log('Update device OnOff called', device);
+	//console.log('Update device OnOff called', device);
 	
  	Homey.manager('insights').createEntry( 'LightwaveRF', onoff, new Date(), function(err, success){
         if( err ) return Homey.error(err);
@@ -523,7 +603,7 @@ function addDevice(deviceIn) {
 		transID3   			: deviceIn.transID3,
 		transID4   			: deviceIn.transID4,
 		transID5   			: deviceIn.transID5,
-		transID   			: deviceIn.transID1 + deviceIn.transID2 + deviceIn.transID3 + deviceIn.transID4 + deviceIn.transID5,
+		transID   			: HextoTransID(deviceIn.transID1,deviceIn.transID2,deviceIn.transID3,deviceIn.transID4,deviceIn.transID5),
 		TransmitterSubID	: deviceIn.TransmitterSubID,
 		dim					: deviceIn.dim,
 		onoff    			: deviceIn.onoff,
@@ -531,7 +611,7 @@ function addDevice(deviceIn) {
 	});	
 }
 
-
+/*
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
 // N milliseconds. If `immediate` is passed, trigger the function on the
@@ -549,7 +629,7 @@ function debounce(func, wait, immediate) {
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
 	};
-};
+}*/;
 
 
 function sendOnOff(deviceIn, onoff) {
@@ -761,11 +841,18 @@ function createHexString(intToHexArray) {
 
 
 ///Flow Section*************************************************************************************************************
-
-
-Homey.manager('flow').on('trigger.LW2100press', function( callback, args ){ 
+Homey.manager('flow').on('trigger.LW107activate', function( callback, args ){ 
 	
-		console.log('LW2100press fired in flow');
+		console.log('LW107activate fired in flow');
+		console.log('Flow approved');
+	   	callback( null, true );   	
+	
+	});
+	
+
+Homey.manager('flow').on('trigger.LW107deactivate', function( callback, args ){ 
+	
+		console.log('LW107deactivate fired in flow');
 		console.log('Flow approved');
 	   	callback( null, true );   	
 	
@@ -843,7 +930,7 @@ Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callb
     
 });
 
-
+///END Flow Section*************************************************************************************************************
 
 
 
@@ -980,25 +1067,42 @@ var Devarr= [channel, page];
 return Devarr;
 }
 
+function HextoTransID(transId1,transId2, transId3, transId4, transId5){
+	var hx1 = parseInt(transId1,16).toString(16);
+	var hx2 = parseInt(transId2,16).toString(16);
+	var hx3 = parseInt(transId3,16).toString(16);
+	var hx4 = parseInt(transId4,16).toString(16);
+	var hx5 = parseInt(transId5,16).toString(16);
+	
 
+    var trans = hx1 + hx2 + hx3 + hx4 + hx5;
+	//console.log('HextoTransID - Intial:', transId1, transId2, transId3, transId4, transId5);
+	//console.log('HextoTransID - Individual conv:', hx1, hx2, hx3, hx4, hx5);
+	//console.log('HextoTransID - Complete:', trans);
+
+	
+	return trans;
+}
 
 function parseRXData(data) {
 
-
+if (data != undefined) {
 	var para1 = data[0];
 	var para2 = data[1];
 	var device = data[2];
 	var Command = data[3];
 	
-	
-	var TransmitterID = data[4].toString(16);
-	TransmitterID = TransmitterID + data[5].toString(16);
-	TransmitterID = TransmitterID + data[6].toString(16);
-	TransmitterID = TransmitterID + data[7].toString(16);
-	TransmitterID = TransmitterID + data[8].toString(16);
-	
-	
-	
+//	var TransmitterID = data[4].toString(16);
+//	TransmitterID = TransmitterID + data[5].toString(16);
+//	TransmitterID = TransmitterID + data[6].toString(16);
+//	TransmitterID = TransmitterID + data[7].toString(16);
+//	TransmitterID = TransmitterID + data[8].toString(16);
+
+	var TransmitterID = HextoTransID(data[4].toString(16), 
+									data[5].toString(16),
+									data[6].toString(16),
+									data[7].toString(16),
+									data[8].toString(16));
 	
 	var TransmitterSubID = data[9];
 	//var TransIDArray = createTransIDtoInt(TransmitterID);
@@ -1032,7 +1136,7 @@ function parseRXData(data) {
 		Command  			: Command,
 		onoff    			: onoff
 	};
-}
+}}
 
 
 function dec2bin(dec){
@@ -1052,10 +1156,7 @@ function bitStringToBitArray(str) {
     return result;
 };
 
-function ResetTimeOut() {
-   	timeoutflag =false;	
-};
-					
+				
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)

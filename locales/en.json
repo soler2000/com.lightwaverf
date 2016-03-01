@@ -16,7 +16,8 @@
     	"start":{
         	"sendpaircode": "Put device into pairing mode",
   		"has_remote": "Press the On button on your remote",
-  		"has_no_remote": "Set up device Pairing"
+  		"has_no_remote": "Set up device Pairing",
+		"is_pir": "Activate the PIR by moving in front of it"
   		},
       "dipswitches": "set address and unit",
       "configure2":{
@@ -28,11 +29,13 @@
   		},
   		"generate1":{
   			"pressprogram": "Press and hold both buttons on your device untill the blue and red leds start to blink",
+			"presssingleprogram": "Press and hold the button on your device untill the blue and amber led start to flash",
 			"presson": "Press and hold both buttons on your device untill the blue and red leds start to blink"
   		},
   		"generate2":{
   			"testIfWorking": "Use the switch above to test your device",
-			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly"
+			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly",
+			"testIfrecieving_pir": "Test your device by making movement,  once activated use the switch to reset and move again after the timeout on the PIR"
   		}
     }
 }
