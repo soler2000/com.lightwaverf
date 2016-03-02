@@ -400,14 +400,16 @@
 		                    { "id": "2", "label": { "en": "Button: 2" } },
 		                    { "id": "3", "label": { "en": "Button: 3" } }, 
 		                    { "id": "4", "label": { "en": "Button: 4" } }, 
-		                    { "id": "5", "label": { "en": "Button: G" } }
+		                    { "id": "5", "label": { "en": "Button: All" } }
 	                    ]
 	                }
             	]
 	        },
 	        {
-	            "id": "LW100remoteOff",
-	            "title": {"en": "Off is pressed on your remote" },
+	            "id": "LW100remoteOf",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
 	            "args": [
 	                {
 	                    "name": "device",
@@ -433,12 +435,11 @@
 		                    { "id": "2", "label": { "en": "Button: 2" } },
 		                    { "id": "3", "label": { "en": "Button: 3" } }, 
 		                    { "id": "4", "label": { "en": "Button: 4" } }, 
-		                    { "id": "5", "label": { "en": "Button: G" } }
+		                    { "id": "5", "label": { "en": "Button: All" } }
 	                    ]
 	                }
             	]
 	        }
 		]
-}	
-	
+	}		
 }
