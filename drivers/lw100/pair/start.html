@@ -1,10 +1,12 @@
 <script type="text/javascript">
 	Homey.setTitle( __('pair.title.LW100_Remote') );
 	
+	
+	//Tells homey to listen for a signal once
 	Homey.emit('remote', function(err, onoff) { //Send signal
 	});	
 	
-	
+	//Once the initial signal is detected it sets the intial tempdevice and moves to the next window
 	Homey.on('remote_found', function() {
     	Homey.showView('remote1');
 	});

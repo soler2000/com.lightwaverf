@@ -103,20 +103,20 @@ function createDriver(driver) {
 			{
 				var index = deviceList.indexOf(getDeviceById(device_data));
 				delete deviceList[index];
-				console.log('LW item: Device deleted, you will need to manually remove homey from the device');
+				//console.log('LW item: Device deleted, you will need to manually remove homey from the device');
 			},//end of deleted
 		
 			capabilities: {
 						onoff: {
 							get: function( device_data, callback ) 
 								{
-									console.log('capabilities get onoff');
+									//console.log('capabilities get onoff');
 									var device = getDeviceById(device_data);
 									callback( null, device.onoff );
 								},
 							set: function( device_data, onoff, callback ) 
 								{
-									console.log('Setting device');
+									///console.log('Setting device');
 							
 									var devices = getDeviceByEachtransID(device_data);
 									
@@ -131,7 +131,7 @@ function createDriver(driver) {
 					dim: {
 						get: function( device_data, callback )
 							{
-								console.log('capabilities get dim');
+								//console.log('capabilities get dim');
 								
 								var device = getDeviceById(device_data);
 								
@@ -143,11 +143,14 @@ function createDriver(driver) {
 		
 						set: function( device_data, dim, callback )
 							{
-								console.log('capabilities set dim', device_data);
+								//console.log('capabilities set dim', device_data);
 								setDim(device_data, dim, function(err, dimLevel) 
 									{
 										Homey.log('Set dim:', dimLevel);
 										//module.exports.realtime( device, 'dim', dimLevel );
+										
+										////%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+										
 										
 										//var device = getDeviceById(device_data);
 										//updateDeviceDim(self, device, dim);
@@ -160,11 +163,11 @@ function createDriver(driver) {
 	
 		
 		pair: function( socket ) {
-			console.log('pair socket at ',displayTime());
+			//console.log('pair socket at ',displayTime());
 			//This is the first call to set temp data for a socket
 			socket.on('imitate1', function( data, callback )
 				{
-					console.log('imitate1 at ',displayTime());
+					//console.log('imitate1 at ',displayTime());
 					var address = [];
 					for(var i = 0; i < 20; i++)
 						{
@@ -178,19 +181,9 @@ function createDriver(driver) {
 					var transID5 = getRandomInt(0,15);
 					console.log('pair about to add');
 					var dim = 1;
-					console.log('transID1',transID1);	
-					console.log('transID2',transID2);
-					console.log('transID3',transID3);
-					console.log('transID4',transID4);
-					console.log('transID5',transID5);
 				
-				var transID = Number(transID1).toString(16)+ 
-						Number(transID2).toString(16) +
-						Number(transID3).toString(16) +
-						Number(transID4).toString(16) + 
-						Number(transID5).toString(16);
+				var transID = HextoTransID(transID1, transID2, transID3, transID4, transID5);
 				
-
 				tempdata = 
 					{
 					address: address,
@@ -203,7 +196,7 @@ function createDriver(driver) {
 					dim		   : dim,
 					onoff  	   : true,
 					}	
-				console.log('Data in Tempdata',tempdata);
+				//console.log('Data in Tempdata',tempdata);
 			
 				sendOnOff(tempdata, true);
 				socket.emit('datasent');
@@ -211,21 +204,20 @@ function createDriver(driver) {
 			});
 			
 	
-			
+			///????????
+			//This is continuing to run after the pairing is closed
+			///????????
 			
 			//Testing of Remote
 			socket.on('test_device', function( data, callback ){
-				console.log('test device at ',displayTime());
+				
 				signal.on('payload', function(payload, first){
 					console.log('test device - payload recieved ',displayTime());
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
 					
-					console.log('rxData.transID',rxData.transID);
-					console.log('tempdata.transID)',tempdata.transID);
-					
-					
+				
 			        if(rxData.transID == tempdata.transID){
 						if(rxData.onoff){
 							socket.emit('received_on'); //Send signal to frontend
@@ -240,15 +232,15 @@ function createDriver(driver) {
 			
 			//Testing of Remote
 			socket.on('test_device_pir', function( data, callback ){
-				console.log('test device pir at ',displayTime());
+				//console.log('test device pir at ',displayTime());
 				signal.on('payload', function(payload, first){
-					console.log('test device pir- payload recieved ',displayTime());
+					//console.log('test device pir- payload recieved ',displayTime());
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
 					
-					console.log('rxData.transID',rxData.transID);
-					console.log('tempdata.transID)',tempdata.transID);
+					//console.log('rxData.transID',rxData.transID);
+					//console.log('tempdata.transID)',tempdata.transID);
 					
 					
 			        if(rxData.transID == tempdata.transID){
@@ -269,12 +261,12 @@ function createDriver(driver) {
 			//Testing of Remote
 			socket.on('remote', function( data, callback )
 				{
-				console.log('remote socket at ',displayTime());
+				//console.log('remote socket at ',displayTime());
 					signal.once('payload', function(payload, first)
 						{
-							console.log('remote payload at ',displayTime());
+							//console.log('remote payload at ',displayTime());
 							if(!first)return;
-							console.log('Remote Detected at ',displayTime());
+							//console.log('Remote Detected at ',displayTime());
 							
 							
 			        		var rxData = parseRXData(payload);
@@ -304,25 +296,26 @@ function createDriver(driver) {
 							
 							console.log('Temp Data stored at',displayTime());
 							socket.emit('remote_found');
+							callback(null, tempdata.onoff);
 						});
 						
 		
-					callback(null, tempdata.onoff);
-				}
-				);
+					
+				});
 				
+							
 			//Testing of remote	
 			socket.on('generate', function( data, callback )
 				{
-					console.log('generate at ',displayTime());
+					//console.log('generate at ',displayTime());
 					signal.on('payload', function(payload, first)
 						{
 							
-							console.log('generate payload at ',displayTime());
+							//console.log('generate payload at ',displayTime());
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
 							
-							console.log('tempdata', tempdata);
+							//console.log('tempdata', tempdata);
 							
 			       			if(rxData.address == tempdata.address ){
 							if(rxData.onoff){
@@ -338,9 +331,10 @@ function createDriver(driver) {
 				
 		socket.on('saveRemote', function( onoff, callback )
 				{
-					console.log('SaveRemote at ',displayTime());		
+					console.log('SaveRemote at ',displayTime());	
+					console.log('No action is taken just flipping of the switch');		
 					///added for remote end
-					console.log('tempdata', tempdata);
+					//console.log('tempdata', tempdata);
 							
 					callback();
 				});
@@ -348,7 +342,7 @@ function createDriver(driver) {
 		//Sending Test Data to Socket or Light		
 		socket.on('sendSignal', function( onoff, callback )
 				{
-					console.log('SendSignal at ',displayTime());
+					//console.log('SendSignal at ',displayTime());
 					if(onoff != true){
 						onoff = false;
 						}
@@ -364,7 +358,7 @@ function createDriver(driver) {
 				
 		socket.on('remote_done', function( data, callback )
 				{
-					console.log('Remote Done at ',displayTime());
+					//console.log('Remote Done at ',displayTime());
 				});
 				
 				
@@ -375,7 +369,7 @@ function createDriver(driver) {
 					var idNumber = Math.round(Math.random() * 0xFFFF);
 					var id = tempdata.address;
 					var name =  __(driver); //__() Is for translation
-					console.log('adding device in socket on');
+					//console.log('adding device in socket on');
 					
 				
 					addDevice({
@@ -391,7 +385,7 @@ function createDriver(driver) {
 						onoff    	: false,
 						driver   	: driver,
 						});
-					console.log('LWSocket: Added device: ID',id);
+					//console.log('LWSocket: Added device: ID',id);
 				
 					//Share data to front end
 					callback(null, 
@@ -406,7 +400,7 @@ function createDriver(driver) {
 								transID3   	: tempdata.transID3,
 								transID4   	: tempdata.transID4,
 								transID5   	: tempdata.transID5,
-								dim			: tempdata.dim,
+								dim			: 0,
 								onoff    	: false,
 								driver   	: driver,
 								}
@@ -433,13 +427,13 @@ function ManageIncomingRX(self, rxData){
 		console.log('*****************Pay load received****************');
 		console.log(displayTime());
 	
-		console.log('Devices Found:', devices.length);
-		console.log('transID rxdata:', rxData.transID);
-		console.log('transID device:', device.transID);
+		//console.log('Devices Found:', devices.length);
+		//console.log('transID rxdata:', rxData.transID);
+		//console.log('transID device:', device.transID);
 		
 		if (lastTXMessageID != device.transID  && devices.length ==1){
-			Homey.log('New message, taking action');	
-			console.log('Newmessage:P1', rxData.para1, 
+			//Homey.log('New message, taking action');	
+			console.log('New message:P1', rxData.para1, 
 								' P2:',rxData.para2 ,  
 								' Cmd:', rxData.Command,
 								' TransID:', rxData.transID);
@@ -452,7 +446,6 @@ function ManageIncomingRX(self, rxData){
 			updateDeviceOnOff(self, device, rxData.onoff);					
 			flowselection(device, LastRX);
 				
-			//lastTXMessage = device.transID;
 			lastTXMessageID = device.transID;
 			
 			
@@ -461,7 +454,7 @@ function ManageIncomingRX(self, rxData){
 		}else{
 			//Act on Dim Value
 		}
-		lastTXMessageID = device.transID;
+		lastTXMessageID = rxData.transID;
 	});
 	
 	
@@ -494,7 +487,7 @@ function getDeviceByEachtransID(deviceIn) {
 
  function callfromreemotesetup()// does it need a call back
 {
-	console.log('callfromreemotesetup Done');
+	//console.log('callfromreemotesetup Done');
 	}
 	
 	
@@ -535,10 +528,10 @@ function updateDeviceDim(self, device, dim){
 
 
 function addDevice(deviceIn) {
-	console.log('Adding device - Device Data', deviceIn);
+	//console.log('Adding device - Device Data', deviceIn);
 	
 	var transID = HextoTransID(deviceIn.transID1,deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5)
-	console.log('Adding device - transID', transID);
+	//console.log('Adding device - transID', transID);
 	
 	deviceList.push({
 		id       			: deviceIn.id,
@@ -574,13 +567,13 @@ function sendOnOff(deviceIn, onoff) {
 	
 	
 	
-	console.log('****************Send on off*****************');
+	//console.log('****************Send on off*****************');
 	if(device === undefined)
 	{
 		console.log('In send on off the device is undefined');
 	}
-	console.log('device ID', device.id);
-	console.log('Send On / Off, device:',device);
+	//console.log('device ID', device.id);
+	//console.log('Send On / Off, device:',device);
 	
 	
 		
@@ -838,8 +831,8 @@ Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){
 		console.log('Flow approved');
     	callback( null, true );   	
    }else{
-		console.log('Flow canceled');
-		callback( null, false ); 
+		console.log('Flow canceled -did not cancel the flow');
+		//callback( null, false ); 
 	}	 
 });
 
