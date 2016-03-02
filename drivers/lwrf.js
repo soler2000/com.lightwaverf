@@ -445,11 +445,13 @@ function ManageIncoming(self, rxData){
 								' Cmd:', rxData.Command,
 								' TransID:', rxData.transID);
 				
-
+			LastTriggered = rxData;
 			updateDeviceOnOff(self, device, rxData.onoff);					
-			flowselection(device, rxData);
+			flowselection(device, LastTriggered);
 				
-			lastTXMessage = device.transID;
+			//lastTXMessage = device.transID;
+			lastTXMessageID = device.transID;
+			
 			
 			//clears the last value after 2 seconds
 			setTimeout(function(){lastTXMessageID =''; }, 2000);
@@ -477,10 +479,11 @@ function flowselection(device,rxData){
 			console.log('Command', rxData.Command);
 			if (rxData.Command == 1){
 				Homey.manager('flow').trigger('LW100remoteOn');	
-	
+				console.log('Flow LW100 approved');
 			}
 			if(rxData.Command == 0){
 				Homey.manager('flow').trigger('LW100remoteOff');	
+				console.log('Flow LW100 cancelled');
 			}
 		break;
 		
@@ -537,7 +540,11 @@ function getDeviceByTransId(deviceIn) {
 }
 function getDeviceByEachtransID(deviceIn) {
 	var matches = deviceList.filter(function(d){
-		return d.transID1 == deviceIn.transID1 && d.transID2 == deviceIn.transID2 && d.transID3 == deviceIn.transID3 && d.transID4 == deviceIn.transID4 && d.transID5 == deviceIn.transID5; 
+		return d.transID1 == deviceIn.transID1 && 
+			d.transID2 == deviceIn.transID2 && 
+			d.transID3 == deviceIn.transID3 && 
+			d.transID4 == deviceIn.transID4 && 
+			d.transID5 == deviceIn.transID5; 
 	});
 	return matches ? matches : null;
 }
