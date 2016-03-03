@@ -3,15 +3,15 @@
 
   "pair":{
     "title":{
-		"LW100_Remote": "Add a LightwaveRF remote…",
-		"LW107_PIR": "Add a LightwaveRF PIR Switch...",
-		"LW200_Lightswitch": "Add a LightwaveRF wireless dimmer...",
-		"LW260_socket": "Add a LightwaveRF plug socket...",
-		"LW301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
-		"LW321_Lightswitch": "Add a LightwaveRF Plug in...",
-		"LW400_Lightswitch": "Add a LightwaveRF Wired Dimmer...",
-		"LW2101_Doorbell": "Add a LightwaveRF Doorbell Ringer...",
-		"LW2100_Doorbell": "Add a LightwaveRF Doorbell Pushbutton..."
+		"lw100_Remote": "Add a LightwaveRF remote…",
+		"lw107_PIR": "Add a LightwaveRF PIR Switch...",
+		"lw200_Lightswitch": "Add a LightwaveRF wireless dimmer...",
+		"lw260_socket": "Add a LightwaveRF plug socket...",
+		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
+		"lw321_Lightswitch": "Add a LightwaveRF Plug in...",
+		"lw400_Lightswitch": "Add a LightwaveRF Wired Dimmer...",
+		"lw2101_Doorbell": "Add a LightwaveRF Doorbell Ringer...",
+		"lw2100_Doorbell": "Add a LightwaveRF Doorbell Pushbutton..."
     		},
     	"start":{
         	"sendpaircode": "Put device into pairing mode",

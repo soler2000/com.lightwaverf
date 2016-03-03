@@ -762,58 +762,58 @@ function flowselection(device,rxData){
 	console.log('Flow device RX', rxData);
 	
 	switch(device.driver) {					
-		case 'LW100':
-			console.log('Flow Selection LW100');
+		case 'lw100':
+			console.log('Flow Selection lw100');
 			console.log('Command', rxData.Command);
 			
 			if (rxData.Command == 1){
-				console.log('Flow LW100 remoteOn');
-				Homey.manager('flow').trigger('LW100remoteOn');	
+				console.log('Flow lw100 remoteOn');
+				Homey.manager('flow').trigger('lw100remoteOn');	
 				
 			}
 			if (rxData.Command == 0){
-				console.log('Flow LW100 remoteOff');
-				Homey.manager('flow').trigger('LW100remoteOf');	
+				console.log('Flow lw100 remoteOff');
+				Homey.manager('flow').trigger('lw100remoteOf');	
 				
 			}
 		break;
 		
-		case 'LW107':
+		case 'lw107':
 		
-			console.log('LW107 case');
+			console.log('lw107 case');
 			console.log('Command', rxData.Command);
 		
 			if (rxData.Command == 9){
-				Homey.manager('flow').trigger('LW107activate');	
-				console.log('LW107activate condition');
+				Homey.manager('flow').trigger('lw107activate');	
+				console.log('lw107activate condition');
 				}
 			if(rxData.Command == 6){
-				Homey.manager('flow').trigger('LW107deactivate');	
-				console.log('LW107deactivate condition');
+				Homey.manager('flow').trigger('lw107deactivate');	
+				console.log('lw107deactivate condition');
 				}
 		break;
 		
 		
-		case 'LW200':
-		console.log('Flow LW200');
+		case 'lw200':
+		console.log('Flow lw200');
 		console.log('Command', rxData.Command);
 			if (rxData.Command == 1){
-				Homey.manager('flow').trigger('LW200remoteOn');	
-				console.log('LW200remoteOn');
+				Homey.manager('flow').trigger('lw200remoteOn');	
+				console.log('lw200remoteOn');
 			}
 			if(rxData.Command == 0){
 			
-				Homey.manager('flow').trigger('LW200remoteOff');	
-				console.log('LW200remoteOff');
+				Homey.manager('flow').trigger('lw200remoteOff');	
+				console.log('lw200remoteOff');
 			}
 		break;		
 					
-		case 'LW2100':
-			console.log('Flow LW2100');
+		case 'lw2100':
+			console.log('Flow lw2100');
 			console.log('Command', rxData.Command);
 			if (rxData.Command == 3){
-				Homey.manager('flow').trigger('LW2100press');	
-				console.log('LW2100press');
+				Homey.manager('flow').trigger('lw2100press');	
+				console.log('lw2100press');
 			}
 
 		break;												
@@ -823,9 +823,9 @@ function flowselection(device,rxData){
 }
 
 
-Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){
+Homey.manager('flow').on('trigger.lw100remoteOn', function( callback, args ){
 	
-	console.log('LW100remoteOn fired in flow. arg:', args);
+	console.log('lw100remoteOn fired in flow. arg:', args);
 		
 	if(args.channel == LastRX.channel && args.unit == LastRX.unit && args.device.transID == LastRX.transID){
 		console.log('Flow approved');
@@ -836,16 +836,16 @@ Homey.manager('flow').on('trigger.LW100remoteOn', function( callback, args ){
 	}	 
 });
 
-Homey.manager('flow').on('trigger.LW100remoteOf', function( callback, args ){
+Homey.manager('flow').on('trigger.lw100remoteOf', function( callback, args ){
 	
 	
 		
 	if(args.channel == LastRX.channel && args.unit == LastRX.unit && args.device.transID == LastRX.transID){
-		console.log('LW100remoteOff fired in flow. arg:', args);
+		console.log('lw100remoteOff fired in flow. arg:', args);
 		console.log('Flow approved');
     	callback( null, true );   	
    }else{
-	   	console.log('LW100remoteOff fired in flow. arg:', args);
+	   	console.log('lw100remoteOff fired in flow. arg:', args);
 		console.log('Flow canceled');
 		callback( null, false ); 
 	}	 
@@ -854,14 +854,14 @@ Homey.manager('flow').on('trigger.LW100remoteOf', function( callback, args ){
 
 
 
-Homey.manager('flow').on('trigger.LW107activate', function( callback, args ){ 
+Homey.manager('flow').on('trigger.lw107activate', function( callback, args ){ 
 	
 	if(args.device.transID == LastRX.transID) {
-		console.log('LW107activate fired in flow');
+		console.log('lw107activate fired in flow');
 		console.log('Flow approved');
 	   	callback( null, true ); 
 	}else{
-		console.log('LW107 not fired:', args);
+		console.log('lw107 not fired:', args);
 		console.log('Flow canceled');
 		callback( null, false ); 
 	}
@@ -869,37 +869,37 @@ Homey.manager('flow').on('trigger.LW107activate', function( callback, args ){
 	});
 	
 
-Homey.manager('flow').on('trigger.LW107deactivate', function( callback, args ){ 
+Homey.manager('flow').on('trigger.lw107deactivate', function( callback, args ){ 
 	if(args.device.transID == LastRX.transID) {
-		console.log('LW107deactivate fired in flow');
+		console.log('lw107deactivate fired in flow');
 		console.log('Flow approved');
 	   	callback( null, true );   	
 		}else{
-		console.log('LW107deactivate not fired:', args);
+		console.log('lw107deactivate not fired:', args);
 		console.log('Flow canceled');
 		callback( null, false ); 
 	}
 	});
 	
-Homey.manager('flow').on('trigger.LW200remoteOn', function( callback, args ){ 
+Homey.manager('flow').on('trigger.lw200remoteOn', function( callback, args ){ 
 	if(args.device.transID == LastRX.transID) {
-		console.log('LW200remoteOn fired in flow');
+		console.log('lw200remoteOn fired in flow');
 		console.log('Flow approved');
 	   	callback( null, true );   	
 		}else{
-		console.log('LW200remoteOn not fired:', args);
+		console.log('lw200remoteOn not fired:', args);
 		console.log('Flow canceled');
 		callback( null, false ); 
 	}
 	});
 	
-Homey.manager('flow').on('trigger.LW200remoteOff', function( callback, args ){ 
+Homey.manager('flow').on('trigger.lw200remoteOff', function( callback, args ){ 
 	if(args.device.transID == LastRX.transID) {
-		console.log('LW200remoteOff fired in flow');
+		console.log('lw200remoteOff fired in flow');
 		console.log('Flow approved');
 	   	callback( null, true );   	
 		}else{
-		console.log('LW200remoteOff not fired:', args);
+		console.log('lw200remoteOff not fired:', args);
 		console.log('Flow canceled');
 		callback( null, false ); 
 	}

@@ -1,3 +1,3 @@
 "use strict";
-var LW100 = require('../lwrf.js');
-module.exports = LW100.createDriver('LW100');
+var lw100 = require('../lwrf.js');
+module.exports = lw100.createDriver('lw100');

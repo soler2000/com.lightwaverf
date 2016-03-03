@@ -1,3 +1,3 @@
 "use strict";
-var LW260 = require('../lwrf.js');
-module.exports = LW260.createDriver('LW260');
+var lw260 = require('../lwrf.js');
+module.exports = lw260.createDriver('lw260');
