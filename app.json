@@ -280,8 +280,8 @@
 				"large": "../drivers/lw2101/assets/images/large.png",
 				"small": "../drivers/lw2101/assets/images/small.png"
 		    },
-		    "class": "doorbell",
-		    "capabilities": ["alarm_generic"],
+		    "class": "light",
+		    "capabilities": ["onoff"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -406,7 +406,7 @@
             	]
 	        },
 	        {
-	            "id": "lw100remoteOf",
+	            "id": "lw100remoteOff",
 	            "title": {
 	                "en": "Off is pressed on your remote"
 	            },

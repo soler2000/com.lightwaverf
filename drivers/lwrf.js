@@ -36,22 +36,22 @@ function createDriver(driver) {
 						sof: [high1,high2], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
    						eof: [high1], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low
 						words: [
-							[high1,high2,	high1,high2,  	high1,high2,		high1,high2,	high1,		low1,  		high1,high2,	high1,		low1],// 0x0	1+11110110
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,		low1,		high1,high2,  	high1,high2,	high1,		low1],// 0x1	1+11101110
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,		low1,		high1,high2,  	high1,		low1,		high1,high2],// 0x2	1+11101101
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,		low1,		high1,		low1,  		high1,high2,  	high1,high2],// 0x3	1+11101011
-							[high1,high2,  	high1,high2,		high1,			low1,  		high1,high2,	high1,high2,  	high1,high2,	high1,		low1],// 0x4	1+11011110
-							[high1,high2,  	high1,high2,		high1,			low1,  		high1,high2,	high1,high2,  	high1,		low1,		high1,high2],// 0x5	1+11011101
-							[high1,high2,  	high1,high2,		high1,			low1,  		high1,high2,	high1,		low1,  		high1,high2,  	high1,high2],// 0x6	1+11011011
-							[high1,high2,	high1,			low1,			high1,high2,	high1,high2,	high1,high2,	high1,high2,	high1,		low1],	// 0x7 1+10111110
-							[high1,high2,	high1,			low1, 			high1,high2,	high1,high2,	high1,high2,	high1,		low1,		high1,high2],// 0x8 1+10111101
-							[high1,high2,	high1,			low1,			high1,high2,	high1,high2,	high1,		low1,		high1,high2,	high1,high2],// 0x9	1+10111011
-							[high1,high2,	high1,			low1,			high1,high2,	high1,		low1,		high1,high2,	high1,high2,	high1,high2],// 0xA	1+10110111
-							[high1,			low1,			high1,high2,		high1,high2,	high1,high2,	high1,high2,	high1,high2,	high1,		low1],// 0xB	1+01111110
-							[high1,			low1,			high1,high2,		high1,high2,	high1,high2,	high1,high2,	high1,		low1,		high1,high2],// 0xC	1+01111101
-							[high1,			low1,			high1,high2,		high1,high2,	high1,high2,	high1,		low1,		high1,high2,	high1,high2],// 0xD	1+01111011
-							[high1,			low1,			high1,high2,		high1,high2,	high1,		low1,		high1,high2,	high1,high2,	high1,high2],// 0xE	1+01110111
-							[high1,			low1,			high1,high2,		high1,		low1,		high1,high2,	high1,high2,	high1,high2,	high1,high2],// 0xF	1+01101111
+							[high1,high2,	high1,high2,  	high1,high2,		high1,high2,		high1,			low1,  			high1,high2,		high1,			low1],// 0x0	1+11110110
+							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,high2,  	high1,high2,		high1,			low1],// 0x1	1+11101110
+							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,high2,  	high1,			low1,			high1,high2],// 0x2	1+11101101
+							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,			low1,  			high1,high2,  	high1,high2],// 0x3	1+11101011
+							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,high2,  	high1,high2,		high1,			low1],// 0x4	1+11011110
+							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,high2,  	high1,			low1,			high1,high2],// 0x5	1+11011101
+							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,			low1,  			high1,high2,  	high1,high2],// 0x6	1+11011011
+							[high1,high2,	high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1],	// 0x7 1+10111110
+							[high1,high2,	high1,			low1, 			high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2],// 0x8 1+10111101
+							[high1,high2,	high1,			low1,			high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2],// 0x9	1+10111011
+							[high1,high2,	high1,			low1,			high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2],// 0xA	1+10110111
+							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1],// 0xB	1+01111110
+							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2],// 0xC	1+01111101
+							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2],// 0xD	1+01111011
+							[high1,			low1,			high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2],// 0xE	1+01110111
+							[high1,			low1,			high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2],// 0xF	1+01101111
 							],
 						interval: 10750, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
 						repetitions: 4,   	
@@ -589,6 +589,11 @@ function sendOnOff(deviceIn, onoff) {
 	}
 	
 	//  should look to get last dim level or dim level from app
+	if (device.driver =='lw2101'){
+		doorbell(1);
+	}else{
+	
+	
 	
 	var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
 	var frame = new Buffer(dataToSend);
@@ -597,12 +602,45 @@ function sendOnOff(deviceIn, onoff) {
 	
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
-		
+	});
+	}
 		//need to make this work to send data back,  call back is in capabilities
 		//callback( null, deviceIn.onoff ); //Callback the new dim
-	})
+}
+var myVar;
+var myVar1;
+function doorbell(onoff){
+	console.log('Sound Door Bell');
+	var command = 3;
+	
+	
+	//[ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12] 
+	// myVar = setTimeout(alertFunc(), 0);
+	// myVar1 = setTimeout(alertFunc(), 1900);
+	 
+	alertFunc();
+
 	
 }
+
+
+
+function alertFunc() {
+	//office light
+	//a85d6
+    //var dataToSend = [ 0, 0, 10, 1, 10, 8, 5, 13, 6, 1 ];
+	var dataToSend = [ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12 ];
+	var frame = new Buffer(dataToSend);
+	
+	console.log('Data to Send', dataToSend);
+	
+	signal.tx( frame, function( err, result ){
+   		if(err != null)console.log('LWSocket: Error:', err);
+	});
+}
+
+
+
 
 
 
@@ -773,7 +811,7 @@ function flowselection(device,rxData){
 			}
 			if (rxData.Command == 0){
 				console.log('Flow lw100 remoteOff');
-				Homey.manager('flow').trigger('lw100remoteOf');	
+				Homey.manager('flow').trigger('lw100remoteOff');	
 				
 			}
 		break;
@@ -836,7 +874,7 @@ Homey.manager('flow').on('trigger.lw100remoteOn', function( callback, args ){
 	}	 
 });
 
-Homey.manager('flow').on('trigger.lw100remoteOf', function( callback, args ){
+Homey.manager('flow').on('trigger.lw100remoteOff', function( callback, args ){
 	
 	
 		
@@ -1092,25 +1130,28 @@ function HextoTransID(transId1,transId2, transId3, transId4, transId5){
 
 function parseRXData(data) {
 
-if (data != undefined) {
-	var para1 = data[0];
-	var para2 = data[1];
-	var device = data[2];
-	var Command = data[3];
+
+	console.log('Parse data', data);
+
+	if (data != undefined) {
+		var para1 = data[0];
+		var para2 = data[1];
+		var device = data[2];
+		var Command = data[3];
 
 
 
 
 
-	var TransmitterID = HextoTransID(data[4], 
-									data[5],
-									data[6],
-									data[7],
-									data[8]);
+		var TransmitterID = HextoTransID(data[4], 
+										data[5],
+										data[6],
+										data[7],
+										data[8]);
 	
-	var TransmitterSubID = data[9];
-	//var TransIDArray = createTransIDtoInt(TransmitterID);
-	var Devarr = GetChannelandPage(device);
+		var TransmitterSubID = data[9];
+		//var TransIDArray = createTransIDtoInt(TransmitterID);
+		var Devarr = GetChannelandPage(device);
 	
 	if(Command == "1")
 		{
@@ -1134,7 +1175,7 @@ if (data != undefined) {
 	 	transID4 			: data[7].toString(),
 	 	transID5 			: data[8].toString(),
 		TransmitterSubID  	: TransmitterSubID,
-		device   			: device,
+		//device   			: device,  doubled
 		channel				: Devarr[0].toString(),
 		unit				: Devarr[1].toString(),
 		Command  			: Command,
