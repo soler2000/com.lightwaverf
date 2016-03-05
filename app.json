@@ -440,6 +440,36 @@
 	                }
             	]
 	        }
-		]
+		],
+		 "actions": [
+        {
+            "id": "Choose_tune",
+            "title": {
+                "en": "What tune to play"
+            },
+			  "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw2101",
+	                    "placeholder": { "en": "Which tune?", "nl": "Which tune?" }
+	                },
+	                {
+	                    "name": "tune",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "Westminster" } },
+		                    { "id": "2", "label": { "en": "Ding-Dong" } },
+		                    { "id": "3", "label": { "en": "Tubular-1" } }, 
+		                    { "id": "4", "label": { "en": "Tubular-2" } }, 
+							{ "id": "5", "label": { "en": "Piano-1" } }, 
+							{ "id": "6", "label": { "en": "Piano-2" } }, 
+							{ "id": "7", "label": { "en": "Drum" } }, 
+							{ "id": "8", "label": { "en": "Bell" } }
+	                    ]
+	                }
+					]
+        }
+    ]
 	}		
 }

@@ -11,6 +11,7 @@ var incomingtimeoutflag = true;
 var inmessageQ = [];
 var incomingQueTimer;
 var lastTXMessageID;
+var TuneCount =0;
 
 function createDriver(driver) {
 	var self = 
@@ -22,27 +23,27 @@ function createDriver(driver) {
 					{
 					console.log('LightwaveRF: Init')
 					
-					
-					
-					
-					
+	
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					var short =375;	//orginal 293	14-15 samples at 48khz				
 					var long =650;	//orginal 280  14-15 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [short,short,long,long,short], //Start of frame,Starting 1 added to words due to some starting words beginning on a low   // first 5 High Low
-   						eof: [short], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low   //no end of frame yet
+						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short], //Start of frame,Starting 1 added to words due to some starting words beginning on a low   // first 5 High Low
+   						eof: [], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low   //no end of frame yet
 						words: [
-							[short,long,short,long,short,		long,short,long,long,short,	long,short,short,long,short,	long,long,short,long],//done
-							[short,long,short,long,short,		long,short,long,long,short,	long,short,short,long,long,	short,short,long,long],//done
-							[short,long,short,long,short,		long,short,long,long,short,	long,short,long,short,short,	long,short,long,long]//done
+							[long,short,long,short,short,	long,short,long,long,short],//done
+							[long,short,long,short,long,		short,short,long,long,short],//done
+							[long,short,long,short,long,		short,long,short,short,long],//done
+							[long,short,short,long,short,	long,long,short,short,long],//done
+							[long,short,short,long,short,	long,short,long,long,short],//done
+							[long,short,short,long,short,	long,long,short,long,short],//done
+							[long,short,short,long,long,		short,short,long,long,short]//done
 							],
 						interval: 6000, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 120, //   total 150    	
+						repetitions: 150, //   total 150    	
 						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
-						//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
 						sensitivity: 0.8, 
 						minimalLength: 1,
                     	maximalLength: 1
@@ -52,12 +53,12 @@ function createDriver(driver) {
 						signal.register(function( err, success ){
 							if(err != null)
 								{
-								console.log('LightwaveRF: err', err, 'success', success);
+								console.log('LightwaveRF Doorbell: err', err, 'success', success);
 								}
 						});
 							
 							
-						console.log('Start listening for Lightwave Commands');
+						console.log('Start listening for Lightwave Door Bell Commands');
 					
 						//Start receiving
 						signal.on('payload', function(payload, first)
@@ -78,7 +79,7 @@ function createDriver(driver) {
 			//Refresh deviceList
 			devices.forEach(function(device)
 				{
-				console.log('Refresh Device List TransID', device.transID, ' Driver:', device.driver);
+				console.log('Refresh Device List - Driver:', device.driver);
 				addDevice(device);
 				});
 				callback();
@@ -104,11 +105,11 @@ function createDriver(driver) {
 								{
 									///console.log('Setting device');
 							
-									var devices = getDeviceByEachtransID(device_data);
+									var devices = getDeviceById(device_data);
 									
-									devices.forEach(function(device){
-										updateDeviceOnOff(self, device, onoff);
-									});	
+									//devices.forEach(function(device){
+									//	updateDeviceOnOff(self, device, onoff);
+									//});	
 	
 									sendOnOff(device_data, onoff);
 									callback( null, onoff );
@@ -161,8 +162,8 @@ function createDriver(driver) {
 					if(!first)return;
 			        var rxData = parseRXData(payload);	
 			 		// no id statement yet unless cab decode further
-							socket.emit('received_on'); //Send signal to frontend	
-					}
+					socket.emit('received_on'); //Send signal to frontend	
+					
 				});
 				callback(null, tempdata.onoff);
 			});
@@ -181,7 +182,7 @@ function createDriver(driver) {
 					//console.log('tempdata.transID)',tempdata.transID);
 					
 					
-			    // no id statement yet unless cab decode further
+			    	//No id statement yet unless cab decode further
 					socket.emit('received_on'); //Send signal to frontend
 					
 				
@@ -335,45 +336,34 @@ function ManageIncomingRX(self, rxData){
 	// if not the action
 	
 	
-	var devices = getDeviceByEachtransID(rxData);
-					
+	var devices = getDeviceByTune(rxData);
+	
+	/*
+	//console.log('Devices Found:', devices.length);
 	devices.forEach(function(device){
 		
 		console.log('*****************Pay load received****************');
 		console.log(displayTime());
 	
-		//console.log('Devices Found:', devices.length);
+		//
 		//console.log('transID rxdata:', rxData.transID);
 		//console.log('transID device:', device.transID);
 		
-		if (lastTXMessageID != device.transID  && devices.length ==1){
+		if (lastTXMessageID != device.address){
 			//Homey.log('New message, taking action');	
-			console.log('New message:P1', rxData.para1, 
-								' P2:',rxData.para2 ,  
-								' Cmd:', rxData.Command,
-								' TransID:', rxData.transID);
-
-
-				
+			console.log('New message');			
 			LastRX = rxData;
-			
-		
+
 			updateDeviceOnOff(self, device, rxData.onoff);					
 			flowselection(device, LastRX);
 				
-			lastTXMessageID = device.transID;
-			
-			
+			lastTXMessageID = device.address;
+					
 			//clears the last value after 2 seconds
 			setTimeout(function(){lastTXMessageID =''; }, 2000);
-		}else{
-			//Act on Dim Value
 		}
-		lastTXMessageID = rxData.transID;
-	});
-	
-	
-
+		
+	});*/
 }
 
 
@@ -383,22 +373,6 @@ function ManageIncomingRX(self, rxData){
 
 
 
-function getDeviceByTransId(deviceIn) {
-	var matches = deviceList.filter(function(d){
-		return d.transID == deviceIn.transID;
-	});
-	return matches ? matches[0] : null;
-}
-function getDeviceByEachtransID(deviceIn) {
-	var matches = deviceList.filter(function(d){
-		return d.transID1 == deviceIn.transID1 && 
-			d.transID2 == deviceIn.transID2 && 
-			d.transID3 == deviceIn.transID3 && 
-			d.transID4 == deviceIn.transID4 && 
-			d.transID5 == deviceIn.transID5; 
-	});
-	return matches ? matches : null;
-}
 
  function callfromreemotesetup()// does it need a call back
 {
@@ -413,11 +387,11 @@ function getDeviceById(deviceIn) {
 	return matches ? matches[0] : null;
 }
 
-function getDeviceBytransIDAndUnit(deviceIn) {
+function getDeviceByTune(deviceIn) {
 	var matches = deviceList.filter(function(d){
-		return d.transID == deviceIn.transID && d.unit == deviceIn.unit; 
+		return d.tune == deviceIn.tune;
 	});
-	return matches ? matches : null;
+	return matches ? matches[0] : null;
 }
 
 function getDeviceByAddress(deviceIn) {
@@ -454,45 +428,26 @@ function sendOnOff(deviceIn, onoff) {
 	//device set to 1
 	//SUB ID set to 1
 	
-	var command =0;
-	var transID =0;
-	var transID1 =0;
-	var transID2 =0;
-	var transID3 =0;
-	var transID4 =0;
-	var transID5 =0;
+	TuneCount = TuneCount +1;
 	
+	if(TuneCount ==7){ 
+		TuneCount =0;
+	}
+	var tune =1;
+	
+	tune = TuneCount;//deviceIn.tune;
 	
 	
 	//console.log('****************Send on off*****************');
 	if(device === undefined)
 	{
-		console.log('In send on off the device is undefined');
+		console.log('In send on off the doorbell device is undefined');
 	}
 	//console.log('device ID', device.id);
 	//console.log('Send On / Off, device:',device);
 	
 	
-		
-	if( onoff == false){
-		//send off
-		command =0;
-		//deviceIn.onoff = true; 
-	}
-	else if(onoff == true){
-		//send on
-		command =1;
-		//deviceIn.onoff = false;
-	}
-	
-	//  should look to get last dim level or dim level from app
-	if (device.driver =='lw2101'){
-		doorbell(1);
-	}else{
-	
-	
-	
-	var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
+	var dataToSend = [tune];
 	var frame = new Buffer(dataToSend);
 	
 	console.log('Data to Send', dataToSend);
@@ -500,42 +455,10 @@ function sendOnOff(deviceIn, onoff) {
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
 	});
-	}
+	
 		//need to make this work to send data back,  call back is in capabilities
 		//callback( null, deviceIn.onoff ); //Callback the new dim
 }
-var myVar;
-var myVar1;
-function doorbell(onoff){
-	console.log('Sound Door Bell');
-	var command = 3;
-	
-	
-	//[ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12] 
-	// myVar = setTimeout(alertFunc(), 0);
-	// myVar1 = setTimeout(alertFunc(), 1900);
-	 
-	alertFunc();
-
-	
-}
-
-
-
-function alertFunc() {
-	//office light
-	//a85d6
-    //var dataToSend = [ 0, 0, 10, 1, 10, 8, 5, 13, 6, 1 ];
-	var dataToSend = [ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12 ];
-	var frame = new Buffer(dataToSend);
-	
-	console.log('Data to Send', dataToSend);
-	
-	signal.tx( frame, function( err, result ){
-   		if(err != null)console.log('LWSocket: Error:', err);
-	});
-}
-
 
 
 
@@ -545,45 +468,45 @@ function alertFunc() {
 
 ///Flow Section*************************************************************************************************************
 
-function flowselection(device,rxData){
-	console.log('Flow device Device', device);
-	console.log('Flow device RX', rxData);
-	
-	switch(device.driver) {					
-		case 'lw2101':
-			console.log('Flow Selection lw100');
-			console.log('Command', rxData.Command);
-			
-			if (rxData.Command == 1){
-				console.log('Flow lw100 remoteOn');
-				Homey.manager('flow').trigger('lw100remoteOn');	
-				
-			}
-			if (rxData.Command == 0){
-				console.log('Flow lw100 remoteOff');
-				Homey.manager('flow').trigger('lw100remoteOff');	
-				
-			}
-		break;
-												
-		default: 
-			
-	}
-}
+//function flowselection(device,rxData){
+//	console.log('Flow device Device', device);
+//	console.log('Flow device RX', rxData);
+//	
+//	switch(device.driver) {					
+//		case 'lw2101':
+//			console.log('Flow Selection lw2101');
+//	
+//				Homey.manager('flow').trigger('Choose_tune');			
+//		break;
+//												
+//		default: 
+//			
+//	}
+//}
 
 
-Homey.manager('flow').on('trigger.lw2101tune', function( callback, args ){
+Homey.manager('flow').on('action.Choose_tune', function( callback, args ){
 	
-	console.log('lw100remoteOn fired in flow. arg:', args);
+	console.log('Choose_tune fired in flow. args:', args);
+	var devices = getDeviceByAddress(args.device.address );
+	
+	devices.forEach(function(device){
+	
+		var dataToSend = [args.tune];
+	
+		var frame = new Buffer(dataToSend);
+	
+		signal.tx( frame, function( err, result ){
+   			if(err != null)console.log('LWSocket: Error:', err);
+		});
 		
-	if(args.channel == LastRX.channel && args.unit == LastRX.unit && args.device.transID == LastRX.transID){
-		console.log('Flow approved');
-    	callback( null, true );   	
-   }else{
-		console.log('Flow canceled -did not cancel the flow');
-		//callback( null, false ); 
-	}	 
+		
+    	callback( null, true );   
+
+		
+	});
 });
+
 
 
 
@@ -599,11 +522,7 @@ function parseRXData(data) {
 
 	if (data != undefined) {
 		var tune = data[0];
-	
-		//var TransIDArray = createTransIDtoInt(TransmitterID);
-		var Devarr = GetChannelandPage(device);
-	
-	
+		var onoff = 0;
 	return { 
 		tune 				: tune,
 		onoff    			: onoff

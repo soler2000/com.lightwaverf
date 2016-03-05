@@ -454,7 +454,7 @@ function ManageIncomingRX(self, rxData){
 		}else{
 			//Act on Dim Value
 		}
-		lastTXMessageID = rxData.transID;
+		
 	});
 	
 	
