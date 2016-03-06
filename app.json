@@ -281,7 +281,7 @@
 				"small": "../drivers/lw2100/assets/images/small.png"
 		    },
 		    "class": "lw2100",
-		    "capabilities": ["onoff"],
+		    "capabilities": ["button"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -308,8 +308,8 @@
 				"large": "../drivers/lw2101/assets/images/large.png",
 				"small": "../drivers/lw2101/assets/images/small.png"
 		    },
-		    "class": "light",
-		    "capabilities": ["onoff"],
+		    "class": "doorbell",
+		    "capabilities": ["alarm_generic"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -510,14 +510,14 @@
 	                    "name": "tune",
 	                    "type": "dropdown",
 	                    "values": 	[ 
-		                    { "id": "1", "label": { "en": "Westminster" } },
-		                    { "id": "2", "label": { "en": "Ding-Dong" } },
-		                    { "id": "3", "label": { "en": "Tubular-1" } }, 
-		                    { "id": "4", "label": { "en": "Tubular-2" } }, 
-							{ "id": "5", "label": { "en": "Piano-1" } }, 
-							{ "id": "6", "label": { "en": "Piano-2" } }, 
-							{ "id": "7", "label": { "en": "Drum" } }, 
-							{ "id": "8", "label": { "en": "Bell" } }
+		                    { "id": "0", "label": { "en": "Westminster" } },
+		                    { "id": "1", "label": { "en": "Ding-Dong" } },
+		                    { "id": "2", "label": { "en": "Tubular-1" } }, 
+		                    { "id": "3", "label": { "en": "Tubular-2" } }, 
+							{ "id": "4", "label": { "en": "Piano-1" } }, 
+							{ "id": "5", "label": { "en": "Piano-2" } }, 
+							{ "id": "6", "label": { "en": "Drum" } }, 
+							{ "id": "7", "label": { "en": "Bell" } }
 	                    ]
 	                }
 					]

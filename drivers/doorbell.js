@@ -33,13 +33,14 @@ function createDriver(driver) {
 						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short], //Start of frame,Starting 1 added to words due to some starting words beginning on a low   // first 5 High Low
    						eof: [], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low   //no end of frame yet
 						words: [
-							[long,short,long,short,short,	long,short,long,long,short],//done
+							[long,short,long,short,short,	long,short,long,long,short],//done  guitar
 							[long,short,long,short,long,		short,short,long,long,short],//done
 							[long,short,long,short,long,		short,long,short,short,long],//done
 							[long,short,short,long,short,	long,long,short,short,long],//done
 							[long,short,short,long,short,	long,short,long,long,short],//done
 							[long,short,short,long,short,	long,long,short,long,short],//done
 							[long,short,short,long,long,		short,short,long,long,short]//done
+							[long,short,short,long,long,		short,short,long,long,short]//done  repeat of tune 7
 							],
 						interval: 6000, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
 						repetitions: 150, //   total 150    	
@@ -428,6 +429,10 @@ function sendOnOff(deviceIn, onoff) {
 	//device set to 1
 	//SUB ID set to 1
 	
+	
+	
+	
+	///testing only
 	TuneCount = TuneCount +1;
 	
 	if(TuneCount ==7){ 

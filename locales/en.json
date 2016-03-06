@@ -31,6 +31,7 @@
   		},
   		"generate1":{
   			"pressprogram": "Press and hold both buttons on your device untill the blue and red leds start to blink",
+			"linkdoorbell": "Either remove the batteries and reinsert them or press the code button,  Click here to continue",
 			"presssingleprogram": "Press and hold the button on your device untill the blue and amber led start to flash",
 			"presson": "Press and hold both buttons on your device untill the blue and red leds start to blink"
   		},
