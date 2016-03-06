@@ -10,12 +10,14 @@
 		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
 		"lw321_Lightswitch": "Add a LightwaveRF Plug in...",
 		"lw400_Lightswitch": "Add a LightwaveRF Wired Dimmer...",
+		"lw904": "Add a LightwaveRF Door Sensor...",
 		"lw2101_Doorbell": "Add a LightwaveRF Doorbell Ringer...",
 		"lw2100_Doorbell": "Add a LightwaveRF Doorbell Pushbutton..."
     		},
     	"start":{
         	"sendpaircode": "Put device into pairing mode",
   		"has_remote": "Press the On button on your remote",
+		"door_sensor": "Open & close the door",
   		"has_no_remote": "Set up device Pairing",
 		"is_pir": "Activate the PIR by moving in front of it"
   		},
@@ -35,6 +37,7 @@
   		"generate2":{
   			"testIfWorking": "Use the switch above to test your device",
 			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly",
+			"testIfdoor": "Test your device by opening and clossing the door or window",
 			"testIfrecieving_pir": "Test your device by making movement,  once activated use the switch to reset and move again after the timeout on the PIR"
   		}
     }

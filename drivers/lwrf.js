@@ -845,11 +845,25 @@ function flowselection(device,rxData){
 				console.log('lw200remoteOff');
 			}
 		break;		
-					
+			
+		case 'lw904':
+			console.log('Flow lw904');
+			console.log('Command', rxData.Command);
+			if (rxData.Command == 1){
+				Homey.manager('flow').trigger('lw904open');	
+				console.log('lw904activate');
+			}
+			if(rxData.Command == 0){
+			
+				Homey.manager('flow').trigger('lw904close');	
+				console.log('lw200remoteOff');
+			}
+		break;	
+				
 		case 'lw2100':
 			console.log('Flow lw2100');
 			console.log('Command', rxData.Command);
-			if (rxData.Command == 3){
+			if (rxData.Command == 1){
 				Homey.manager('flow').trigger('lw2100press');	
 				console.log('lw2100press');
 			}
@@ -943,10 +957,30 @@ Homey.manager('flow').on('trigger.lw200remoteOff', function( callback, args ){
 	}
 	});
 	
+Homey.manager('flow').on('trigger.lw904open', function( callback, args ){ 
+	if(args.device.transID == LastRX.transID) {
+		console.log('lw904open fired in flow');
+		console.log('Flow approved');
+	   	callback( null, true );   	
+		}else{
+		console.log('lw904open not fired:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}
+	});
 
 
-
-
+Homey.manager('flow').on('trigger.lw904close', function( callback, args ){ 
+	if(args.device.transID == LastRX.transID) {
+		console.log('lw904close fired in flow');
+		console.log('Flow approved');
+	   	callback( null, true );   	
+		}else{
+		console.log('lw904close not fired:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}
+	});
 /*Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callback, args ){
     var items = searchForItemsByName( args.query );
     
