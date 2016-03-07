@@ -356,8 +356,7 @@ function createDriver(driver) {
 				{
 					console.log('SaveRemote at ',displayTime());	
 					console.log('No action is taken just flipping of the switch');		
-					///added for remote end
-					//console.log('tempdata', tempdata);
+	
 							
 					callback();
 				});
@@ -379,14 +378,7 @@ function createDriver(driver) {
 					callback();
 				});
 				
-		socket.on('remote_done', function( data, callback )
-				{
-					//console.log('Remote Done at ',displayTime());
-				});
-				
-				
-							
-		socket.on('done', function( data, callback )
+	/*	socket.on('remote_done', function( data, callback )
 				{
 					console.log('emit Done at', displayTime());
 					var idNumber = Math.round(Math.random() * 0xFFFF);
@@ -404,12 +396,53 @@ function createDriver(driver) {
 						transID3   	: tempdata.transID3,
 						transID4   	: tempdata.transID4,
 						transID5   	: tempdata.transID5,
-						dim			: 0,
 						onoff    	: false,
 						driver   	: driver,
 						});
 					//console.log('LWSocket: Added device: ID',id);
 				
+					//Share data to front end
+					callback(null, 
+						{
+							name: name,
+							data: {
+								id       	: id,
+								address  	: tempdata.address,
+								transID   	: tempdata.transID,
+								transID1   	: tempdata.transID1,
+								transID2   	: tempdata.transID2,
+								transID3   	: tempdata.transID3,
+								transID4   	: tempdata.transID4,
+								transID5   	: tempdata.transID5,
+								onoff    	: false,
+								driver   	: driver,
+								}
+						});
+				});*/
+				
+				
+							
+		socket.on('done', function( data, callback )
+				{
+					console.log('emit Done at', displayTime());
+					var idNumber = Math.round(Math.random() * 0xFFFF);
+					var id = tempdata.address;
+					var name =  __(driver); //__() Is for translation
+					
+					addDevice({
+						id       	: id,
+						address  	: tempdata.address,
+						transID   	: tempdata.transID,
+						transID1   	: tempdata.transID1,
+						transID2   	: tempdata.transID2,
+						transID3   	: tempdata.transID3,
+						transID4   	: tempdata.transID4,
+						transID5   	: tempdata.transID5,
+						dim			: 0,
+						onoff    	: false,
+						driver   	: driver,
+						});
+					
 					//Share data to front end
 					callback(null, 
 						{

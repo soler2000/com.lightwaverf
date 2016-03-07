@@ -260,7 +260,7 @@
 				"small": "./drivers/lw904/assets/images/small.png"
 		    },
 		    "class": "remote",
-		    "capabilities": ["onnoff"],
+		    "capabilities": ["onoff"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -288,7 +288,7 @@
 				"small": "./drivers/lw2100/assets/images/small.png"
 		    },
 		    "class": "lw2100",
-		    "capabilities": ["button"],
+		    "capabilities": ["onoff"],
 	    "pair": [
 				{
 			    	"id": "start"
