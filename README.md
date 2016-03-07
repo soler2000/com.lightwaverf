@@ -13,7 +13,7 @@
   
 **Supports:**  
 
-- LW 2100 Doorbell (remote & Unit) 
+- LW 2100 Doorbell (Remote & Bell Unit) 
 - LW 400/420/430/440  wired dimmable light switches  
 - LW 260/270 Sockets  
 - LW 301 Plug-in Dimmer  
