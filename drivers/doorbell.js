@@ -35,8 +35,8 @@ function createDriver(driver) {
 						words: [
 							[short,long,short,long,		short,long,long,	short],//done   West Minster
 							[short,long,short,long,		long,short,long,	short],//done   Ding Dong
-							[short,long,long,short,		short,long,long,	short],//done 	Tubular Up
-							[long,short,short,long,		short,long,long,	short],//done  	Tubular Down
+							//[short,long,long,short,		short,long,long,	short],//done 	Tubular Up fails
+							//[long,short,short,long,		short,long,long,	short],//done  	Tubular Down fails
 							[long,short,long,short,		short,long,long,	short],//done	Piano 1
 							[long,short,long,short,		long,short,short,long],//done   Piano 2
 							[short,long,long,short,		long,short,short,long],//done	Guitar
@@ -44,7 +44,7 @@ function createDriver(driver) {
 							
 							],
 						interval: 6050, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 100, //   total 150    	
+						repetitions: 60, //   total 150    	
 						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
 						sensitivity: 0.8, 
 						minimalLength: 1,
@@ -65,8 +65,8 @@ function createDriver(driver) {
 						//Start receiving
 						signal.on('payload', function(payload, first)
 							{
-							//should prevent boucing, but need dim value therefore used alternative method
-							 //if(!first)return;
+							//should prevent boucing, 
+							 if(!first)return;
 			
 							//Convert received array to usable data
 							var rxData = parseRXData(payload); 

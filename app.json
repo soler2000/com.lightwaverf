@@ -29,8 +29,8 @@
 			    "nl": "Handheld Remote"
 		    },
 		    "images": {
-				"large": "../drivers/lw100/assets/images/large.png",
-				"small": "../drivers/lw100/assets/images/small.png"
+				"large": "./drivers/lw100/assets/images/large.png",
+				"small": "./drivers/lw100/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onoff", "dim"],
@@ -57,8 +57,8 @@
 			    "nl": "Wireless PIR"
 		    },
 		    "images": {
-				"large": "../drivers/lw107/assets/images/large.png",
-				"small": "../drivers/lw107/assets/images/small.png"
+				"large": "./drivers/lw107/assets/images/large.png",
+				"small": "./drivers/lw107/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onoff"],
@@ -85,8 +85,8 @@
 			    "nl": "Wireless Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw200/assets/images/large.png",
-				"small": "../drivers/lw200/assets/images/small.png"
+				"large": "./drivers/lw200/assets/images/large.png",
+				"small": "./drivers/lw200/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onoff", "dim"],
@@ -113,8 +113,8 @@
 			    "nl": "Schakelaar"
 		    },
 		    "images": {
-				"large": "../drivers/lw260/assets/images/large.png",
-				"small": "../drivers/lw260/assets/images/small.png"
+				"large": "./drivers/lw260/assets/images/large.png",
+				"small": "./drivers/lw260/assets/images/small.png"
 		    },
 		    "class": "socket",
 		    "capabilities": [ "onoff" ],
@@ -147,8 +147,8 @@
 			    "nl": "Plug in Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw301/assets/images/large.png",
-				"small": "../drivers/lw301/assets/images/small.png"
+				"large": "./drivers/lw301/assets/images/large.png",
+				"small": "./drivers/lw301/assets/images/small.png"
 		    },
 		    "class": "light",
 		    "capabilities": [ "onoff", "dim" ],
@@ -181,8 +181,8 @@
 			    "nl": "Plug-in On/Off"
 		    },
 		    "images": {
-				"large": "../drivers/lw321/assets/images/large.png",
-				"small": "../drivers/lw321/assets/images/small.png"
+				"large": "./drivers/lw321/assets/images/large.png",
+				"small": "./drivers/lw321/assets/images/small.png"
 		    },
 		    "class": "light",
 		    "capabilities": [ "onoff" ],
@@ -215,8 +215,8 @@
 			    "nl": "Wired Dimmer"
 		    },
 		    "images": {
-				"large": "../drivers/lw400/assets/images/large.png",
-				"small": "../drivers/lw400/assets/images/small.png"
+				"large": "./drivers/lw400/assets/images/large.png",
+				"small": "./drivers/lw400/assets/images/small.png"
 		    },
 		    "class": "light",
 		    "capabilities": ["onoff", "dim"],
@@ -249,8 +249,8 @@
 			    "nl": "Wireless Door Sensor"
 		    },
 		    "images": {
-				"large": "../drivers/lw904/assets/images/large.png",
-				"small": "../drivers/lw904/assets/images/small.png"
+				"large": "./drivers/lw904/assets/images/large.png",
+				"small": "./drivers/lw904/assets/images/small.png"
 		    },
 		    "class": "remote",
 		    "capabilities": ["onnoff"],
@@ -277,8 +277,8 @@
 			    "nl": "Wireless DoorBell Button"
 		    },
 		    "images": {
-				"large": "../drivers/lw2100/assets/images/large.png",
-				"small": "../drivers/lw2100/assets/images/small.png"
+				"large": "./drivers/lw2100/assets/images/large.png",
+				"small": "./drivers/lw2100/assets/images/small.png"
 		    },
 		    "class": "lw2100",
 		    "capabilities": ["button"],
@@ -305,8 +305,8 @@
 			    "nl": "Wireless DoorBell Ringer"
 		    },
 		    "images": {
-				"large": "../drivers/lw2101/assets/images/large.png",
-				"small": "../drivers/lw2101/assets/images/small.png"
+				"large": "./drivers/lw2101/assets/images/large.png",
+				"small": "./drivers/lw2101/assets/images/small.png"
 		    },
 		    "class": "doorbell",
 		    "capabilities": ["alarm_generic"],
@@ -512,12 +512,10 @@
 	                    "values": 	[ 
 		                    { "id": "0", "label": { "en": "Westminster" } },
 		                    { "id": "1", "label": { "en": "Ding-Dong" } },
-		                    { "id": "2", "label": { "en": "Tubular-1" } }, 
-		                    { "id": "3", "label": { "en": "Tubular-2" } }, 
-							{ "id": "4", "label": { "en": "Piano-1" } }, 
-							{ "id": "5", "label": { "en": "Piano-2" } }, 
-							{ "id": "6", "label": { "en": "Drum" } }, 
-							{ "id": "7", "label": { "en": "Bell" } }
+							{ "id": "3", "label": { "en": "Piano-1" } }, 
+							{ "id": "4", "label": { "en": "Piano-2" } }, 
+							{ "id": "5", "label": { "en": "Drum" } }, 
+							{ "id": "6", "label": { "en": "Bell" } }
 	                    ]
 	                }
 					]
