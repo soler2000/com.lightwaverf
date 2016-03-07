@@ -30,17 +30,17 @@ function createDriver(driver) {
 					var long =650;	//orginal 280  14-15 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short,long], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
+						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short,long,short], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
    						eof: [], //no end of frame
 						words: [
-							[short,short,long,short,		long,short,long,long,	short],//done   West Minster
-							[short,short,long,short,		long,long,short,long,	short],//done   Ding Dong
-							[short,short,short,short,	short,short,long,long,	short],//done 	Tubular Up
-							[short,long,long,long,		long,short,long,long,	short],//done  	Tubular Down
-							[short,long,short,long,		short,short,long,long,	short],//done	Piano 1
-							[short,long,short,long,		short,long,short,short,	long],//done   Piano 2
-							[short,short,long,long,		short,long,short,short,	long],//done	Guitar
-							[short,short,long,short,		long,long,short,short,	long]//done  	Bell
+							[short,long,short,long,		short,long,long,	short],//done   West Minster
+							[short,long,short,long,		long,short,long,	short],//done   Ding Dong
+							[short,long,long,short,		short,long,long,	short],//done 	Tubular Up
+							[long,short,short,long,		short,long,long,	short],//done  	Tubular Down
+							[long,short,long,short,		short,long,long,	short],//done	Piano 1
+							[long,short,long,short,		long,short,short,long],//done   Piano 2
+							[short,long,long,short,		long,short,short,long],//done	Guitar
+							[short,long,short,long,		long,short,short,long]//done  	Bell
 							
 							],
 						interval: 6050, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
