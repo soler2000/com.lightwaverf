@@ -30,20 +30,21 @@ function createDriver(driver) {
 					var long =650;	//orginal 280  14-15 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short], //Start of frame,Starting 1 added to words due to some starting words beginning on a low   // first 5 High Low
-   						eof: [], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low   //no end of frame yet
+						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short,long], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
+   						eof: [], //no end of frame
 						words: [
-							[long,short,long,short,short,	long,short,long,long,short],//done  guitar
-							[long,short,long,short,long,		short,short,long,long,short],//done
-							[long,short,long,short,long,		short,long,short,short,long],//done
-							[long,short,short,long,short,	long,long,short,short,long],//done
-							[long,short,short,long,short,	long,short,long,long,short],//done
-							[long,short,short,long,short,	long,long,short,long,short],//done
-							[long,short,short,long,long,		short,short,long,long,short]//done
-							[long,short,short,long,long,		short,short,long,long,short]//done  repeat of tune 7
+							[short,short,long,short,		long,short,long,long,	short],//done   West Minster
+							[short,short,long,short,		long,long,short,long,	short],//done   Ding Dong
+							[short,short,short,short,	short,short,long,long,	short],//done 	Tubular Up
+							[short,long,long,long,		long,short,long,long,	short],//done  	Tubular Down
+							[short,long,short,long,		short,short,long,long,	short],//done	Piano 1
+							[short,long,short,long,		short,long,short,short,	long],//done   Piano 2
+							[short,short,long,long,		short,long,short,short,	long],//done	Guitar
+							[short,short,long,short,		long,long,short,short,	long]//done  	Bell
+							
 							],
-						interval: 6000, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 150, //   total 150    	
+						interval: 6050, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
+						repetitions: 100, //   total 150    	
 						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
 						sensitivity: 0.8, 
 						minimalLength: 1,
@@ -94,30 +95,32 @@ function createDriver(driver) {
 				//console.log('LW item: Device deleted, you will need to manually remove homey from the device');
 			},//end of deleted
 		
-			capabilities: {
-						onoff: {
-							get: function( device_data, callback ) 
-								{
-									//console.log('capabilities get onoff');
-									var device = getDeviceById(device_data);
-									callback( null, device.onoff );
-								},
-							set: function( device_data, onoff, callback ) 
-								{
-									///console.log('Setting device');
-							
-									var devices = getDeviceById(device_data);
-									
-									//devices.forEach(function(device){
-									//	updateDeviceOnOff(self, device, onoff);
-									//});	
-	
-									sendOnOff(device_data, onoff);
-									callback( null, onoff );
-								}
-						},		
-		}, 
-	
+		
+//alarm generic shoulld be on button , not bell		
+//			capabilities: {
+//						alarm_generic: {
+//							get: function( device_data, callback ) 
+//								{
+//									//console.log('capabilities get onoff');
+//									var device = getDeviceById(device_data);
+//									callback( null, device.onoff );
+//								},
+//							set: function( device_data, onoff, callback ) 
+//								{
+//									///console.log('Setting device');
+//							
+//									var devices = getDeviceById(device_data);
+//									
+//									//devices.forEach(function(device){
+//									//	updateDeviceOnOff(self, device, onoff);
+//									//});	
+//	
+//									sendOnOff(device_data, onoff);
+//									callback( null, onoff );
+//								}
+//						}		
+//		}
+//	
 		
 		pair: function( socket ) {
 			//console.log('pair socket at ',displayTime());
@@ -276,11 +279,11 @@ function createDriver(driver) {
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceByEachtransID(tempdata);
+					var devices = getDeviceById(tempdata);
 					
-					devices.forEach(function(device){
-						updateDeviceOnOff(self, device, onoff)
-					});	
+					//devices.forEach(function(device){
+						updateDeviceOnOff(self, tempdata, onoff)
+					//});	
 						
 					callback();
 				});
@@ -423,7 +426,7 @@ function addDevice(deviceIn) {
 function sendOnOff(deviceIn, onoff) {
 	
 	var device = clone(deviceIn);
-	
+	console.log('Sending onoff from doorbel');
 	//Consider the transmitter iD to be unique to every device so as not to run out of devices
 	//TransmitterID  = is generated a unique vale at pairing
 	//device set to 1
@@ -438,9 +441,9 @@ function sendOnOff(deviceIn, onoff) {
 	if(TuneCount ==7){ 
 		TuneCount =0;
 	}
-	var tune =1;
 	
-	tune = TuneCount;//deviceIn.tune;
+	
+	var tune = TuneCount;//deviceIn.tune;
 	
 	
 	//console.log('****************Send on off*****************');
@@ -488,33 +491,41 @@ function sendOnOff(deviceIn, onoff) {
 //			
 //	}
 //}
-
+var timeout = 3200;  //3.2 seonds to send all message
+var lastfired = 0 ;
 
 Homey.manager('flow').on('action.Choose_tune', function( callback, args ){
 	
 	console.log('Choose_tune fired in flow. args:', args);
 	var devices = getDeviceByAddress(args.device.address );
+	var dataToSend = args.tune;
 	
-	devices.forEach(function(device){
-	
-		var dataToSend = [args.tune];
-	
-		var frame = new Buffer(dataToSend);
-	
-		signal.tx( frame, function( err, result ){
-   			if(err != null)console.log('LWSocket: Error:', err);
-		});
-		
-		
-    	callback( null, true );   
+	//Sends to all devices as currently no clear pairing method.
 
+	var frame = new Buffer(dataToSend);
+	//Prevents double firing and causing hang
+	if (TimeDiff(lastfired)>timeout){
+		lastfired = Date.now();
+		signal.tx( frame, function( err, result ){
+   		if(err != null)console.log('LWSocket: Error:', err);
+			
+		});	
+		console.log('about to fire call back');
 		
-	});
+		//Add delay to sending the callback to prevent other calls during the transmission
+		setTimeout(function(){ callback( null, true ); ; }, timeout);
+		  
+		console.log('fired call back');
+	}
 });
 
+function TimeDiff(LastTime){
+	
+	var now = (new Date()).getTime();
+	var diff = now - LastTime;//diff should be in milis
 
-
-
+return diff;
+}
 
 ///END Flow Section*************************************************************************************************************
 

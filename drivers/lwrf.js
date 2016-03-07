@@ -204,10 +204,7 @@ function createDriver(driver) {
 			});
 			
 	
-			///????????
-			//This is continuing to run after the pairing is closed
-			///????????
-			
+			///????????	console.log('about to fire call back');
 			//Testing of Remote
 			socket.on('test_device', function( data, callback ){
 				
