@@ -117,7 +117,7 @@
 				"small": "./drivers/lw260/assets/images/small.png"
 		    },
 		    "class": "socket",
-		    "capabilities": [ "onoff" ],
+		    "capabilities": [ "onoff"],
 	    "pair": [
 				{
 			    	"id": "start"
@@ -131,10 +131,17 @@
 			    {
 			    	"id": "generate2",
 			    	"navigation": {
-						"next": "done",
+						"next": "choose_slave",
 				    	"prev": "start"
 			    	}
-			    },
+			    },			
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
 				{
 			    	"id": "done"
 			    }
