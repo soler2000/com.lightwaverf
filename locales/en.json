@@ -38,6 +38,7 @@
   		"generate2":{
   			"testIfWorking": "Use the switch above to test your device",
 			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly",
+			"testIfrecieving_doorbell": "Press your door bell to make the bell animate",
 			"testIfdoor": "Test your device by opening and clossing the door or window",
 			"testIfrecieving_pir": "Test your device by making movement,  once activated use the switch to reset and move again after the timeout on the PIR"
   		}

@@ -251,6 +251,32 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
+				//Testing of Remote
+			socket.on('test_device_doorbell', function( data, callback ){
+				//console.log('test device pir at ',displayTime());
+				signal.on('payload', function(payload, first){
+					//console.log('test device pir- payload recieved ',displayTime());
+					
+					if(!first)return;
+			        var rxData = parseRXData(payload);
+					
+					//console.log('rxData.transID',rxData.transID);
+					//console.log('tempdata.transID)',tempdata.transID);
+					
+					
+			        if(rxData.transID == tempdata.transID){
+						if(rxData.command = 3){
+							socket.emit('received_on'); //Send signal to frontend
+							setTimeout(function(){socket.emit('received_off');}, 2500);
+							
+						}else{
+							
+							socket.emit('received_off'); //Send signal to frontend
+						}
+					}
+				});
+				callback(null, tempdata.onoff);
+			});
 			
 			
 			
@@ -606,15 +632,13 @@ function sendOnOff(deviceIn, onoff) {
 }
 var myVar;
 var myVar1;
+
+
 function doorbell(onoff){
 	console.log('Sound Door Bell');
 	var command = 3;
 	
 	
-	//[ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12] 
-	// myVar = setTimeout(alertFunc(), 0);
-	// myVar1 = setTimeout(alertFunc(), 1900);
-	 
 	alertFunc();
 
 	
@@ -629,7 +653,7 @@ function alertFunc() {
 	var dataToSend = [ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12 ];
 	var frame = new Buffer(dataToSend);
 	
-	console.log('Data to Send', dataToSend);
+	console.log('Alert function Data to Send', dataToSend);
 	
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
@@ -860,7 +884,7 @@ function flowselection(device,rxData){
 		case 'lw2100':
 			console.log('Flow lw2100');
 			console.log('Command', rxData.Command);
-			if (rxData.Command == 1){
+			if (rxData.Command == 3){
 				Homey.manager('flow').trigger('lw2100press');	
 				console.log('lw2100press');
 			}
@@ -978,29 +1002,21 @@ Homey.manager('flow').on('trigger.lw904close', function( callback, args ){
 		callback( null, false ); 
 	}
 	});
-/*Homey.manager('flow').on('action.card_id.arg_name.autocomplete', function( callback, args ){
-    var items = searchForItemsByName( args.query );
-    
-    // args can also contain other arguments, so you can specify your autocomplete results
-    
-    
-        example items:
-        [
-            {
-                icon: "https://path.to/icon.png",
-                name: 'Item name',
-                description: 'Optional description',
-                some_value_for_myself: 'that i will recognize when fired, such as an ID'
-            },
-            {
-                ...
-            }
-        ]
-   
-    
-    callback( null, items ); // err, results
-    
-});*/
+
+
+Homey.manager('flow').on('trigger.lw2100press', function( callback, args ){ 
+	if(args.device.transID == LastRX.transID) {
+		console.log('lw2100press fired in flow');
+		console.log('Flow approved');
+	   	callback( null, true );   	
+		}else{
+		console.log('lw2100press not fired:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}
+	});
+
+
 
 ///END Flow Section*************************************************************************************************************
 

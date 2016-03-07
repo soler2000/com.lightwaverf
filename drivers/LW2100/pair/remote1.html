@@ -48,7 +48,7 @@ body.on .onoff:before {
 		updateState(false);
 	});
 
-	Homey.emit('test_device', function(err, onoff) { //Get device status
+	Homey.emit('test_device_doorbell', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
 
@@ -66,6 +66,8 @@ body.on .onoff:before {
 function updateState( value ) {
 	if(value){
 		document.getElementById("onoff").style.display = 'block'; //Should also be done when the dipswitch is set to on
+		//setTimeout(function(){lastTXMessageID =''; }, 2000);
+		//setTimeout(function(){updateState( false ) }, 2000);
 	}else{
 		document.getElementById("onoff").style.display = 'none'; //Should also be done when the dipswitch is set to on
 	
@@ -86,8 +88,7 @@ function updateState( value ) {
 
 
 </script>
-<img src="light.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
-<img id="onoff" src="light_on.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
-<img id="tick" src="tick.svg" alt="" style="z-index: 2; width: 12vw; left: 80vw; position: absolute; margin: 0; display: none;"/>
+<img src="bell.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
+<img id="onoff" src="bell_sound.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <div class="onoff"></div>
-<p data-i18n="pair.generate2.testIfrecieving" style="position: relative; top: 80vh; text-align: center; font-size: 3.5vh;"></p>
+<p data-i18n="pair.generate2.testIfrecieving_doorbell" style="position: relative; top: 80vh; text-align: center; font-size: 3.5vh;"></p>
