@@ -10,7 +10,7 @@ var timeoutPeriod =500;
 var incomingtimeoutflag = true;
 var inmessageQ = [];
 var incomingQueTimer;
-var lastTXMessageID;
+var lastTXMessageID ='';
 
 function createDriver(driver) {
 	var self = 
@@ -53,11 +53,11 @@ function createDriver(driver) {
 							[high1,			low1,			high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2],// 0xE	1+01110111
 							[high1,			low1,			high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2],// 0xF	1+01101111
 							],
-						interval: 10750, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 4,   	
+						interval: 10500, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
+						repetitions: 20,   	
 						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
 						//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-						sensitivity: 0.8, 
+						sensitivity: 0.9, 
 						minimalLength: 10,
                     	maximalLength: 10
 						});
@@ -213,6 +213,24 @@ function createDriver(driver) {
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
+					
+					
+					///need to listen to specific data when pairing
+					//Example below the LW400 remote sends out three transmission of 
+					//either homey decodes inccorectly or the first the lines of 
+					//transmission data are to do with diming 
+					//these three lines are not recieved when a off is pressed before an on
+					//where as if an on command is pressed repeatedly they appear before the on command, nibbel 4
+					//inital data represents the following
+					//On 1 224-255 Set all to level 0-31 (param–224) (or 14-15 first nibble)
+					
+					
+					//Parse data [ 15, 14, 7, 2, 10, 10, 5, 10, 10, 11 ]
+					//Parse data [ 15, 14, 7, 2, 14, 10, 5, 10, 10, 11 ]
+					//Parse data [ 15, 14, 7, 2, 10, 10, 5, 10, 10, 11 ]
+					//Parse data [ 0, 0,  12, 1, 15,  4,15,  9, 15, 15 ]*/
+					
+					
 					
 				
 			        if(rxData.transID == tempdata.transID){
@@ -487,7 +505,7 @@ function ManageIncomingRX(self, rxData){
 		//console.log('transID rxdata:', rxData.transID);
 		//console.log('transID device:', device.transID);
 		
-		if (lastTXMessageID != device.transID  && devices.length ==1){
+		if (lastTXMessageID != device.transID  && devices.length >0){
 			//Homey.log('New message, taking action');	
 			console.log('New message:P1', rxData.para1, 
 								' P2:',rxData.para2 ,  
@@ -495,9 +513,9 @@ function ManageIncomingRX(self, rxData){
 								' TransID:', rxData.transID);
 
 
-				
+			//used in flow to see which remote was last pressed	
 			LastRX = rxData;
-			
+		
 		
 			updateDeviceOnOff(self, device, rxData.onoff);					
 			flowselection(device, LastRX);
@@ -508,8 +526,9 @@ function ManageIncomingRX(self, rxData){
 			//clears the last value after 2 seconds
 			setTimeout(function(){lastTXMessageID =''; }, 2000);
 		}else{
-			//Act on Dim Value
+			console.log('Message rejected in time out of Manage Incoming'); 
 		}
+	
 		
 	});
 	
@@ -850,13 +869,13 @@ function createHexString(intToHexArray) {
 ///Flow Section*************************************************************************************************************
 
 function flowselection(device,rxData){
-	console.log('Flow device Device', device);
-	console.log('Flow device RX', rxData);
+	//console.log('Flow device Device', device);
+	//console.log('Flow device RX', rxData);
 	
 	switch(device.driver) {					
 		case 'lw100':
 			console.log('Flow Selection lw100');
-			console.log('Command', rxData.Command);
+			//console.log('Command', rxData.Command);
 			
 			if (rxData.Command == 1){
 				console.log('Flow lw100 remoteOn');
@@ -931,7 +950,7 @@ function flowselection(device,rxData){
 
 Homey.manager('flow').on('trigger.lw100remoteOn', function( callback, args ){
 	
-	console.log('lw100remoteOn fired in flow. arg:', args);
+	console.log('lw100remoteOn fired in flow. arg: last', args.device.transID, '  ',  LastRX.transID);
 		
 	if(args.channel == LastRX.channel && args.unit == LastRX.unit && args.device.transID == LastRX.transID){
 		console.log('Flow approved');
