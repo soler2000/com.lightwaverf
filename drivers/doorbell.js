@@ -26,27 +26,25 @@ function createDriver(driver) {
 	
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
-					var short =375;	//orginal 293	14-15 samples at 48khz				
-					var long =650;	//orginal 280  14-15 samples at 48khz
+					var short =320;	//	15 samples at 48khz				
+					var long =730;	//  35 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [short,short,long,long,short,short,long,short,long,short,long,short,long,long,short,long,short], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
+						sof: [short,short,long,long, short,short,long,short,	long,short,long,short,long,long,short,long], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
    						eof: [], //no end of frame
 						words: [
-							[short,long,short,long,		short,long,long,	short],//done   West Minster
-							[short,long,short,long,		long,short,long,	short],//done   Ding Dong
-							//[short,long,long,short,		short,long,long,	short],//done 	Tubular Up fails
-							//[long,short,short,long,		short,long,long,	short],//done  	Tubular Down fails
-							[long,short,long,short,		short,long,long,	short],//done	Piano 1
-							[long,short,long,short,		long,short,short,long],//done   Piano 2
-							[short,long,long,short,		long,short,short,long],//done	Guitar
-							[short,long,short,long,		long,short,short,long]//done  	Bell
-							
+							[short,short,long,short,long,short,long,long,short],//done   West Minster
+							[short,short,long,short,long,long,short,long,short],//done   Ding Dong
+							[short,short,long,long,short,short,long,long,short],//done 	Tubular Up fails
+							[short,long,short,short,long,short,long,long,short],//done  	Tubular Down fails
+							[short,long,short,long,short,short,long,long,short],//done	Piano 1
+							[short,long,short,long,short,long,short,short,long],//done   Piano 2
+							[short,short,long,long,short,long,short,short,long],//done	Guitar
+							[short,short,long,short,long,long,short,short,long]//done  	Bell
 							],
 						interval: 6050, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 60, //   total 150    	
-						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
-						sensitivity: 0.8, 
+						repetitions: 60, //   actual remote 150  //number of times a transmition takes place
+						sensitivity: 0.2, //Higher number less selective,  lower number signal most conform 
 						minimalLength: 1,
                     	maximalLength: 1
 						});
@@ -438,7 +436,7 @@ function sendOnOff(deviceIn, onoff) {
 	///testing only
 	TuneCount = TuneCount +1;
 	
-	if(TuneCount ==7){ 
+	if(TuneCount ==5){ 
 		TuneCount =0;
 	}
 	
@@ -455,7 +453,7 @@ function sendOnOff(deviceIn, onoff) {
 	//console.log('Send On / Off, device:',device);
 	
 	
-	var dataToSend = [tune];
+	var dataToSend = [6,7,tune];
 	var frame = new Buffer(dataToSend);
 	
 	console.log('Data to Send', dataToSend);
@@ -537,7 +535,7 @@ function parseRXData(data) {
 	console.log('Parse data', data);
 
 	if (data != undefined) {
-		var tune = data[0];
+		var tune = data[1];
 		var onoff = 0;
 	return { 
 		tune 				: tune,
