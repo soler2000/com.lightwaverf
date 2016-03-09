@@ -34,19 +34,19 @@ function createDriver(driver) {
 					//var longLow = 1350;	//orginal 1273  65 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [1.0], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
-   						eof: [1.0], //high,  End of frame,Ending 1 added to words due to some ending words ending on a low
+						sof: [1,0], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
+   						eof: [1], //high,  End of frame,Ending 1 added to words due to some ending words ending on a low
 						words: [
-							[1.0],
-							[0.0.0.0]
+							[0,0,0,0],
+							[1,0]
 							],
 						manchesterUnit:     271, //set to microsecond duration of single digit for manchester encoding
-    					manchesterMaxUnits: 10, //maximal succeeding units without edges for manchester encoding
+    					manchesterMaxUnits: 9, //maximal succeeding units without edges for manchester encoding
 						interval: 10500, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
 						repetitions: 20,//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
 						sensitivity: 0.9, 
-						minimalLength: 10,
-                    	maximalLength: 10
+						minimalLength: 90,
+                    	maximalLength: 90
 						});
 					
 						
@@ -480,7 +480,7 @@ function ManageIncomingRX(self, rxData){
 	// if message was the same no action
 	// if not the action
 	
-	
+	console.log('rxData:', rxData);
 	var devices = getDeviceByEachtransID(rxData);
 					
 	devices.forEach(function(device){
@@ -1214,60 +1214,187 @@ function HextoTransID(transId1,transId2, transId3, transId4, transId5){
 	return trans;
 }
 
+function parseMessage(data,startpoint){
+	
+	
+	//could do a check to ensure numbers add up to 6
+	
+	var msg = data[startpoint].toString();
+	msg = msg + data[startpoint+1].toString();
+	msg = msg + data[startpoint+2].toString();
+	msg = msg + data[startpoint+3].toString();
+	msg = msg + data[startpoint+4].toString();
+	msg = msg + data[startpoint+5].toString();
+	msg = msg + data[startpoint+6].toString();
+	msg = msg + data[startpoint+7].toString();
+		
+	
+	//console.log(msg);
+	
+	
+	
+	var msgI = 99;
+	
+	switch (msg) {
+    	case '11110110':
+    	   msgI = 0;
+    	    break;
+   	 	case '11101110':
+        	 msgI = 1;
+        	break;
+    	case '11101101':
+        	 msgI = 2;
+        	break;
+    	case '11101011':
+        	 msgI = 3;
+        	break;
+    	case '11011110':
+        	 msgI = 4;
+        	break;
+    	case '11011101':
+        	 msgI = 5;
+        	break;
+    	case '11011011':
+        	 msgI = 6;
+        	break;
+		case '10111110':
+        	 msgI = 7;
+        	break;
+		case '10111101':
+        	 msgI = 8;
+        	break;
+		case '10111011':
+        	 msgI = 9;
+        	break;
+		case '10110111':
+        	 msgI = 10;
+        	break;
+		case '01111110':
+        	 msgI = 11;
+        	break;
+		case '01111101':
+        	 msgI = 12;
+        	break;
+		case '01111011':
+        	 msgI = 13;
+        	break;
+		case '01110111':
+        	 msgI = 14;
+        	break;
+		case '01101111':
+        	 msgI = 15;
+        	break;
+	}
+
+return msgI;
+
+}
+
+
+function outputRXdata(data){
+
+//console.log('Start bit ', data[0]);
+var x = 0;
+console.log('Param 1 ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 9;
+console.log('Param 2 ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 18;
+console.log('Device  ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 27;
+console.log('Command ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 36;
+console.log('TranID 1', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 54;
+console.log('TranID 2', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+x = 63;
+console.log('TranID 3', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
+
+
+
+}
+
 function parseRXData(data) {
 
 
-	console.log('Parse data', data);
-
+	//console.log('Parse data', data);// too long to show
+	//outputRXdata(data);
+	
 	if (data != undefined) {
-		var para1 = data[0];
-		var para2 = data[1];
-		var device = data[2];
-		var Command = data[3];
-
-
-
-
-
-		var TransmitterID = HextoTransID(data[4], 
-										data[5],
-										data[6],
-										data[7],
-										data[8]);
+		
+		
+		//Data format,
+		
+		//First bit always hould be a 1 for start of frame
+		
+		if (data[0] !=1){
+			console.log('incorrect First bit', data[0]);
+			return { 
+				para1 				: 0,
+				para2 				: 0,
+				device				: 0,
+				transID				: 0,
+				transID1 			: 0,
+				transID2 			: 0,
+				transID3 			: 0,
+				transID4 			: 0,
+				transID5 			: 0,
+				TransmitterSubID  	: 0,
+				device   			: 0,
+				channel				: 0,
+				unit				: 0,
+				Command  			: 0,
+				onoff    			: false
+			};
+		}else{
+			
 	
-		var TransmitterSubID = data[9];
-		//var TransIDArray = createTransIDtoInt(TransmitterID);
-		var Devarr = GetChannelandPage(device);
+			var para1 = parseMessage(data,1);	
+		
+			var para2 = parseMessage(data,10);	
+		
+			var device = parseMessage(data,19);	
+		
+			var Command = parseMessage(data,28);	
 	
-	if(Command == "1")
-		{
-		//Turn On
-		onoff = true;
+			var TransmitterID = HextoTransID(parseMessage(data,37), 
+											parseMessage(data,46),
+											parseMessage(data,55),
+											parseMessage(data,64),
+											parseMessage(data,73));
+		
+			var TransmitterSubID = parseMessage(data,82);
+			//var TransIDArray = createTransIDtoInt(TransmitterID);
+			var Devarr = GetChannelandPage(device);
+		
+			if(Command == "1"){
+				//Turn On
+				onoff = true;
+			}else{
+				//Turn Off
+				onoff = false;
+			}
+	
+			return { 
+				para1 				: para1,
+				para2 				: para2,
+				device				: device,
+				transID				: TransmitterID,
+			 	transID1 			: parseMessage(data,37),
+			 	transID2 			: parseMessage(data,46),
+			 	transID3 			: parseMessage(data,55),
+			 	transID4 			: parseMessage(data,64),
+			 	transID5 			: parseMessage(data,73),
+				TransmitterSubID  	: TransmitterSubID,
+				//device   			: device,  doubled
+				channel				: Devarr[0].toString(),
+				unit				: Devarr[1].toString(),
+				Command  			: Command,
+				onoff    			: onoff
+			};
+	
 		}
-	else
-		{
-		//Turn Off
-		onoff = false;
-		}
-	
-	return { 
-		para1 				: para1,
-		para2 				: para2,
-		device				: device,
-		transID				: TransmitterID,
-	 	transID1 			: data[4].toString(),
-	 	transID2 			: data[5].toString(),
-	 	transID3 			: data[6].toString(),
-	 	transID4 			: data[7].toString(),
-	 	transID5 			: data[8].toString(),
-		TransmitterSubID  	: TransmitterSubID,
-		//device   			: device,  doubled
-		channel				: Devarr[0].toString(),
-		unit				: Devarr[1].toString(),
-		Command  			: Command,
-		onoff    			: onoff
-	};
-}}
+	}
+}
 
 
 function dec2bin(dec){
