@@ -50,6 +50,34 @@
 			    }
 		    ]
 		},
+		  {
+		    "id": "lw101",
+		    "name": {
+				"en": "Mood Remote",
+			    "nl": "Mood Remote"
+		    },
+		    "images": {
+				"large": "./drivers/lw101/assets/images/large.png",
+				"small": "./drivers/lw101/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
 		{
 		    "id": "lw107",
 		    "name": {
@@ -498,6 +526,56 @@
 	                    ]
 	                }
             	]
+	        },
+			  {
+	            "id": "lw101remoteOn",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "On Mood" } },
+		                    { "id": "2", "label": { "en": "Off Mood" } },
+		                    { "id": "3", "label": { "en": "Mood 1" } }, 
+		                    { "id": "4", "label": { "en": "Mood 2" } },
+							{ "id": "5", "label": { "en": "Mood 2" } }  
+	                    ]
+	                }
+            	]
+	        },
+			  {
+	            "id": "lw101remoteOff",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "On Mood" } },
+		                    { "id": "2", "label": { "en": "Off Mood" } },
+		                    { "id": "3", "label": { "en": "Mood 1" } }, 
+		                    { "id": "4", "label": { "en": "Mood 2" } },
+							{ "id": "5", "label": { "en": "Mood 2" } }  
+	                    ]
+					}
+            	]
 	        }
 		],
 		 "actions": [
@@ -525,7 +603,7 @@
 							{ "id": "6", "label": { "en": "Bell" } }
 	                    ]
 	                }
-					]
+				]
         }
     ]
 	}		
