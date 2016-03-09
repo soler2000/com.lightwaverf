@@ -44,7 +44,7 @@ function createDriver(driver) {
     					manchesterMaxUnits: 9, //maximal succeeding units without edges for manchester encoding
 						interval: 10500, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
 						repetitions: 20,//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-						sensitivity: 0.9, 
+						sensitivity: 0.95, 
 						minimalLength: 90,
                     	maximalLength: 90
 						});
@@ -91,19 +91,19 @@ function createDriver(driver) {
 				var index = deviceList.indexOf(getDeviceById(device_data));
 				delete deviceList[index];
 				//console.log('LW item: Device deleted, you will need to manually remove homey from the device');
-			},//end of deleted
+			},
 		
 			capabilities: {
 						onoff: {
 							get: function( device_data, callback ) 
 								{
-									//console.log('capabilities get onoff');
+		
 									var device = getDeviceById(device_data);
 									callback( null, device.onoff );
 								},
 							set: function( device_data, onoff, callback ) 
 								{
-									///console.log('Setting device');
+					
 							
 									var devices = getDeviceByEachtransID(device_data);
 									
@@ -191,7 +191,7 @@ function createDriver(driver) {
 			});
 			
 	
-			///????????	console.log('about to fire call back');
+		
 			//Testing of Remote
 			socket.on('test_device', function( data, callback ){
 				
@@ -200,24 +200,6 @@ function createDriver(driver) {
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-					
-					
-					///need to listen to specific data when pairing
-					//Example below the LW400 remote sends out three transmission of 
-					//either homey decodes inccorectly or the first the lines of 
-					//transmission data are to do with diming 
-					//these three lines are not recieved when a off is pressed before an on
-					//where as if an on command is pressed repeatedly they appear before the on command, nibbel 4
-					//inital data represents the following
-					//On 1 224-255 Set all to level 0-31 (param–224) (or 14-15 first nibble)
-					
-					
-					//Parse data [ 15, 14, 7, 2, 10, 10, 5, 10, 10, 11 ]
-					//Parse data [ 15, 14, 7, 2, 14, 10, 5, 10, 10, 11 ]
-					//Parse data [ 15, 14, 7, 2, 10, 10, 5, 10, 10, 11 ]
-					//Parse data [ 0, 0,  12, 1, 15,  4,15,  9, 15, 15 ]*/
-					
-					
 					
 				
 			        if(rxData.transID == tempdata.transID){
@@ -234,7 +216,7 @@ function createDriver(driver) {
 			
 			//Testing of Remote
 			socket.on('test_device_pir', function( data, callback ){
-				//console.log('test device pir at ',displayTime());
+				
 				signal.on('payload', function(payload, first){
 					//console.log('test device pir- payload recieved ',displayTime());
 					
@@ -632,84 +614,33 @@ function sendOnOff(deviceIn, onoff) {
 	//console.log('****************Send on off*****************');
 	if(device === undefined)
 	{
-		console.log('In send on off the device is undefined');
+		console.log('In send on off - the device is undefined');
 	}
-	//console.log('device ID', device.id);
-	//console.log('Send On / Off, device:',device);
-	
-	
 		
 	if( onoff == false){
-		//send off
-		command =0;
+		
+		command =0;//send off
 		//deviceIn.onoff = true; 
 	}
 	else if(onoff == true){
-		//send on
-		command =1;
+		
+		command =1;//send on
 		//deviceIn.onoff = false;
 	}
 	
-	//  should look to get last dim level or dim level from app
-	if (device.driver =='lw2101'){
-		doorbell(1);
-	}else{
-	
 	var dataToSend = createTXarray( 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
-	
-	
-	
-	console.log('Lenght',dataToSend.length);
-	console.log(dataToSend);
-	//var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
-	
-	
 	var frame = new Buffer(dataToSend);
-	
-	console.log('Data to Send', dataToSend);
 	
 	signal.tx( frame, function( err, result ){
    		if(err != null)console.log('LWSocket: Error:', err);
 	});
-	}
-		//need to make this work to send data back,  call back is in capabilities
-		//callback( null, deviceIn.onoff ); //Callback the new dim
-}
-var myVar;
-var myVar1;
-
-
-function doorbell(onoff){
-	console.log('Sound Door Bell');
-	var command = 3;
 	
-	
-	alertFunc();
-
-	
+		//call back not working
+		///callback( null, deviceIn.onoff ); //Callback the new dim
 }
 
 
-
-function alertFunc() {
-	//office light
-	//a85d6
-    //var dataToSend = [ 0, 0, 10, 1, 10, 8, 5, 13, 6, 1 ];
-	var dataToSend = [ 0, 0, 0, 3, 15, 7, 3, 9, 11, 12 ];
-	var frame = new Buffer(dataToSend);
-	
-	console.log('Alert function Data to Send', dataToSend);
-	
-	signal.tx( frame, function( err, result ){
-   		if(err != null)console.log('LWSocket: Error:', err);
-	});
-}
-
-
-
-
-
-
+///Dim  Section*************************************************************************************************************
 // Get the Dim
 function getDim( deviceIn, callback ) {
 	//devices.forEach(function(device){ //Loop trough all registered devices
@@ -729,7 +660,6 @@ function getDim( deviceIn, callback ) {
 function setDim( deviceIn, dim, callback ) {
 	
 	console.log("setDim: ", dim);
-	
 	//Device In does not contain the correct onoff value
 	console.log("Device In: ", deviceIn);
 	var deviceOnOff = getDeviceById(deviceIn);
@@ -737,130 +667,80 @@ function setDim( deviceIn, dim, callback ) {
 	
 	
 	var last_dim = deviceIn.dim;
-	//increase dim Parameter: 11  Parameter1: 15
+	// increase dim Parameter: 11  Parameter1: 15
 	// decrease dim Parameter: 10  Parameter1: 0
 	var Para1 = 0;
 	var Para2 = 0;
 	var command =0;
 	
-			if (dim < 0.05) { //Totally off
-				//device.bridge.sendCommands(commands.white.off(device.group));
-				Para1 = 0;
-				Para2 = 0;
-				command = 0;
-			} else if (dim > 0.95) { //Totally on
-				//device.bridge.sendCommands(commands.white.maxBright(device.group));
-				Para1 = 0;
-				Para2 = 0;
-				command = 1;
-			} else {
-				
-				
-				var dim_new = Math.round((dim*31) );
-				dim_new= dim_new + 192;
+		if (dim < 0.05) { //Totally off
+			Para1 = 0;
+			Para2 = 0;
+			command = 0;
+		} else if (dim > 0.95) { //Totally on
+			Para1 = 0;
+			Para2 = 0;
+			command = 1;
+		} else {			
+		var dim_new = Math.round((dim*31) );
+		dim_new= dim_new + 192;
 				
 			
-				//0-32 in hex,  first digit para1 second digit para2
+		//0-32 in hex,  first digit para1 second digit para2		
+		var dArray = createHexString(dim_new);
 				
-				var dArray = createHexString(dim_new);
-				
-				Para1 = parseInt(dArray[0],16);
-				Para2 = parseInt(dArray[1],16);
-				command = 1;
+		Para1 = parseInt(dArray[0],16);
+		Para2 = parseInt(dArray[1],16);
+		command = 1;
 
 				
-			}
+	}
 			
-			//only fire if the dim value has changed to prevent over firing
-			if ( dim_new != last_dim){
+	//only fire if the dim value has changed to prevent over firing
+	if ( dim_new != last_dim){
 				
-			var dataToSend = createTXarray( Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 );
+		var dataToSend = createTXarray( 	Para1, 
+										Para2, 
+										10, 
+										command, 
+										deviceIn.transID1, 
+										deviceIn.transID2, 
+										deviceIn.transID3, 
+										deviceIn.transID4, 
+										deviceIn.transID5, 
+											1 );
 			
-			var frame = new Buffer(dataToSend);
-	
+		var frame = new Buffer(dataToSend);
 			
-			
-			
-			//Trigger to detect if lights are on or offf
-			//var device = getDeviceById(device_data);
-			if (deviceOnOff.onoff== true)
-			{
-				signal.tx( frame, function( err, result ){
-   				if(err != null)console.log('LWSocket: Error:', err);
+		//Trigger to detect if lights are on or offf
+		//var device = getDeviceById(device_data);
+		if (deviceOnOff.onoff== true)
+		{
+			signal.tx( frame, function( err, result ){
+   			if(err != null)console.log('LWSocket: Error:', err);
 				console.log('Light on data sent', dataToSend);
 			})
-			}
-			else if(deviceOnOff.onoff == false)
-			{
-				console.log('Light off so dim level not transmitted', dataToSend);
-				}
+		}
+		else if(deviceOnOff.onoff == false)
+		{
+			console.log('Light off so dim level not transmitted', dataToSend);
+		}
 	
 			
-			
+		deviceIn.dim = dim; //Set the new dim
+		callback( null, deviceIn.dim ); //Callback the new dim
 	
-			deviceIn.dim = dim; //Set the new dim
-			//console.log("setState callback", deviceIn.dim);
-			callback( null, deviceIn.dim ); //Callback the new dim
-	
-			}
+	}
 }
-
-function createTransIDtoInt(Hexs) {
-	   console.log("input Hex String", Hexs );	
-	   var ns = Hexs.tostring();
-	   
-	   if (ns.length ==5){
-       	var trans1 = Hexs.substring(0,1).tostring();
-	   	trans1 =parseInt("0x" + trans1,16);
-	   	var trans2 = Hexs.substring(1,2).tostring();
-	   	trans2 =parseInt("0x" + trans2,16);
-	   	var trans3 = Hexs.substring(2,3).tostring();
-	   	trans3 =parseInt("0x" + trans3,16);
-	   	var trans4 = Hexs.substring(3,4).tostring();
-	   	trans4 =parseInt("0x" + trans4,16);   
-       	var trans5 = Hexs.substring(4,5).tostring();
-	   	trans5 =parseInt("0x" + trans5,16);
-	   
-	   	var result = [trans1, trans2, trans3, trans4, trans5];
-	   	}
-	   else
-	   	{
-		   var result = [];
-	   	}
-	   
-	
-		console.log("Int array", result );	  
-		
-
-    return result;
-}
-
-function createHexString(intToHexArray) {
- 
-        var str = intToHexArray.toString(16);
-
-        str = str.length == 1 ? "0" + str : 
-              str.length == 2 ? str :
-              str.substring(str.length-2, str.length);
-			  var result = [str.substring(0, 1), str.substring(1, 2)];
-			  
-		console.log("input String", intToHexArray );	 	  
-		console.log("Hex String", str );	  
-		console.log("array 1", str.substring(0, 1) );
-	 	console.log("array 2", str.substring(1, 2));
-	 
-	 	
-     	console.log("array 1", result[0] );
-	 	console.log("array 2", result[1] );
+///End Dim Section*************************************************************************************************************
 
 
-    return result;
-}
 
 
 
 
 ///Flow Section*************************************************************************************************************
+
 
 function flowselection(device,rxData){
 	//console.log('Flow device Device', device);
@@ -950,7 +830,7 @@ Homey.manager('flow').on('trigger.lw100remoteOn', function( callback, args ){
 		console.log('Flow approved');
     	callback( null, true );   	
    }else{
-		console.log('Flow canceled -did not cancel the flow');
+		console.log('Flow canceled');
 		//callback( null, false ); 
 	}	 
 });
@@ -1422,6 +1302,65 @@ function parseRXData(data) {
 		}
 	}
 }
+
+
+
+///TransID Section*************************************************************************************************************
+function createTransIDtoInt(Hexs) {
+	   console.log("input Hex String", Hexs );	
+	   var ns = Hexs.tostring();
+	   
+	   if (ns.length ==5){
+       	var trans1 = Hexs.substring(0,1).tostring();
+	   	trans1 =parseInt("0x" + trans1,16);
+	   	var trans2 = Hexs.substring(1,2).tostring();
+	   	trans2 =parseInt("0x" + trans2,16);
+	   	var trans3 = Hexs.substring(2,3).tostring();
+	   	trans3 =parseInt("0x" + trans3,16);
+	   	var trans4 = Hexs.substring(3,4).tostring();
+	   	trans4 =parseInt("0x" + trans4,16);   
+       	var trans5 = Hexs.substring(4,5).tostring();
+	   	trans5 =parseInt("0x" + trans5,16);
+	   
+	   	var result = [trans1, trans2, trans3, trans4, trans5];
+	   	}
+	   else
+	   	{
+		   var result = [];
+	   	}
+	   
+	
+		console.log("Int array", result );	  
+		
+
+    return result;
+}
+
+function createHexString(intToHexArray) {
+ 
+        var str = intToHexArray.toString(16);
+
+        str = str.length == 1 ? "0" + str : 
+              str.length == 2 ? str :
+              str.substring(str.length-2, str.length);
+			  var result = [str.substring(0, 1), str.substring(1, 2)];
+			  
+		console.log("input String", intToHexArray );	 	  
+		console.log("Hex String", str );	  
+		console.log("array 1", str.substring(0, 1) );
+	 	console.log("array 2", str.substring(1, 2));
+	 
+	 	
+     	console.log("array 1", result[0] );
+	 	console.log("array 2", result[1] );
+
+
+    return result;
+}
+
+///TransID Section*************************************************************************************************************
+
+
 
 
 function dec2bin(dec){
