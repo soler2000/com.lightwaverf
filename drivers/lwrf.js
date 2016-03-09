@@ -28,35 +28,22 @@ function createDriver(driver) {
 					
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
-					var high1 =300;	//orginal 293	14-15 samples at 48khz				
-					var high2 =300;	//orginal 280  14-15 samples at 48khz
-					var low1 = 1350;	//orginal 1273  65 samples at 48khz
+					
+					//var high =300;	//orginal 293	14-15 samples at 48khz				
+					//var low =300;	//orginal 280  14-15 samples at 48khz
+					//var longLow = 1350;	//orginal 1273  65 samples at 48khz
 					signal = new Signal(
 						{   
-						sof: [high1,high2], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
-   						eof: [high1], //high1,  End of frame,Ending 1 added to words due to some ending words ending on a low
+						sof: [1.0], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
+   						eof: [1.0], //high,  End of frame,Ending 1 added to words due to some ending words ending on a low
 						words: [
-							[high1,high2,	high1,high2,  	high1,high2,		high1,high2,		high1,			low1,  			high1,high2,		high1,			low1],// 0x0	1+11110110
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,high2,  	high1,high2,		high1,			low1],// 0x1	1+11101110
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,high2,  	high1,			low1,			high1,high2],// 0x2	1+11101101
-							[high1,high2,  	high1,high2,		high1,high2,  	high1,			low1,			high1,			low1,  			high1,high2,  	high1,high2],// 0x3	1+11101011
-							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,high2,  	high1,high2,		high1,			low1],// 0x4	1+11011110
-							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,high2,  	high1,			low1,			high1,high2],// 0x5	1+11011101
-							[high1,high2,  	high1,high2,		high1,			low1,  			high1,high2,		high1,			low1,  			high1,high2,  	high1,high2],// 0x6	1+11011011
-							[high1,high2,	high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1],	// 0x7 1+10111110
-							[high1,high2,	high1,			low1, 			high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2],// 0x8 1+10111101
-							[high1,high2,	high1,			low1,			high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2],// 0x9	1+10111011
-							[high1,high2,	high1,			low1,			high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2],// 0xA	1+10110111
-							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1],// 0xB	1+01111110
-							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2],// 0xC	1+01111101
-							[high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2],// 0xD	1+01111011
-							[high1,			low1,			high1,high2,		high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2],// 0xE	1+01110111
-							[high1,			low1,			high1,high2,		high1,			low1,			high1,high2,		high1,high2,		high1,high2,		high1,high2],// 0xF	1+01101111
+							[1.0],
+							[0.0.0.0]
 							],
+						manchesterUnit:     271, //set to microsecond duration of single digit for manchester encoding
+    					manchesterMaxUnits: 10, //maximal succeeding units without edges for manchester encoding
 						interval: 10500, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 20,   	
-						//This is the trigger count for detecting a signal,, this may also be the number of times a transmition takes place
-						//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
+						repetitions: 20,//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
 						sensitivity: 0.9, 
 						minimalLength: 10,
                     	maximalLength: 10
