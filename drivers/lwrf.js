@@ -1231,93 +1231,40 @@ function parseMessage(data,startpoint){
 	
 	//console.log(msg);
 	
+	var transcodes = [
+				 '11110110',
+   	 			 '11101110',
+   			 	 '11101101',
+    			 '11101011',
+    			 '11011110',
+    			 '11011101',
+    			 '11011011',
+				 '10111110',
+				 '10111101',
+				 '10111011',   
+				 '10110111',  
+				 '01111110',   
+				 '01111101',    	
+				 '01111011',       	
+				 '01110111',
+				 '01101111'];
+
+			
+    var msgI = transcodes.indexOf(msg);
 	
-	
-	var msgI = 99;
-	
-	switch (msg) {
-    	case '11110110':
-    	   msgI = 0;
-    	    break;
-   	 	case '11101110':
-        	 msgI = 1;
-        	break;
-    	case '11101101':
-        	 msgI = 2;
-        	break;
-    	case '11101011':
-        	 msgI = 3;
-        	break;
-    	case '11011110':
-        	 msgI = 4;
-        	break;
-    	case '11011101':
-        	 msgI = 5;
-        	break;
-    	case '11011011':
-        	 msgI = 6;
-        	break;
-		case '10111110':
-        	 msgI = 7;
-        	break;
-		case '10111101':
-        	 msgI = 8;
-        	break;
-		case '10111011':
-        	 msgI = 9;
-        	break;
-		case '10110111':
-        	 msgI = 10;
-        	break;
-		case '01111110':
-        	 msgI = 11;
-        	break;
-		case '01111101':
-        	 msgI = 12;
-        	break;
-		case '01111011':
-        	 msgI = 13;
-        	break;
-		case '01110111':
-        	 msgI = 14;
-        	break;
-		case '01101111':
-        	 msgI = 15;
-        	break;
-	}
 
 return msgI;
 
 }
 
 
-function outputRXdata(data){
 
-//console.log('Start bit ', data[0]);
-var x = 0;
-console.log('Param 1 ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 9;
-console.log('Param 2 ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 18;
-console.log('Device  ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 27;
-console.log('Command ', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 36;
-console.log('TranID 1', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 54;
-console.log('TranID 2', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-x = 63;
-console.log('TranID 3', data[x], ' ',data[x+1], data[x+2], data[x+3], data[x+4], data[x+5], data[x+6], data[x+7] ,data[x+8] );
-
-
-
-}
 
 function parseRXData(data) {
 
 
 	//console.log('Parse data', data);// too long to show
-	//outputRXdata(data);
+
 	
 	if (data != undefined) {
 		
