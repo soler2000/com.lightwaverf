@@ -655,9 +655,15 @@ function sendOnOff(deviceIn, onoff) {
 		doorbell(1);
 	}else{
 	
+	var dataToSend = createTXarray( 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
 	
 	
-	var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
+	
+	console.log('Lenght',dataToSend.length);
+	console.log(dataToSend);
+	//var dataToSend = [ 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 ];
+	
+	
 	var frame = new Buffer(dataToSend);
 	
 	console.log('Data to Send', dataToSend);
@@ -768,7 +774,8 @@ function setDim( deviceIn, dim, callback ) {
 			//only fire if the dim value has changed to prevent over firing
 			if ( dim_new != last_dim){
 				
-			var dataToSend = [ Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 ];
+			var dataToSend = createTXarray( Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 );
+			
 			var frame = new Buffer(dataToSend);
 	
 			
@@ -1214,24 +1221,7 @@ function HextoTransID(transId1,transId2, transId3, transId4, transId5){
 	return trans;
 }
 
-function parseMessage(data,startpoint){
-	
-	
-	//could do a check to ensure numbers add up to 6
-	
-	var msg = data[startpoint].toString();
-	msg = msg + data[startpoint+1].toString();
-	msg = msg + data[startpoint+2].toString();
-	msg = msg + data[startpoint+3].toString();
-	msg = msg + data[startpoint+4].toString();
-	msg = msg + data[startpoint+5].toString();
-	msg = msg + data[startpoint+6].toString();
-	msg = msg + data[startpoint+7].toString();
-		
-	
-	//console.log(msg);
-	
-	var transcodes = [
+var transcodes = [
 				 '11110110',
    	 			 '11101110',
    			 	 '11101101',
@@ -1247,9 +1237,24 @@ function parseMessage(data,startpoint){
 				 '01111101',    	
 				 '01111011',       	
 				 '01110111',
-				 '01101111'];
+				 '01101111']
 
-			
+
+
+
+function parseMessage(data,startpoint){
+	
+	
+	//could do a check to ensure numbers add up to 6
+	
+	var msg = data[startpoint].toString();
+	msg = msg + data[startpoint+1].toString();
+	msg = msg + data[startpoint+2].toString();
+	msg = msg + data[startpoint+3].toString();
+	msg = msg + data[startpoint+4].toString();
+	msg = msg + data[startpoint+5].toString();
+	msg = msg + data[startpoint+6].toString();
+	msg = msg + data[startpoint+7].toString();		
     var msgI = transcodes.indexOf(msg);
 	
 
@@ -1257,7 +1262,82 @@ return msgI;
 
 }
 
+function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3, TransID4, TransID5, SubID){
+	
+	
+	//var dataToSend = [ Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 ];
+		
+		//add Para1
+		
+		var txSignal =[1];
+		//txSignal.push(1);
+		var str;
+		str = transcodes[parseInt(Para1,10)];
+		//str = transcodes[0];
 
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		console.log('Para1', txSignal);
+		
+		
+		
+		txSignal.push(1);
+		str = transcodes[parseInt(Para2,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);	
+		str = transcodes[parseInt(Device,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);		
+		str = transcodes[parseInt(Command,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);		
+		str = transcodes[parseInt(TransID1,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);		
+		str = transcodes[parseInt(TransID2,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);		
+		str = transcodes[parseInt(TransID3,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		
+		txSignal.push(1);		
+		str = transcodes[parseInt(TransID4,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+				
+		txSignal.push(1);	
+		str = transcodes[parseInt(TransID5,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+		txSignal.push(1);		
+		str = transcodes[parseInt(SubID,10)];
+		for (var i = 0, len = str.length; i < len; i++) {
+  			txSignal.push(str[i]);
+		}
+	console.log(	txSignal);		
+	return txSignal;		
+	}
 
 
 function parseRXData(data) {
