@@ -302,9 +302,6 @@ function createDriver(driver) {
 								onoff  	   	: rxData.onoff,
 								}		
 							console.log('Trans ID ',rxData.transID);
-							console.log('Trans ID ',rxData.transID1, rxData.transID2, rxData.transID3, rxData.transID4, rxData.transID5);
-							
-							console.log('Temp Data stored at',displayTime());
 							socket.emit('remote_found');
 							callback(null, tempdata.onoff);
 						});
@@ -317,16 +314,12 @@ function createDriver(driver) {
 			//Testing of remote	
 			socket.on('generate', function( data, callback )
 				{
-					//console.log('generate at ',displayTime());
+					console.log('generate at ',displayTime());
 					signal.on('payload', function(payload, first)
 						{
-							
-							//console.log('generate payload at ',displayTime());
 							if(!first)return;
 			        		var rxData = parseRXData(payload);
-							
-							//console.log('tempdata', tempdata);
-							
+						
 			       			if(rxData.address == tempdata.address ){
 							if(rxData.onoff){
 								socket.emit('received_on'); //Send signal to frontend
@@ -457,25 +450,20 @@ function createDriver(driver) {
 
 
 
-
 function ManageIncomingRX(self, rxData){
 	// if message was the same no action
 	// if not the action
 	
-	console.log('rxData:', rxData);
+	//console.log('rxData:', rxData);
 	var devices = getDeviceByEachtransID(rxData);
 					
 	devices.forEach(function(device){
 		
 		console.log('*****************Pay load received****************');
 		console.log(displayTime());
-	
-		//console.log('Devices Found:', devices.length);
-		//console.log('transID rxdata:', rxData.transID);
-		//console.log('transID device:', device.transID);
 		
 		if (lastTXMessageID != device.transID  && devices.length >0){
-			//Homey.log('New message, taking action');	
+	
 			console.log('New message:P1', rxData.para1, 
 								' P2:',rxData.para2 ,  
 								' Cmd:', rxData.Command,
@@ -495,7 +483,10 @@ function ManageIncomingRX(self, rxData){
 			//clears the last value after 2 seconds
 			setTimeout(function(){lastTXMessageID =''; }, 2000);
 		}else{
-			console.log('Message rejected in time out of Manage Incoming'); 
+			//checks
+			//is it a mood device,  device 15?  if so do nothing
+			//is it a parameter command,  if so act
+			console.log('Message rejected - Within time out setting of Manage Incoming'); 
 		}
 	
 		
@@ -592,6 +583,7 @@ function addDevice(deviceIn) {
 	});	
 }
 
+
 function sendOnOff(deviceIn, onoff) {
 	
 	var device = clone(deviceIn);
@@ -620,12 +612,12 @@ function sendOnOff(deviceIn, onoff) {
 	if( onoff == false){
 		
 		command =0;//send off
-		//deviceIn.onoff = true; 
+		deviceIn.onoff = true; 
 	}
 	else if(onoff == true){
 		
 		command =1;//send on
-		//deviceIn.onoff = false;
+		deviceIn.onoff = false;
 	}
 	
 	var dataToSend = createTXarray( 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
@@ -718,12 +710,12 @@ function setDim( deviceIn, dim, callback ) {
 		{
 			signal.tx( frame, function( err, result ){
    			if(err != null)console.log('LWSocket: Error:', err);
-				console.log('Light on data sent', dataToSend);
+				console.log('Light on');
 			})
 		}
 		else if(deviceOnOff.onoff == false)
 		{
-			console.log('Light off so dim level not transmitted', dataToSend);
+			console.log('Light off so dim level not transmitted');
 		}
 	
 			
@@ -751,7 +743,7 @@ function flowselection(device,rxData){
 			console.log('Flow Selection lw100');
 			//console.log('Command', rxData.Command);
 			
-			if (rxData.Command == 1){
+			if (rxData.Command == 1){    ///mood1
 				console.log('Flow lw100 remoteOn');
 				Homey.manager('flow').trigger('lw100remoteOn');	
 				
@@ -759,6 +751,44 @@ function flowselection(device,rxData){
 			if (rxData.Command == 0){
 				console.log('Flow lw100 remoteOff');
 				Homey.manager('flow').trigger('lw100remoteOff');	
+				
+			}
+		break;
+		
+		case 'lw101'://Mood switch
+			console.log('Flow Selection lw101 P1: P2', rxData.para1, rxData.para2);
+			
+			//console.log('Command', rxData.Command);
+			if (rxData.para1 == 8  && rxData.para2 == 1){
+				console.log('Flow lw101 lw101remoteMoodOn');
+				Homey.manager('flow').trigger('lw101remoteMoodOn');	
+				
+			}
+			if (rxData.para1 == 8  && rxData.para2 == 0){
+				console.log('Flow lw101 lw101remoteMoodoff');
+				Homey.manager('flow').trigger('lw101remoteMoodoff');	
+				
+			}
+			
+			if (rxData.para1 == 12  && rxData.para2 == 0){
+				console.log('Flow lw101 lw101remoteAllOff');
+				Homey.manager('flow').trigger('lw101remoteAllOff');	
+				
+			}
+			
+			if (rxData.para1 == 8  && rxData.para2 == 2){
+				console.log('Flow lw101 lw101remoteMood1 - Trigger');
+				Homey.manager('flow').trigger('lw101remoteMood1');	
+				
+			}
+			if (rxData.para1 == 8  && rxData.para2 == 3){
+				console.log('Flow lw101 lw101remoteMood2');
+				Homey.manager('flow').trigger('lw101remoteMood2');	
+				
+			}
+			if (rxData.para1 == 8  && rxData.para2 == 4){
+				console.log('Flow lw101 lw101remoteMood3');
+				Homey.manager('flow').trigger('lw101remoteMood3');	
 				
 			}
 		break;
@@ -849,6 +879,106 @@ Homey.manager('flow').on('trigger.lw100remoteOff', function( callback, args ){
 		callback( null, false ); 
 	}	 
 });
+
+
+
+
+
+
+
+
+
+Homey.manager('flow').on('trigger.lw101remoteMoodOn', function( callback, args ){
+	
+	
+		
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteMoodOn fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteMoodOn fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+Homey.manager('flow').on('trigger.lw101remoteMoodoff', function( callback, args ){
+	
+	console.log('Flow lw101remoteMoodoff triggered');
+		
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteMoodoff fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteMoodOff fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+
+Homey.manager('flow').on('trigger.lw101remoteAllOff', function( callback, args ){
+	
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteAllOff fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteAllOff fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+
+
+Homey.manager('flow').on('trigger.lw101remoteMood1', function( callback, args ){
+	
+	
+	console.log('lw101remoteMood1 fired in flow. arg:', args ,lastrx);
+
+
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteMood1 fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteMood1 fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+
+Homey.manager('flow').on('trigger.lw101remoteMood2', function( callback, args ){
+	
+	
+		
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteMood2 fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteMood2 fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+
+Homey.manager('flow').on('trigger.lw101remoteMood3', function( callback, args ){
+	
+	
+		
+	if(args.device.transID == LastRX.transID){
+		console.log('lw101remoteMood3 fired in flow. arg:', args);
+		console.log('Flow approved');
+    	callback( null, true );   	
+   }else{
+	   	console.log('lw101remoteMood3 fired in flow. arg:', args);
+		console.log('Flow canceled');
+		callback( null, false ); 
+	}	 
+});
+
+
 
 
 
@@ -1143,10 +1273,7 @@ return msgI;
 }
 
 function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3, TransID4, TransID5, SubID){
-	
-	
-	//var dataToSend = [ Para1, Para2, 10, command, deviceIn.transID1, deviceIn.transID2, deviceIn.transID3, deviceIn.transID4, deviceIn.transID5, 1 ];
-		
+
 		//add Para1
 		
 		var txSignal =[1];
@@ -1158,8 +1285,6 @@ function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3,
 		for (var i = 0, len = str.length; i < len; i++) {
   			txSignal.push(str[i]);
 		}
-		
-		console.log('Para1', txSignal);
 		
 		
 		
@@ -1215,7 +1340,7 @@ function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3,
 		for (var i = 0, len = str.length; i < len; i++) {
   			txSignal.push(str[i]);
 		}
-	console.log(	txSignal);		
+		
 	return txSignal;		
 	}
 

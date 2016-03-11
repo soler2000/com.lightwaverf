@@ -54,7 +54,7 @@ body.on .onoff:before {
 	});			
 
 	document.querySelector('.onoff').addEventListener('click', function(){
-		Homey.emit('saveRemote', !state, function(err, onoff) { //Send signal
+		Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
 		});	
 		updateState(!state);
 	});

@@ -526,11 +526,11 @@
 	                    ]
 	                }
             	]
-	        },
-			  {
-	            "id": "lw101remoteOn",
+	        }, 
+			{
+	            "id": "lw101remoteMoodOn",
 	            "title": {
-	                "en": "Off is pressed on your remote"
+	                "en": "Mood On is pressed"
 	            },
 	            "args": [
 	                {
@@ -538,24 +538,41 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw101",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
+	                }
+            	]
+	        }, 
+			{
+	            "id": "lw101remoteMoodoff",
+	            "title": {
+	                "en": "Mood Off is pressed"
+	            },
+	            "args": [
 	                {
-	                    "name": "channel",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "1", "label": { "en": "On Mood" } },
-		                    { "id": "2", "label": { "en": "Off Mood" } },
-		                    { "id": "3", "label": { "en": "Mood 1" } }, 
-		                    { "id": "4", "label": { "en": "Mood 2" } },
-							{ "id": "5", "label": { "en": "Mood 2" } }  
-	                    ]
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        }, 
+			{
+	            "id": "lw101remoteAllOff",
+	            "title": {
+	                "en": "All off is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
 	                }
             	]
 	        },
 			  {
-	            "id": "lw101remoteOff",
+	            "id": "lw101remoteMood1",
 	            "title": {
-	                "en": "Off is pressed on your remote"
+	                "en": "Mood I is pressed"
 	            },
 	            "args": [
 	                {
@@ -563,20 +580,39 @@
 	                    "type": "device",
 	                    "filter": "driver_id=lw101",
 	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
-	                },
+	                }
+            	]
+	        },
+			{
+	            "id": "lw101remoteMood2",
+	            "title": {
+	                "en": "Mood II is pressed"
+	            },
+	            "args": [
 	                {
-	                    "name": "channel",
-	                    "type": "dropdown",
-	                    "values": 	[ 
-		                    { "id": "1", "label": { "en": "On Mood" } },
-		                    { "id": "2", "label": { "en": "Off Mood" } },
-		                    { "id": "3", "label": { "en": "Mood 1" } }, 
-		                    { "id": "4", "label": { "en": "Mood 2" } },
-							{ "id": "5", "label": { "en": "Mood 2" } }  
-	                    ]
-					}
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw101remoteMood3",
+	            "title": {
+	                "en": "Mood III is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
             	]
 	        }
+
+
 		],
 		 "actions": [
         {
