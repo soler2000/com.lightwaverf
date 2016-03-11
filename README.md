@@ -17,7 +17,7 @@
 - LW 400/420/430/440  wired dimmable light switches  
 - LW 260/270 Sockets  
 - LW 301 Plug-in Dimmer  
-- Lw 321 Plug-in On/Off  
+- LW 321 Plug-in On/Off  
 - LW 107 PIR Sensor  
 - LW 100 Remote  
 
