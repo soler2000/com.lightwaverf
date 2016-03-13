@@ -48,7 +48,7 @@ body.on .onoff:before {
 		updateState(false);
 	});
 
-	Homey.emit('test_device', function(err, onoff) { //Get device status
+	Homey.emit('test_moodswitch', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
 

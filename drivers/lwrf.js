@@ -213,8 +213,43 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
+			//Testing of MoodSwitch
+			socket.on('test_moodswitch', function( data, callback ){
+				
+				signal.on('payload', function(payload, first){
+					console.log('test device - payload recieved ',displayTime());
+					
+					if(!first)return;
+			        var rxData = parseRXData(payload);
+					
+				
+			         if(rxData.transID == tempdata.transID){
+						console.log('Para1', rxData.para1);
+						console.log('Para2', rxData.para2);
+						console.log('Device', rxData.device);
+						console.log('Command', rxData.Command);
+						if(rxData.device == 15){ //in mood mode
+							//P1 0 for on or 8 for off
+							if(rxData.para1 == 8 && rxData.para2 == 1){
+								socket.emit('received_on'); //Send signal to frontend
+							}else{
+								socket.emit('received_off'); //Send signal to frontend
+							}					
+						}else{
+							//not in moood mode
+							if(rxData.Command == 1){
+								socket.emit('received_on'); //Send signal to frontend
+							}else{
+								socket.emit('received_off'); //Send signal to frontend
+							}			
+						}
+					}
+				});
+				callback(null, tempdata.onoff);
+			});
 			
-			//Testing of Remote
+			
+			//Testing of PIR
 			socket.on('test_device_pir', function( data, callback ){
 				
 				signal.on('payload', function(payload, first){
@@ -228,7 +263,7 @@ function createDriver(driver) {
 					
 					
 			        if(rxData.transID == tempdata.transID){
-						if(rxData.command = 9){
+						if(rxData.command == 9){
 							socket.emit('received_on'); //Send signal to frontend
 						}else{
 							socket.emit('received_off'); //Send signal to frontend
@@ -252,7 +287,7 @@ function createDriver(driver) {
 					
 					
 			        if(rxData.transID == tempdata.transID){
-						if(rxData.command = 3){
+						if(rxData.command == 3){
 							socket.emit('received_on'); //Send signal to frontend
 							setTimeout(function(){socket.emit('received_off');}, 2500);
 							
