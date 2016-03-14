@@ -123,7 +123,7 @@ function createDriver(driver) {
 		pair: function( socket ) {
 			//console.log('pair socket at ',displayTime());
 			//This is the first call to set temp data for a socket
-			socket.on('imitate1', function( data, callback )
+			socket.once('imitate1', function( data, callback )
 				{
 					//console.log('imitate1 at ',displayTime());
 					var address = [];
@@ -498,7 +498,7 @@ Homey.manager('flow').on('action.Choose_tune', function( callback, args ){
 	var devices = getDeviceByAddress(args.device.address );
 	var dataToSend = args.tune;
 	
-	//Sends to all devices as currently no clear pairing method.
+	//Sends to all devices as currently no clear pairing method for door bell.
 
 	var frame = new Buffer(dataToSend);
 	//Prevents double firing and causing hang
@@ -508,12 +508,12 @@ Homey.manager('flow').on('action.Choose_tune', function( callback, args ){
    		if(err != null)console.log('LWSocket: Error:', err);
 			
 		});	
-		console.log('about to fire call back');
+		
 		
 		//Add delay to sending the callback to prevent other calls during the transmission
 		setTimeout(function(){ callback( null, true ); ; }, timeout);
 		  
-		console.log('fired call back');
+		
 	}
 });
 
