@@ -21,11 +21,7 @@ function createDriver(driver) {
 				if(initFlag)
 					{
 					console.log('LightwaveRF: Init')
-					
-					
-					
-					
-					
+		
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					
@@ -38,10 +34,10 @@ function createDriver(driver) {
 							[0,0,0,0],
 							[1,0]
 							],
-						manchesterUnit:     271, //set to microsecond duration of single digit for manchester encoding
-    					manchesterMaxUnits: 9, //maximal succeeding units without edges for manchester encoding
-						interval: 10500, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 20,//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
+						manchesterUnit:     271, 	//set to microsecond duration of single digit for manchester encoding
+    					manchesterMaxUnits: 9, 		//maximal succeeding units without edges for manchester encoding
+						interval: 10500, 			//Time between repetitions,  this is the time between the a complete message and the start of the next
+						repetitions: 20,				//basic remotes send the whole message 6 times, while the wifilink sends this 25 time
 						sensitivity: 0.95, 
 						minimalLength: 90,
                     	maximalLength: 90
@@ -97,10 +93,7 @@ function createDriver(driver) {
 								},
 							set: function( device_data, onoff, callback ) 
 								{
-					
-							
 									var devices = getDeviceByEachtransID(device_data);
-									
 									devices.forEach(function(device){
 										updateDeviceOnOff(self, device, onoff);
 									});	
@@ -108,47 +101,33 @@ function createDriver(driver) {
 									sendOnOff(device_data, onoff);
 									callback( null, onoff );
 								}
-						},
-					dim: {
-						get: function( device_data, callback )
-							{
-								//console.log('capabilities get dim');
-								
-								var device = getDeviceById(device_data);
-								
-								// Changing dim State turns on Lights but does not change light state
-								callback( null, device.dim ); //New state
-								
-								
 							},
-		
-						set: function( device_data, dim, callback )
-							{
-								//console.log('capabilities set dim', device_data);
-								setDim(device_data, dim, function(err, dimLevel) 
-									{
-										Homey.log('Set dim:', dimLevel);
-										//module.exports.realtime( device, 'dim', dimLevel );
-										
-										////%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-										
-										
-										//var device = getDeviceById(device_data);
-										//updateDeviceDim(self, device, dim);
-										
-										callback( null, dimLevel ) //New state
-									});		
-							}
-						}		
-		}, 
+					dim: {
+							get: function(device_data, callback )
+								{
+									var device = getDeviceById(device_data);				
+									getDim(device_data,callback);
+									Homey.log('Get dim:', device_data);
+									callback( null, device_data.dim ); 
+								},
 	
+							set: function(device_data, dim, callback )
+								{
+									setDim(device_data, dim, function(err, dimLevel) 
+										{
+											
+											var device = getDeviceById(device_data);
+											updateDeviceDim(self, device, dim);
+										
+											callback( null, dimLevel ) //New state
+										});
+								}	
+						}, 
+			},
 		
 		pair: function( socket ) {
-			//console.log('pair socket at ',displayTime());
-			//This is the first call to set temp data for a socket
 			socket.on('imitate1', function( data, callback )
 				{
-					//console.log('imitate1 at ',displayTime());
 					var address = [];
 					for(var i = 0; i < 20; i++)
 						{
@@ -177,16 +156,12 @@ function createDriver(driver) {
 					dim		   : dim,
 					onoff  	   : true,
 					}	
-				//console.log('Data in Tempdata',tempdata);
 			
 				sendOnOff(tempdata, true);
 				socket.emit('datasent');
 				callback();
 			});
 			
-	
-		
-			//Testing of Remote
 			socket.on('test_device', function( data, callback ){
 				
 				signal.on('payload', function(payload, first){
@@ -247,14 +222,10 @@ function createDriver(driver) {
 			socket.on('test_device_pir', function( data, callback ){
 				
 				signal.on('payload', function(payload, first){
-					//console.log('test device pir- payload recieved ',displayTime());
-					
+			
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-					
-					//console.log('rxData.transID',rxData.transID);
-					//console.log('tempdata.transID)',tempdata.transID);
-					
+		
 					
 			        if(rxData.transID == tempdata.transID){
 						if(rxData.command == 9){
@@ -267,19 +238,14 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
-				//Testing of Remote
+			//Testing of DoorBell
 			socket.on('test_device_doorbell', function( data, callback ){
-				//console.log('test device pir at ',displayTime());
 				signal.on('payload', function(payload, first){
 					//console.log('test device pir- payload recieved ',displayTime());
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-					
-					//console.log('rxData.transID',rxData.transID);
-					//console.log('tempdata.transID)',tempdata.transID);
-					
-					
+				
 			        if(rxData.transID == tempdata.transID){
 						if(rxData.command == 3){
 							socket.emit('received_on'); //Send signal to frontend
@@ -294,20 +260,15 @@ function createDriver(driver) {
 				callback(null, tempdata.onoff);
 			});
 			
-			
-			
 						
 			//Testing of Remote
 			socket.on('remote', function( data, callback )
 				{
-				//console.log('remote socket at ',displayTime());
 					signal.once('payload', function(payload, first)
 						{
-							//console.log('remote payload at ',displayTime());
+				
 							if(!first)return;
-							//console.log('Remote Detected at ',displayTime());
-							
-							
+						
 			        		var rxData = parseRXData(payload);
 							
 							//added for remote
@@ -339,8 +300,7 @@ function createDriver(driver) {
 					
 				});
 				
-							
-			//Testing of remote	
+	
 			socket.on('generate', function( data, callback )
 				{
 					console.log('generate at ',displayTime());
@@ -370,10 +330,9 @@ function createDriver(driver) {
 					callback();
 				});
 				
-		//Sending Test Data to Socket or Light		
+		
 		socket.on('sendSignal', function( onoff, callback )
 				{
-					//console.log('SendSignal at ',displayTime());
 					if(onoff != true){
 						onoff = false;
 						}
@@ -386,50 +345,7 @@ function createDriver(driver) {
 						
 					callback();
 				});
-				
-	/*	socket.on('remote_done', function( data, callback )
-				{
-					console.log('emit Done at', displayTime());
-					var idNumber = Math.round(Math.random() * 0xFFFF);
-					var id = tempdata.address;
-					var name =  __(driver); //__() Is for translation
-					//console.log('adding device in socket on');
-					
-				
-					addDevice({
-						id       	: id,
-						address  	: tempdata.address,
-						transID   	: tempdata.transID,
-						transID1   	: tempdata.transID1,
-						transID2   	: tempdata.transID2,
-						transID3   	: tempdata.transID3,
-						transID4   	: tempdata.transID4,
-						transID5   	: tempdata.transID5,
-						onoff    	: false,
-						driver   	: driver,
-						});
-					//console.log('LWSocket: Added device: ID',id);
-				
-					//Share data to front end
-					callback(null, 
-						{
-							name: name,
-							data: {
-								id       	: id,
-								address  	: tempdata.address,
-								transID   	: tempdata.transID,
-								transID1   	: tempdata.transID1,
-								transID2   	: tempdata.transID2,
-								transID3   	: tempdata.transID3,
-								transID4   	: tempdata.transID4,
-								transID5   	: tempdata.transID5,
-								onoff    	: false,
-								driver   	: driver,
-								}
-						});
-				});*/
-				
-				
+						
 							
 		socket.on('done', function( data, callback )
 				{
@@ -520,15 +436,7 @@ function ManageIncomingRX(self, rxData){
 	
 		
 	});
-	
-	
-
 }
-
-
-	
-
-
 
 
 
@@ -549,12 +457,7 @@ function getDeviceByEachtransID(deviceIn) {
 	return matches ? matches : null;
 }
 
- function callfromreemotesetup()// does it need a call back
-{
-	//console.log('callfromreemotesetup Done');
-	}
-	
-	
+
 function getDeviceById(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.id == deviceIn.id;
@@ -583,7 +486,6 @@ function updateDeviceOnOff(self, device, onoff){
 }
 
 function updateDeviceDim(self, device, dim){
-	//console.log('update device dim called');
 	device.dim = dim;
 	self.realtime(device, 'dim', dim);
 }
@@ -656,25 +558,26 @@ function sendOnOff(deviceIn, onoff) {
    		if(err != null)console.log('LWSocket: Error:', err);
 	});
 	
-		//call back not working
-		///callback( null, deviceIn.onoff ); //Callback the new dim
 }
 
 
 ///Dim  Section*************************************************************************************************************
 // Get the Dim
-function getDim( deviceIn, callback ) {
-	//devices.forEach(function(device){ //Loop trough all registered devices
 
-		console.log("GetDim", deviceIn.dim);
-		deviceIn.dim = deviceIn.dim;  //temp holder
-		//if (active_device.group == device.group) {
-			console.log("getDim callback", deviceIn.dim);
-			callback( null, deviceIn.dim );
-		//}
-	//});
+// Get the Dim of a group
+function getDim( active_device, callback ) {
+	
+	
+	//active device has no dim data
+	console.log('active device',active_device);
+	var devices = getDeviceByEachtransID(active_device);    ///not returning device
+	 devices.forEach(function(device){ //Loop trough all registered devices
+
+			console.log('getDim callback', device.dim);
+			callback( null, device.dim );
+		
+	});
 }
-
 
 
 // Set the Dim
@@ -683,6 +586,7 @@ function setDim( deviceIn, dim, callback ) {
 	console.log("setDim: ", dim);
 	//Device In does not contain the correct onoff value
 	console.log("Device In: ", deviceIn);
+	
 	var deviceOnOff = getDeviceById(deviceIn);
 	console.log("Device In On Off: ", deviceOnOff.onoff);
 	
@@ -730,7 +634,7 @@ function setDim( deviceIn, dim, callback ) {
 										deviceIn.transID4, 
 										deviceIn.transID5, 
 											1 );
-			
+		
 		var frame = new Buffer(dataToSend);
 			
 		//Trigger to detect if lights are on or offf
