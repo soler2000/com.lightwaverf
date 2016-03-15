@@ -4,12 +4,10 @@
     "compatibility": "0.x || 1.x",
     "category": ["appliances", "lights"],
     "name": {
-        "en": "Lightwave RF",
-		"nl": "Lightwave RF"
+        "en": "Lightwave RF"
     },
     "description": {
 		"en": "Give Homey the ability to control your LightwaveRF devices",
-		"nl": "NA"
     },
     "author": {
         "name" : "Andy Wilde"
@@ -25,8 +23,7 @@
 	    {
 		    "id": "lw100",
 		    "name": {
-				"en": "Handheld Remote",
-			    "nl": "Handheld Remote"
+				"en": "Handheld Remote"
 		    },
 		    "images": {
 				"large": "./drivers/lw100/assets/images/large.png",
@@ -53,8 +50,7 @@
 		  {
 		    "id": "lw101",
 		    "name": {
-				"en": "Mood Remote",
-			    "nl": "Mood Remote"
+				"en": "Mood Remote"
 		    },
 		    "images": {
 				"large": "./drivers/lw101/assets/images/large.png",
@@ -81,8 +77,7 @@
 		{
 		    "id": "lw107",
 		    "name": {
-				"en": "Wireless PIR",
-			    "nl": "Wireless PIR"
+				"en": "Wireless PIR"
 		    },
 		    "images": {
 				"large": "./drivers/lw107/assets/images/large.png",
@@ -109,8 +104,7 @@
 	    {
 		    "id": "lw200",
 		    "name": {
-				"en": "Wireless Dimmer",
-			    "nl": "Wireless Dimmer"
+				"en": "Wireless Dimmer"
 		    },
 		    "images": {
 				"large": "./drivers/lw200/assets/images/large.png",
@@ -137,8 +131,7 @@
 		{
 		    "id": "lw260",
 		    "name": {
-				"en": "Socket",
-			    "nl": "Schakelaar"
+				"en": "Socket"
 		    },
 		    "images": {
 				"large": "./drivers/lw260/assets/images/large.png",
@@ -178,8 +171,7 @@
 		{
 		    "id": "lw301",
 		    "name": {
-				"en": "Plug in Dimmer",
-			    "nl": "Plug in Dimmer"
+				"en": "Plug in Dimmer"
 		    },
 		    "images": {
 				"large": "./drivers/lw301/assets/images/large.png",
@@ -212,8 +204,7 @@
 		{
 		    "id": "lw321",
 		    "name": {
-				"en": "Plug-in On/Off",
-			    "nl": "Plug-in On/Off"
+				"en": "Plug-in On/Off"
 		    },
 		    "images": {
 				"large": "./drivers/lw321/assets/images/large.png",
@@ -246,8 +237,7 @@
 		{
 		    "id": "lw400",
 		    "name": {
-				"en": "Wired Dimmer",
-			    "nl": "Wired Dimmer"
+				"en": "Wired Dimmer"
 		    },
 		    "images": {
 				"large": "./drivers/lw400/assets/images/large.png",
@@ -280,8 +270,7 @@
 		{
 		    "id": "lw904",
 		    "name": {
-				"en": "Wireless Door Sensor",
-			    "nl": "Wireless Door Sensor"
+				"en": "Wireless Door Sensor"
 		    },
 		    "images": {
 				"large": "./drivers/lw904/assets/images/large.png",
@@ -308,8 +297,7 @@
 		{
 		    "id": "lw2100",
 		    "name": {
-				"en": "Wireless DoorBell Button",
-			    "nl": "Wireless DoorBell Button"
+				"en": "Wireless DoorBell Button"
 		    },
 		    "images": {
 				"large": "./drivers/lw2100/assets/images/large.png",
@@ -336,8 +324,7 @@
 		{
 		    "id": "lw2101",
 		    "name": {
-				"en": "Wireless DoorBell Ringer",
-			    "nl": "Wireless DoorBell Ringer"
+				"en": "Wireless DoorBell Ringer"
 		    },
 		    "images": {
 				"large": "./drivers/lw2101/assets/images/large.png",
