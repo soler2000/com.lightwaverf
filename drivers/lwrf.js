@@ -29,13 +29,11 @@ function createDriver(driver) {
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
 					
-					//var high =300;	//orginal 293	14-15 samples at 48khz				
-					//var low =300;	//orginal 280  14-15 samples at 48khz
-					//var longLow = 1350;	//orginal 1273  65 samples at 48khz
+		
 					signal = new Signal(
 						{   
-						sof: [1,0], //Start of frame,Starting 1 added to words due to some starting words beginning on a low
-   						eof: [1], //high,  End of frame,Ending 1 added to words due to some ending words ending on a low
+						sof: [1,0], //Start of frame,
+   						eof: [1], //high,  End of frame,
 						words: [
 							[0,0,0,0],
 							[1,0]
@@ -68,9 +66,6 @@ function createDriver(driver) {
 			
 							//Convert received array to usable data
 							var rxData = parseRXData(payload); 
-							
-							//console.log('RXdata at first point of recieve:', rxData);
-							
 							ManageIncomingRX(self, rxData)
 							
 						});
@@ -83,8 +78,7 @@ function createDriver(driver) {
 				addDevice(device);
 				});
 				callback();
-			},//end if init
-		
+			},
 
 			deleted: function( device_data ) 
 			{
