@@ -3,7 +3,7 @@
 
  This app supports LightwaveRF devices, further functionality will be added however this currently supports switching of sockets and lamps.
  
- Version 0.1
+ Version 0.2
  
 **Current Features**  
 - Tuning on and off plugs and lamps  
