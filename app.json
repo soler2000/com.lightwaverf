@@ -1,0 +1,633 @@
+{
+    "id": "com.lightwaverf",
+    "version": "0.0.3",
+    "compatibility": "0.x || 1.x",
+    "category": ["appliances", "lights"],
+    "name": {
+        "en": "Lightwave RF"
+    },
+    "description": {
+		"en": "Give Homey the ability to control your LightwaveRF devices"
+    },
+    "author": {
+        "name" : "Andy Wilde"
+    },
+    "images": {
+		"large": "./assets/images/large.jpg",
+		"small": "./assets/images/small.jpg"
+    },
+    "permissions": [
+	    "homey:wireless:433"
+    ],
+    "drivers": [
+	    {
+		    "id": "lw100",
+		    "name": {
+				"en": "Handheld Remote"
+		    },
+		    "images": {
+				"large": "./drivers/lw100/assets/images/large.png",
+				"small": "./drivers/lw100/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		  {
+		    "id": "lw101",
+		    "name": {
+				"en": "Mood Remote"
+		    },
+		    "images": {
+				"large": "./drivers/lw101/assets/images/large.png",
+				"small": "./drivers/lw101/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw107",
+		    "name": {
+				"en": "Wireless PIR"
+		    },
+		    "images": {
+				"large": "./drivers/lw107/assets/images/large.png",
+				"small": "./drivers/lw107/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+	    {
+		    "id": "lw200",
+		    "name": {
+				"en": "Wireless Dimmer"
+		    },
+		    "images": {
+				"large": "./drivers/lw200/assets/images/large.png",
+				"small": "./drivers/lw200/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw260",
+		    "name": {
+				"en": "Socket"
+		    },
+		    "images": {
+				"large": "./drivers/lw260/assets/images/large.png",
+				"small": "./drivers/lw260/assets/images/small.png"
+		    },
+		    "class": "socket",
+		    "capabilities": [ "onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "choose_slave",
+				    	"prev": "start"
+			    	}
+			    },			
+				{
+					"id": "choose_slave",
+					"template": "choose_slave",
+					"navigation": {
+						"next": "done"
+					}
+				},
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw301",
+		    "name": {
+				"en": "Plug in Dimmer"
+		    },
+		    "images": {
+				"large": "./drivers/lw301/assets/images/large.png",
+				"small": "./drivers/lw301/assets/images/small.png"
+		    },
+		    "class": "light",
+		    "capabilities": [ "onoff", "dim" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw321",
+		    "name": {
+				"en": "Plug-in On/Off"
+		    },
+		    "images": {
+				"large": "./drivers/lw321/assets/images/large.png",
+				"small": "./drivers/lw321/assets/images/small.png"
+		    },
+		    "class": "light",
+		    "capabilities": [ "onoff" ],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw400",
+		    "name": {
+				"en": "Wired Dimmer"
+		    },
+		    "images": {
+				"large": "./drivers/lw400/assets/images/large.png",
+				"small": "./drivers/lw400/assets/images/small.png"
+		    },
+		    "class": "light",
+		    "capabilities": ["onoff", "dim"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw904",
+		    "name": {
+				"en": "Wireless Door Sensor"
+		    },
+		    "images": {
+				"large": "./drivers/lw904/assets/images/large.png",
+				"small": "./drivers/lw904/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw2100",
+		    "name": {
+				"en": "Wireless DoorBell Button"
+		    },
+		    "images": {
+				"large": "./drivers/lw2100/assets/images/large.png",
+				"small": "./drivers/lw2100/assets/images/small.png"
+		    },
+		    "class": "lw2100",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw2101",
+		    "name": {
+				"en": "Wireless DoorBell Ringer"
+		    },
+		    "images": {
+				"large": "./drivers/lw2101/assets/images/large.png",
+				"small": "./drivers/lw2101/assets/images/small.png"
+		    },
+		    "class": "doorbell",
+		    "capabilities": ["alarm_generic"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+			    {
+			    	"id": "imitate1",
+			    	"navigation": {
+				    	"prev": "start"
+			    	}
+			    },
+			    {
+			    	"id": "generate2",
+			    	"navigation": {
+						"next": "done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "done"
+			    }
+		    ]
+		}
+		
+    ],
+	"flow": {
+	    "triggers": [
+			{
+	            "id": "lw107activate",
+	            "title": {"en": "PIR is activated" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw107",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw107deactivate",
+	            "title": {"en": "PIR is Deactivated" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw107",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw904open",
+	            "title": {"en": "Door sensor is open" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw904",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw904close",
+	            "title": {"en": "Door sensor is closed" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw904",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw2100press",
+	            "title": {"en": "Button is pressed" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw2100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+	        {
+	            "id": "lw200remoteOn",
+	            "title": {"en": "On button is pressed" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw200",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+	        {
+	            "id": "lw200remoteOff",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw200",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+	        {
+	            "id": "lw100remoteOn",
+	            "title": {
+	                "en": "On is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "Channel: a" } },
+		                    { "id": "2", "label": { "en": "Channel: b" } },
+		                    { "id": "3", "label": { "en": "Channel: c" } }, 
+		                    { "id": "4", "label": { "en": "Channel: d" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "Button: 1" } },
+		                    { "id": "2", "label": { "en": "Button: 2" } },
+		                    { "id": "3", "label": { "en": "Button: 3" } }, 
+		                    { "id": "4", "label": { "en": "Button: 4" } }, 
+		                    { "id": "5", "label": { "en": "Button: All" } }
+	                    ]
+	                }
+            	]
+	        },
+	        {
+	            "id": "lw100remoteOff",
+	            "title": {
+	                "en": "Off is pressed on your remote"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw100",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                },
+	                {
+	                    "name": "channel",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "Channel: a" } },
+		                    { "id": "2", "label": { "en": "Channel: b" } },
+		                    { "id": "3", "label": { "en": "Channel: c" } }, 
+		                    { "id": "4", "label": { "en": "Channel: d" } }  
+	                    ]
+	                },
+	                {
+	                    "name": "unit",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "1", "label": { "en": "Button: 1" } },
+		                    { "id": "2", "label": { "en": "Button: 2" } },
+		                    { "id": "3", "label": { "en": "Button: 3" } }, 
+		                    { "id": "4", "label": { "en": "Button: 4" } }, 
+		                    { "id": "5", "label": { "en": "Button: All" } }
+	                    ]
+	                }
+            	]
+	        }, 
+			{
+	            "id": "lw101remoteMoodOn",
+	            "title": {
+	                "en": "Mood On is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        }, 
+			{
+	            "id": "lw101remoteMoodoff",
+	            "title": {
+	                "en": "Mood Off is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        }, 
+			{
+	            "id": "lw101remoteAllOff",
+	            "title": {
+	                "en": "All off is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			  {
+	            "id": "lw101remoteMood1",
+	            "title": {
+	                "en": "Mood I is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw101remoteMood2",
+	            "title": {
+	                "en": "Mood II is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
+			{
+	            "id": "lw101remoteMood3",
+	            "title": {
+	                "en": "Mood III is pressed"
+	            },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw101",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        }
+
+
+		],
+		 "actions": [
+        {
+            "id": "Choose_tune",
+            "title": {
+                "en": "What tune to play"
+            },
+			  "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw2101",
+	                    "placeholder": { "en": "Which tune?", "nl": "Which tune?" }
+	                },
+	                {
+	                    "name": "tune",
+	                    "type": "dropdown",
+	                    "values": 	[ 
+		                    { "id": "0", "label": { "en": "Westminster" } },
+		                    { "id": "1", "label": { "en": "Ding-Dong" } },
+							{ "id": "3", "label": { "en": "Piano-1" } }, 
+							{ "id": "4", "label": { "en": "Piano-2" } }, 
+							{ "id": "5", "label": { "en": "Drum" } }, 
+							{ "id": "6", "label": { "en": "Bell" } }
+	                    ]
+	                }
+				]
+        }
+    ]
+	}		
+}
