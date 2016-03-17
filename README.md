@@ -32,7 +32,7 @@
  
 ---
 
- The official LightwaveRF [APP] topic on the forum:
+ The official LightwaveRF [APP] topic on the forum: https://forum.athom.com/discussion/1005/lightwave-rf-siemens-app-published
  
  If you find a bug please report it here: https://github.com/soler2000/com.lightwaverf/issues
  
