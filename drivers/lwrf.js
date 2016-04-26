@@ -11,6 +11,8 @@ var incomingtimeoutflag = true;
 var inmessageQ = [];
 var incomingQueTimer;
 var lastTXMessageID ='';
+var standardTimeOut = 2000;
+var longTimeOut =7000;
 
 function createDriver(driver) {
 	var self = 
@@ -34,11 +36,11 @@ function createDriver(driver) {
                             [0,0,0],
                             [1,0]
                             ],
-                        manchesterUnit:     310,    // was 271 set to microsecond duration of single digit for manchester encoding
-                        manchesterMaxUnits: 9,      //maximal succeeding units without edges for manchester encoding
+                        manchesterUnit:     325,   	// was 271 set to microsecond duration of single digit for manchester encoding
+                        manchesterMaxUnits: 9,      //max succeeding units without edges for manchester encoding
                         interval: 10500,            //Time between repetitions,  this is the time between the a complete message and the start of the next
-                        repetitions: 20,                //basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-                        sensitivity: 0.95, 
+                        repetitions: 20,            //basic remotes send the whole message 6 times, while the wifilink sends this 25 time
+                        sensitivity: 2, 
                         minimalLength: 90,
                         maximalLength: 90
                         });
@@ -70,7 +72,7 @@ function createDriver(driver) {
 			//Refresh deviceList
 			devices.forEach(function(device)
 				{
-				console.log('Refresh Device List TransID', device.transID, ' Driver:', device.driver);
+				console.log('Refresh Device List TransID', device.transID, ' Driver:', device.driver, ' ID:', device.id);
 				addDevice(device);
 				});
 				callback();
@@ -93,7 +95,7 @@ function createDriver(driver) {
 								},
 							set: function( device_data, onoff, callback ) 
 								{
-									var devices = getDeviceByEachtransID(device_data);
+									var devices = getDeviceByEachTransID(device_data);
 									devices.forEach(function(device){
 										updateDeviceOnOff(self, device, onoff);
 									});	
@@ -141,20 +143,21 @@ function createDriver(driver) {
 					var transID5 = getRandomInt(0,15);
 					console.log('pair about to add');
 					var dim = 1;
-				
+					var TransmitterSubID = 1;  //check this is the same for all
 				var transID = HextoTransID(transID1, transID2, transID3, transID4, transID5);
 				
 				tempdata = 
 					{
 					address: address,
-					transID    : transID,
-					transID1   : transID1,
-					transID2   : transID2,
-					transID3   : transID3,
-					transID4   : transID4,
-					transID5   : transID5,
-					dim		   : dim,
-					onoff  	   : true,
+					transID    			: transID,
+					transID1   			: transID1,
+					transID2   			: transID2,
+					transID3   			: transID3,
+					transID4   			: transID4,
+					transID5   			: transID5,
+					TransmitterSubID	: TransmitterSubID,
+					dim		   			: dim,
+					onoff  	   			: true,
 					}	
 			
 				sendOnOff(tempdata, true);
@@ -196,7 +199,7 @@ function createDriver(driver) {
 						console.log('Para1', rxData.para1);
 						console.log('Para2', rxData.para2);
 						console.log('Device', rxData.device);
-						console.log('Command', rxData.Command);
+						console.log('Command', rxData.command);
 						if(rxData.device == 15){ //in mood mode
 							//P1 0 for on or 8 for off
 							if(rxData.para1 == 8 && rxData.para2 == 1){
@@ -206,7 +209,7 @@ function createDriver(driver) {
 							}					
 						}else{
 							//not in moood mode
-							if(rxData.Command == 1){
+							if(rxData.command == 1){
 								socket.emit('received_on'); //Send signal to frontend
 							}else{
 								socket.emit('received_off'); //Send signal to frontend
@@ -241,15 +244,18 @@ function createDriver(driver) {
 			//Testing of DoorBell
 			socket.on('test_device_doorbell', function( data, callback ){
 				signal.on('payload', function(payload, first){
-					//console.log('test device pir- payload recieved ',displayTime());
+					
 					
 					if(!first)return;
 			        var rxData = parseRXData(payload);
-				
+					
+					console.log('Test device Doorbell- payload recieved ',displayTime(), ' Comannd:', rxData.command );
+					
 			        if(rxData.transID == tempdata.transID){
+						
 						if(rxData.command == 3){
 							socket.emit('received_on'); //Send signal to frontend
-							setTimeout(function(){socket.emit('received_off');}, 2500);
+							setTimeout(function(){socket.emit('received_off');}, 1500);   //delay to animate the bell
 							
 						}else{
 							
@@ -281,15 +287,16 @@ function createDriver(driver) {
 							
 							tempdata = 
 								{
-								address		: address,
-								transID    	: rxData.transID,
-								transID1   	: rxData.transID1,
-								transID2   	: rxData.transID2,
-								transID3   	: rxData.transID3,
-								transID4   	: rxData.transID4,
-								transID5   	: rxData.transID5,
-								dim		   	: rxData.dim,
-								onoff  	   	: rxData.onoff,
+								address				: address,
+								transID    			: rxData.transID,
+								transID1   			: rxData.transID1,
+								transID2   			: rxData.transID2,
+								transID3   			: rxData.transID3,
+								transID4   			: rxData.transID4,
+								transID5   			: rxData.transID5,
+								TransmitterSubID	: rxData.TransmitterSubID,
+								dim		   			: rxData.dim,
+								onoff  	   			: rxData.onoff,
 								}		
 							console.log('Trans ID ',rxData.transID);
 							socket.emit('remote_found');
@@ -337,7 +344,7 @@ function createDriver(driver) {
 						onoff = false;
 						}
 					sendOnOff(tempdata, onoff);
-					var devices = getDeviceByEachtransID(tempdata);
+					var devices = getDeviceByEachTransID(tempdata);
 					
 					devices.forEach(function(device){
 						updateDeviceOnOff(self, device, onoff)
@@ -355,17 +362,18 @@ function createDriver(driver) {
 					var name =  __(driver); //__() Is for translation
 					
 					addDevice({
-						id       	: id,
-						address  	: tempdata.address,
-						transID   	: tempdata.transID,
-						transID1   	: tempdata.transID1,
-						transID2   	: tempdata.transID2,
-						transID3   	: tempdata.transID3,
-						transID4   	: tempdata.transID4,
-						transID5   	: tempdata.transID5,
-						dim			: 0,
-						onoff    	: false,
-						driver   	: driver,
+						id       			: id,
+						//address  			: tempdata.address,
+						transID   			: tempdata.transID,
+						transID1   			: tempdata.transID1,
+						transID2   			: tempdata.transID2,
+						transID3   			: tempdata.transID3,
+						transID4   			: tempdata.transID4,
+						transID5   			: tempdata.transID5,
+						TransmitterSubID	: tempdata.TransmitterSubID,
+						dim					: 0,
+						onoff    			: false,
+						driver   			: driver,
 						});
 					
 					//Share data to front end
@@ -373,17 +381,18 @@ function createDriver(driver) {
 						{
 							name: name,
 							data: {
-								id       	: id,
-								address  	: tempdata.address,
-								transID   	: tempdata.transID,
-								transID1   	: tempdata.transID1,
-								transID2   	: tempdata.transID2,
-								transID3   	: tempdata.transID3,
-								transID4   	: tempdata.transID4,
-								transID5   	: tempdata.transID5,
-								dim			: 0,
-								onoff    	: false,
-								driver   	: driver,
+								id       			: id,
+								//address  			: tempdata.address,
+								transID   			: tempdata.transID,
+								transID1   			: tempdata.transID1,
+								transID2   			: tempdata.transID2,
+								transID3   			: tempdata.transID3,
+								transID4   			: tempdata.transID4,
+								transID5   			: tempdata.transID5,
+								TransmitterSubID	: tempdata.TransmitterSubID,
+								dim					: 0,
+								onoff    			: false,
+								driver   			: driver,
 								}
 						});
 				});
@@ -400,38 +409,54 @@ function ManageIncomingRX(self, rxData){
 	// if not the action
 	
 	//console.log('rxData:', rxData);
-	var devices = getDeviceByEachtransID(rxData);
-					
+	var devices = getDeviceByEachTransID(rxData);
+	
 	devices.forEach(function(device){
 		
 		console.log('*****************Pay load received****************');
-		console.log(displayTime());
 		
 		if (lastTXMessageID != device.transID  && devices.length >0){
 	
 			console.log('New message:P1', rxData.para1, 
 								' P2:',rxData.para2 ,  
-								' Cmd:', rxData.Command,
-								' TransID:', rxData.transID);
+								' Cmd:', rxData.command,
+								' TransID RX:', rxData.transID,
+								' TransID D:', device.transID,
+								' unit:', rxData.unit,
+								' Channel:', rxData.channel
+								);
 
 
 			//used in flow to see which remote was last pressed	
 			LastRX = rxData;
 		
 		
-			updateDeviceOnOff(self, device, rxData.onoff);					
+			updateDeviceOnOff(self, device, rxData.onoff);			
+			
+			//device passed to flows is inccorect		
 			flowselection(device, LastRX);
 				
 			lastTXMessageID = device.transID;
 			
 			
-			//clears the last value after 2 seconds
-			setTimeout(function(){lastTXMessageID =''; }, 2000);
+			//clears the last value after Time period
+	
+			var timeout;
+			if(device.driver  == "lw2100"){
+				//Prevents retrigger on doorbell
+				timeout =longTimeOut;		//5000
+			}else{
+				timeout =standardTimeOut; 	//2000
+			}
+
+
+			
+			setTimeout(function(){lastTXMessageID ='';console.log('Timeout cleared:',timeout); }, timeout);
 		}else{
 			//checks
 			//is it a mood device,  device 15?  if so do nothing
 			//is it a parameter command,  if so act
-			console.log('Message rejected - Within time out setting of Manage Incoming'); 
+			console.log('Message rejected - inside timeout setting of Manage Incoming'); 
 		}
 	
 		
@@ -439,14 +464,13 @@ function ManageIncomingRX(self, rxData){
 }
 
 
-
-function getDeviceByTransId(deviceIn) {
+function getDeviceByTransID(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.transID == deviceIn.transID;
 	});
 	return matches ? matches[0] : null;
 }
-function getDeviceByEachtransID(deviceIn) {
+function getDeviceByEachTransID(deviceIn) {
 	var matches = deviceList.filter(function(d){
 		return d.transID1 == deviceIn.transID1 && 
 			d.transID2 == deviceIn.transID2 && 
@@ -501,12 +525,12 @@ function addDevice(deviceIn) {
 	
 	deviceList.push({
 		id       			: deviceIn.id,
+		transID   			: transID,
 		transID1   			: deviceIn.transID1,
 		transID2   			: deviceIn.transID2,
 		transID3   			: deviceIn.transID3,
 		transID4   			: deviceIn.transID4,
 		transID5   			: deviceIn.transID5,
-		transID   			: transID,
 		TransmitterSubID	: deviceIn.TransmitterSubID,
 		dim					: deviceIn.dim,
 		onoff    			: deviceIn.onoff,
@@ -560,7 +584,35 @@ function sendOnOff(deviceIn, onoff) {
 	
 }
 
-
+function sendFlash(deviceIn) {
+	
+	var device = clone(deviceIn);
+	
+	var command =0;
+	var transID =0;
+	var transID1 =0;
+	var transID2 =0;
+	var transID3 =0;
+	var transID4 =0;
+	var transID5 =0;
+	
+	
+	//console.log('****************Send flash*****************');
+	if(device === undefined)
+	{
+		console.log('In send flash - the device is undefined');
+	}
+		
+	command =3;//Flash command	
+	
+	var dataToSend = createTXarray( 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
+	var frame = new Buffer(dataToSend);
+	
+	signal.tx( frame, function( err, result ){
+   		if(err != null)console.log('LWSocket: Error:', err);
+	});
+	
+}
 ///Dim  Section*************************************************************************************************************
 // Get the Dim
 
@@ -570,7 +622,7 @@ function getDim( active_device, callback ) {
 	
 	//active device has no dim data
 	console.log('active device',active_device);
-	var devices = getDeviceByEachtransID(active_device);    ///not returning device
+	var devices = getDeviceByEachTransID(active_device);    ///not returning device
 	 devices.forEach(function(device){ //Loop trough all registered devices
 
 			console.log('getDim callback', device.dim);
@@ -668,22 +720,30 @@ function setDim( deviceIn, dim, callback ) {
 
 
 function flowselection(device,rxData){
-	//console.log('Flow device Device', device);
+	console.log('Flow selection device', device.driver);
 	//console.log('Flow device RX', rxData);
 	
 	switch(device.driver) {					
 		case 'lw100':
 			console.log('Flow Selection lw100');
-			//console.log('Command', rxData.Command);
+			//console.log('Command', rxData.command);
 			
-			if (rxData.Command == 1){    ///mood1
+			if (rxData.command == 1){    ///mood1
 				console.log('Flow lw100 remoteOn');
-				Homey.manager('flow').trigger('lw100remoteOn');	
+				Homey.manager('flow').triggerDevice( 'lw100remoteOn', null, null, device, function(err, result){				
+					console.log('lw100remoteOn Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+				
 				
 			}
-			if (rxData.Command == 0){
+			if (rxData.command == 0){
 				console.log('Flow lw100 remoteOff');
-				Homey.manager('flow').trigger('lw100remoteOff');	
+				Homey.manager('flow').triggerDevice( 'lw100remoteOff', null, null, device, function(err, result){				
+					console.log('lw100remoteOff Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+				
 				
 			}
 		break;
@@ -691,94 +751,138 @@ function flowselection(device,rxData){
 		case 'lw101'://Mood switch
 			console.log('Flow Selection lw101 P1: P2', rxData.para1, rxData.para2);
 			
-			//console.log('Command', rxData.Command);
+			//console.log('Command', rxData.command);
 			if (rxData.para1 == 8  && rxData.para2 == 1){
 				console.log('Flow lw101 lw101remoteMoodOn');
-				Homey.manager('flow').trigger('lw101remoteMoodOn');	
-				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMoodOn', null, null, device, function(err, result){				
+					console.log('lw101remoteMoodOn Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 0){
 				console.log('Flow lw101 lw101remoteMoodoff');
-				Homey.manager('flow').trigger('lw101remoteMoodoff');	
-				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMoodoff', null, null, device, function(err, result){				
+					console.log('lw101remoteMoodoff Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
 			}
 			
 			if (rxData.para1 == 12  && rxData.para2 == 0){
 				console.log('Flow lw101 lw101remoteAllOff');
-				Homey.manager('flow').trigger('lw101remoteAllOff');	
+				Homey.manager('flow').triggerDevice( 'lw101remoteAllOff', null, null, device, function(err, result){				
+					console.log('lw101remoteAllOff Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+
 				
 			}
 			
 			if (rxData.para1 == 8  && rxData.para2 == 2){
 				console.log('Flow lw101 lw101remoteMood1 - Trigger');
-				Homey.manager('flow').trigger('lw101remoteMood1');	
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood1', null, null, device, function(err, result){				
+					console.log('lw101 remote Mood1 Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+
 				
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 3){
 				console.log('Flow lw101 lw101remoteMood2');
-				Homey.manager('flow').trigger('lw101remoteMood2');	
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood2', null, null, device, function(err, result){				
+					console.log('lw101 remote Mood2 Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+
 				
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 4){
 				console.log('Flow lw101 lw101remoteMood3');
-				Homey.manager('flow').trigger('lw101remoteMood3');	
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood3', null, null, device, function(err, result){				
+					console.log('lw101 remote Mood3 Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
 				
+			
 			}
 		break;
-		
+	
 		case 'lw107':
 		
 			console.log('lw107 case');
-			console.log('Command', rxData.Command);
+			console.log('Flow Command', rxData.command);
 		
-			if (rxData.Command == 1){
-				Homey.manager('flow').trigger('lw107activate');	
-				console.log('lw107activate condition');
+			if (rxData.command == 1){
+				Homey.manager('flow').triggerDevice( 'lw107activate', null, null, device, function(err, result){				
+					console.log('lw107 activate Flow result ', result);
+					if( err ) return Homey.error(err);
+				});
+				
 				}
-			if(rxData.Command == 0){
-				Homey.manager('flow').trigger('lw107deactivate');	
-				console.log('lw107deactivate condition');
+				
+			if(rxData.command == 0){
+				
+				Homey.manager('flow').triggerDevice('lw107deactivate', null, null, device, function(err, result){				
+					console.log('lw107 deactivate Flow result ', result);
+					if(err) return Homey.error(err);
+				});
+	
 				}
 		break;
 		
-		
+			
 		case 'lw200':
 		console.log('Flow lw200');
-		console.log('Command', rxData.Command);
-			if (rxData.Command == 1){
-				Homey.manager('flow').trigger('lw200remoteOn');	
-				console.log('lw200remoteOn');
+		console.log('Flow Command', rxData.command);
+			if (rxData.command == 1){
+				Homey.manager('flow').triggerDevice( 'lw200remoteOn', null, null, device, function(err, result){				
+					console.log('lw200 remoteOn Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+				
+
 			}
-			if(rxData.Command == 0){
-			
-				Homey.manager('flow').trigger('lw200remoteOff');	
-				console.log('lw200remoteOff');
+			if(rxData.command == 0){
+				Homey.manager('flow').triggerDevice( 'lw200remoteOff', null, null, device, function(err, result){				
+					console.log('lw200 remoteOff Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+	
 			}
 		break;		
 			
 		case 'lw904':
-			console.log('Flow lw904');
-			console.log('Command', rxData.Command);
-			if (rxData.Command == 1){
-				Homey.manager('flow').trigger('lw904open');	
-				console.log('lw904activate');
+			console.log('Flow selected lw904');
+			console.log('Flow Command', rxData.command);
+			if (rxData.command == 1){
+				
+				Homey.manager('flow').triggerDevice( 'lw904open', null, null, device, function(err, result){				
+					console.log('lw904 open Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+	
 			}
-			if(rxData.Command == 0){
-			
-				Homey.manager('flow').trigger('lw904close');	
-				console.log('lw200remoteOff');
+			if(rxData.command == 0){
+	
+				Homey.manager('flow').triggerDevice( 'lw904close', null, null, device, function(err, result){				
+					console.log('lw904 close Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+	
 			}
 		break;	
 				
 		case 'lw2100':
 			console.log('Flow lw2100');
-			console.log('Command', rxData.Command);
-			if (rxData.Command == 3){
-				Homey.manager('flow').trigger('lw2100press');	
-				console.log('lw2100press');
+			console.log('Flow Command', rxData.command);
+			if (rxData.command == 3){
+				Homey.manager('flow').triggerDevice( 'lw2100press', null, null, device, function(err, result){				
+					console.log('lw2100 press Flow result ', result);
+					if( err ) return Homey.error( err);
+				});
+	
 			}
 
-		break;												
+		break;										
 		default: 
 			
 	}
@@ -951,7 +1055,8 @@ Homey.manager('flow').on('trigger.lw200remoteOn', function( callback, args ){
 		}else{
 		console.log('lw200remoteOn not fired:', args);
 		console.log('Flow canceled');
-		callback( null, false ); 
+		callback( null, false );
+		//Homey.manager('flow').trigger('solar_intensity', { intensity: value }); 
 	}
 	});
 	
@@ -1005,7 +1110,13 @@ Homey.manager('flow').on('trigger.lw2100press', function( callback, args ){
 	}
 	});
 
-
+Homey.manager('flow').on('action.flash_lw400', function( callback, args ){ 
+	
+	console.log('flash_lw400 fired in flow');
+	sendFlash(args.device);
+	callback( null, true ); 
+	
+	});
 
 ///END Flow Section*************************************************************************************************************
 
@@ -1164,6 +1275,8 @@ function HextoTransID(transId1,transId2, transId3, transId4, transId5){
 	return trans;
 }
 
+
+//Used as a look up array for the possible words transmitted by lightwaveRF
 var transcodes = [
 				 '11110110',
    	 			 '11101110',
@@ -1205,7 +1318,7 @@ return msgI;
 
 }
 
-function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3, TransID4, TransID5, SubID){
+function createTXarray(Para1,Para2,Device,command, TransID1, TransID2, TransID3, TransID4, TransID5, SubID){
 
 		//add Para1
 		
@@ -1234,7 +1347,7 @@ function createTXarray(Para1,Para2,Device,Command, TransID1, TransID2, TransID3,
 		}
 		
 		txSignal.push(1);		
-		str = transcodes[parseInt(Command,10)];
+		str = transcodes[parseInt(command,10)];
 		for (var i = 0, len = str.length; i < len; i++) {
   			txSignal.push(str[i]);
 		}
@@ -1307,7 +1420,7 @@ function parseRXData(data) {
 				device   			: 0,
 				channel				: 0,
 				unit				: 0,
-				Command  			: 0,
+				command  			: 0,
 				onoff    			: false
 			};
 		}else{
@@ -1319,26 +1432,30 @@ function parseRXData(data) {
 		
 			var device = parseMessage(data,19);	
 		
-			var Command = parseMessage(data,28);	
+			var command = parseMessage(data,28);	
 	
 			var TransmitterID = HextoTransID(parseMessage(data,37), 
 											parseMessage(data,46),
 											parseMessage(data,55),
 											parseMessage(data,64),
 											parseMessage(data,73));
-		
+			
+			
 			var TransmitterSubID = parseMessage(data,82);
 			//var TransIDArray = createTransIDtoInt(TransmitterID);
 			var Devarr = GetChannelandPage(device);
 		
-			if(Command == "1"){
+			if(command == "1"){
 				//Turn On
 				onoff = true;
 			}else{
 				//Turn Off
 				onoff = false;
 			}
-	
+			
+			
+			console.log('Parse RX Trans ID:', TransmitterID ,' Para1:',para1,' Para2:',para2,' Command:',command);
+			
 			return { 
 				para1 				: para1,
 				para2 				: para2,
@@ -1350,10 +1467,9 @@ function parseRXData(data) {
 			 	transID4 			: parseMessage(data,64),
 			 	transID5 			: parseMessage(data,73),
 				TransmitterSubID  	: TransmitterSubID,
-				//device   			: device,  doubled
 				channel				: Devarr[0].toString(),
 				unit				: Devarr[1].toString(),
-				Command  			: Command,
+				command  			: command,
 				onoff    			: onoff
 			};
 	

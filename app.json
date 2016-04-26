@@ -270,7 +270,7 @@
 		{
 		    "id": "lw904",
 		    "name": {
-				"en": "Wireless Door Sensor"
+				"en": "Door Sensor"
 		    },
 		    "images": {
 				"large": "./drivers/lw904/assets/images/large.png",
@@ -297,7 +297,7 @@
 		{
 		    "id": "lw2100",
 		    "name": {
-				"en": "Wireless DoorBell Button"
+				"en": "DoorBell Button"
 		    },
 		    "images": {
 				"large": "./drivers/lw2100/assets/images/large.png",
@@ -324,7 +324,7 @@
 		{
 		    "id": "lw2101",
 		    "name": {
-				"en": "Wireless DoorBell Ringer"
+				"en": "DoorBell Ringer"
 		    },
 		    "images": {
 				"large": "./drivers/lw2101/assets/images/large.png",
@@ -354,7 +354,6 @@
 			    }
 		    ]
 		}
-		
     ],
 	"flow": {
 	    "triggers": [
@@ -612,7 +611,7 @@
 	                    "name": "device",
 	                    "type": "device",
 	                    "filter": "driver_id=lw2101",
-	                    "placeholder": { "en": "Which tune?", "nl": "Which tune?" }
+	                    "placeholder": { "en": "Which tune?"}
 	                },
 	                {
 	                    "name": "tune",
@@ -625,6 +624,19 @@
 							{ "id": "5", "label": { "en": "Drum" } }, 
 							{ "id": "6", "label": { "en": "Bell" } }
 	                    ]
+	                }
+				]
+        },
+		 {
+            "id": "flash_lw400",
+            "title": {
+                "en": "Momentorary Flash"
+            },
+			  "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw400"
 	                }
 				]
         }

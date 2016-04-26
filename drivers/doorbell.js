@@ -21,7 +21,7 @@ function createDriver(driver) {
 				//Define signal
 				if(initFlag)
 					{
-					console.log('LightwaveRF: Init')
+					console.log('LightwaveRF DoorBell: Init')
 					
 	
 					initFlag = 0;
@@ -532,7 +532,7 @@ return diff;
 function parseRXData(data) {
 
 
-	console.log('Parse data', data);
+	console.log('Parse Doorbell Data, Ringer:', data);
 
 	if (data != undefined) {
 		var tune = data[1];

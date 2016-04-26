@@ -10,6 +10,7 @@
 		"lw301_Lightswitch": "Add a LightwaveRF Plug in Dimmer...",
 		"lw321_Lightswitch": "Add a LightwaveRF Plug in...",
 		"lw400_Lightswitch": "Add a LightwaveRF Wired Dimmer...",
+		"test": "Test System for LightwaveRF...",
 		"lw904": "Add a LightwaveRF Door Sensor...",
 		"lw2101_Doorbell": "Add a LightwaveRF Doorbell Ringer...",
 		"lw2100_Doorbell": "Add a LightwaveRF Doorbell Pushbutton..."
@@ -40,7 +41,8 @@
 			"testIfrecieving": "Test your device with the on and off buttons,  the switch should move accordingly",
 			"testIfrecieving_doorbell": "Press your door bell to make the bell animate",
 			"testIfdoor": "Test your device by opening and clossing the door or window",
-			"testIfrecieving_pir": "Test your device by making movement,  once activated use the switch to reset and move again after the timeout on the PIR"
-  		}
+			"testIfrecieving_pir": "Test your device by making movement,  once activated use the switch to reset and move again after the timeout on the PIR",
+  			"testdeviceinstructions": "Enter the code that you need to send to your device,  this should be entered as 2 digit hex codes, or alterativly press a button on your remote to show the code recieved"
+		}
     }
 }
