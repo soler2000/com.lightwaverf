@@ -720,17 +720,27 @@ function setDim( deviceIn, dim, callback ) {
 
 
 function flowselection(device,rxData){
-	console.log('Flow selection device', device.driver);
+	
+	//Need to clone device and reset the following to the same values as pairing
+	//dim: 0,
+	//onoff: false,
+	
+	var fDevice = device;
+	fDevice.dim =0;
+	fDevice.onoff =false;
+	
+	
+	console.log('Flow selection device', fDevice.driver);
 	//console.log('Flow device RX', rxData);
 	
-	switch(device.driver) {					
+	switch(fDevice.driver) {					
 		case 'lw100':
 			console.log('Flow Selection lw100');
 			//console.log('Command', rxData.command);
 			
 			if (rxData.command == 1){    ///mood1
 				console.log('Flow lw100 remoteOn');
-				Homey.manager('flow').triggerDevice( 'lw100remoteOn', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw100remoteOn', null, null, fDevice, function(err, result){				
 					console.log('lw100remoteOn Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -739,7 +749,7 @@ function flowselection(device,rxData){
 			}
 			if (rxData.command == 0){
 				console.log('Flow lw100 remoteOff');
-				Homey.manager('flow').triggerDevice( 'lw100remoteOff', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw100remoteOff', null, null, fDevice, function(err, result){				
 					console.log('lw100remoteOff Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -754,14 +764,14 @@ function flowselection(device,rxData){
 			//console.log('Command', rxData.command);
 			if (rxData.para1 == 8  && rxData.para2 == 1){
 				console.log('Flow lw101 lw101remoteMoodOn');
-				Homey.manager('flow').triggerDevice( 'lw101remoteMoodOn', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMoodOn', null, null, fDevice, function(err, result){				
 					console.log('lw101remoteMoodOn Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 0){
 				console.log('Flow lw101 lw101remoteMoodoff');
-				Homey.manager('flow').triggerDevice( 'lw101remoteMoodoff', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMoodoff', null, null, fDevice, function(err, result){				
 					console.log('lw101remoteMoodoff Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -769,7 +779,7 @@ function flowselection(device,rxData){
 			
 			if (rxData.para1 == 12  && rxData.para2 == 0){
 				console.log('Flow lw101 lw101remoteAllOff');
-				Homey.manager('flow').triggerDevice( 'lw101remoteAllOff', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteAllOff', null, null, fDevice, function(err, result){				
 					console.log('lw101remoteAllOff Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -779,7 +789,7 @@ function flowselection(device,rxData){
 			
 			if (rxData.para1 == 8  && rxData.para2 == 2){
 				console.log('Flow lw101 lw101remoteMood1 - Trigger');
-				Homey.manager('flow').triggerDevice( 'lw101remoteMood1', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood1', null, null, fDevice, function(err, result){				
 					console.log('lw101 remote Mood1 Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -788,7 +798,7 @@ function flowselection(device,rxData){
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 3){
 				console.log('Flow lw101 lw101remoteMood2');
-				Homey.manager('flow').triggerDevice( 'lw101remoteMood2', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood2', null, null, fDevice, function(err, result){				
 					console.log('lw101 remote Mood2 Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -797,7 +807,7 @@ function flowselection(device,rxData){
 			}
 			if (rxData.para1 == 8  && rxData.para2 == 4){
 				console.log('Flow lw101 lw101remoteMood3');
-				Homey.manager('flow').triggerDevice( 'lw101remoteMood3', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw101remoteMood3', null, null, fDevice, function(err, result){				
 					console.log('lw101 remote Mood3 Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -812,7 +822,7 @@ function flowselection(device,rxData){
 			console.log('Flow Command', rxData.command);
 		
 			if (rxData.command == 1){
-				Homey.manager('flow').triggerDevice( 'lw107activate', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw107activate', null, null, fDevice, function(err, result){				
 					console.log('lw107 activate Flow result ', result);
 					if( err ) return Homey.error(err);
 				});
@@ -821,7 +831,7 @@ function flowselection(device,rxData){
 				
 			if(rxData.command == 0){
 				
-				Homey.manager('flow').triggerDevice('lw107deactivate', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice('lw107deactivate', null, null, fDevice, function(err, result){				
 					console.log('lw107 deactivate Flow result ', result);
 					if(err) return Homey.error(err);
 				});
@@ -834,7 +844,7 @@ function flowselection(device,rxData){
 		console.log('Flow lw200');
 		console.log('Flow Command', rxData.command);
 			if (rxData.command == 1){
-				Homey.manager('flow').triggerDevice( 'lw200remoteOn', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw200remoteOn', null, null, fDevice, function(err, result){				
 					console.log('lw200 remoteOn Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -842,7 +852,7 @@ function flowselection(device,rxData){
 
 			}
 			if(rxData.command == 0){
-				Homey.manager('flow').triggerDevice( 'lw200remoteOff', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw200remoteOff', null, null, fDevice, function(err, result){				
 					console.log('lw200 remoteOff Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -855,7 +865,7 @@ function flowselection(device,rxData){
 			console.log('Flow Command', rxData.command);
 			if (rxData.command == 1){
 				
-				Homey.manager('flow').triggerDevice( 'lw904open', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw904open', null, null, fDevice, function(err, result){				
 					console.log('lw904 open Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -863,7 +873,7 @@ function flowselection(device,rxData){
 			}
 			if(rxData.command == 0){
 	
-				Homey.manager('flow').triggerDevice( 'lw904close', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw904close', null, null, fDevice, function(err, result){				
 					console.log('lw904 close Flow result ', result);
 					if( err ) return Homey.error( err);
 				});
@@ -875,7 +885,7 @@ function flowselection(device,rxData){
 			console.log('Flow lw2100');
 			console.log('Flow Command', rxData.command);
 			if (rxData.command == 3){
-				Homey.manager('flow').triggerDevice( 'lw2100press', null, null, device, function(err, result){				
+				Homey.manager('flow').triggerDevice( 'lw2100press', null, null, fDevice, function(err, result){				
 					console.log('lw2100 press Flow result ', result);
 					if( err ) return Homey.error( err);
 				});

@@ -77,7 +77,7 @@
 		{
 		    "id": "lw107",
 		    "name": {
-				"en": "Wireless PIR"
+				"en": "PIR"
 		    },
 		    "images": {
 				"large": "./drivers/lw107/assets/images/large.png",
