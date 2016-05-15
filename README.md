@@ -3,7 +3,7 @@
 
  This app supports LightwaveRF devices, further functionality will be added however this currently supports switching of sockets and lamps.
  
- Version 0.5
+ Version 0.6
  
 **Current Features**  
 - Tuning on and off plugs and lamps  
@@ -30,7 +30,8 @@
   * Dimming from remote
   * Other Lightwave products
  
-**Version Changes**   
+**Version Changes**
+  * 0.6 Updated icons
   * 0.5 Fixed Issue with off command with newer lightwave devices
   * 0.4 Ablity to flash lights, fixed bug with flows, fixed virtual devices when pairing sockets
  
