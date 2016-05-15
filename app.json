@@ -1,6 +1,6 @@
 {
     "id": "com.lightwaverf",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "compatibility": "0.x || 1.x",
     "category": ["appliances", "lights"],
     "name": {
