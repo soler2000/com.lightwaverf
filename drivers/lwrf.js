@@ -556,6 +556,8 @@ function sendOnOff(deviceIn, onoff) {
 	var transID4 =0;
 	var transID5 =0;
 	
+	var p1 =0;
+	var p2 =0;
 	
 	
 	//console.log('****************Send on off*****************');
@@ -567,15 +569,19 @@ function sendOnOff(deviceIn, onoff) {
 	if( onoff == false){
 		
 		command =0;//send off
-		deviceIn.onoff = true; 
+		deviceIn.onoff = true;
+		var p1 =4;
+		var p2 =0; 
 	}
 	else if(onoff == true){
 		
 		command =1;//send on
 		deviceIn.onoff = false;
+		var p1 =0;
+		var p2 =0;
 	}
 	
-	var dataToSend = createTXarray( 0, 0, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
+	var dataToSend = createTXarray( p1, p2, 10, command, device.transID1, device.transID2, device.transID3, device.transID4, device.transID5, 1 );
 	var frame = new Buffer(dataToSend);
 	
 	signal.tx( frame, function( err, result ){
