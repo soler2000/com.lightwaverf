@@ -9,7 +9,8 @@
 - Tuning on and off plugs and lamps  
 - Dimming Lamps and Dimable plug sockets  
 - PIR Sensing  
-  
+- Door and Window Sensing  
+- Door Bell Ringer  
   
 **Supports:**  
 
