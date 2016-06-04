@@ -1,7 +1,7 @@
 # Homey App for Lightwave RF / Siemens
 
 
- This app supports LightwaveRF devices, further functionality will be added however this currently supports switching of sockets and lamps.
+ This app supports LightwaveRF devices, this currently supports switching of sockets and lamps, dimming, flashing of lights and door bell sensing.
  
  Version 0.0.5
  
