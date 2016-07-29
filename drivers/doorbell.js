@@ -26,28 +26,7 @@ function createDriver(driver) {
 	
 					initFlag = 0;
 					var Signal = Homey.wireless('433').Signal;
-					var short =320;	//	15 samples at 48khz				
-					var long =730;	//  35 samples at 48khz
-					signal = new Signal(
-						{   
-						sof: [short,short,long,long, short,short,long,short,	long,short,long,short,long,long,short,long], //Start of frame, probably includes device coding,  however I do not have enough devices to decode
-   						eof: [], //no end of frame
-						words: [
-							[short,short,long,short,long,short,long,long,short],//done   West Minster
-							[short,short,long,short,long,long,short,long,short],//done   Ding Dong
-							[short,short,long,long,short,short,long,long,short],//done 	Tubular Up fails
-							[short,long,short,short,long,short,long,long,short],//done  	Tubular Down fails
-							[short,long,short,long,short,short,long,long,short],//done	Piano 1
-							[short,long,short,long,short,long,short,short,long],//done   Piano 2
-							[short,short,long,long,short,long,short,short,long],//done	Guitar
-							[short,short,long,short,long,long,short,short,long]//done  	Bell
-							],
-						interval: 6050, 	//Time between repetitions,  this is the time between the a complete message and the start of the next
-						repetitions: 60, //   actual remote 150  //number of times a transmition takes place
-						sensitivity: 0.2, //Higher number less selective,  lower number signal most conform 
-						minimalLength: 1,
-                    	maximalLength: 1
-						});
+					signal = new Signal('doorbell');
 					
 						
 						signal.register(function( err, success ){
