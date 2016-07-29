@@ -28,22 +28,7 @@ function createDriver(driver) {
 					var Signal = Homey.wireless('433').Signal;
 					
 		
-					signal = new Signal(
-                        {   
-                        sof: [1,0], //Start of frame,
-                        eof: [1], //high,  End of frame,
-                        words: [
-                            [0,0,0],
-                            [1,0]
-                            ],
-                        manchesterUnit:     325,   	// was 271 set to microsecond duration of single digit for manchester encoding
-                        manchesterMaxUnits: 9,      //max succeeding units without edges for manchester encoding
-                        interval: 10500,            //Time between repetitions,  this is the time between the a complete message and the start of the next
-                        repetitions: 20,            //basic remotes send the whole message 6 times, while the wifilink sends this 25 time
-                        sensitivity: 2, 
-                        minimalLength: 90,
-                        maximalLength: 90
-                        });
+					signal = new Signal('lwrf');
 					
 						
 						signal.register(function( err, success ){
