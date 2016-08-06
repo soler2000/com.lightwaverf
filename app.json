@@ -1,6 +1,6 @@
 {
     "id": "com.lightwaverf",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "compatibility": ">=0.9",
     "category": ["appliances", "lights"],
     "name": {
@@ -264,6 +264,33 @@
 			    },
 				{
 			    	"id": "done"
+			    }
+		    ]
+		},
+		{
+		    "id": "lw801",
+		    "name": {
+				"en": "DuskTillDawn"
+		    },
+		    "images": {
+				"large": "./drivers/lw801/assets/images/large.png",
+				"small": "./drivers/lw801/assets/images/small.png"
+		    },
+		    "class": "remote",
+		    "capabilities": ["onoff"],
+	    "pair": [
+				{
+			    	"id": "start"
+			    },
+				{
+			    	"id": "remote1",
+			    	"navigation": {
+				    	"next": "remote_done",
+				    	"prev": "start"
+			    	}
+			    },
+				{
+			    	"id": "remote_done"
 			    }
 		    ]
 		},
