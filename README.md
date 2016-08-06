@@ -3,7 +3,7 @@
 
  This app supports LightwaveRF devices, this currently supports switching of sockets and lamps, dimming, flashing of lights and door bell sensing.
  
- Version 0.0.6
+ Version 0.0.7
  
 **Current Features**  
 - Tuning on and off plugs and lamps  
@@ -11,10 +11,12 @@
 - PIR Sensing  
 - Door and Window Sensing  
 - Door Bell Ringer  
-  
+- Dusk till Dawn Sensor
+-
 **Supports:**  
 
 - LW 2100 Doorbell (Remote & Bell Unit) 
+- LW 801 Dusk till Dawn Sensor
 - LW 400/420/430/440  wired dimmable light switches  
 - LW 260/270 Sockets  
 - LW 301 Plug-in Dimmer  
@@ -32,6 +34,7 @@
   * Other Lightwave products
  
 **Version Changes**
+  * 0.0.7 Added dusk till dawn sensor
   * 0.0.6 Fixed Issue with new Athom API for firmware 0.9 and onwards.
   * 0.0.5 Fixed Issue with off command with newer lightwave devices, Updated icons
   * 0.0.4 Ablity to flash lights, fixed bug with flows, fixed virtual devices when pairing sockets
