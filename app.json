@@ -396,6 +396,18 @@
 	                }
             	]
 	        },
+	        	{
+	            "id": "lw801activate",
+	            "title": {"en": "DusktillDawn is activated" },
+	            "args": [
+	                {
+	                    "name": "device",
+	                    "type": "device",
+	                    "filter": "driver_id=lw801",
+	                    "placeholder": { "en": "Which remote?", "nl": "Welke afstandbediening?" }
+	                }
+            	]
+	        },
 			{
 	            "id": "lw107deactivate",
 	            "title": {"en": "PIR is Deactivated" },
