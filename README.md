@@ -12,7 +12,8 @@
 - Door and Window Sensing  
 - Door Bell Ringer  
 - Dusk till Dawn Sensor
--
+
+
 **Supports:**  
 
 - LW 2100 Doorbell (Remote & Bell Unit) 
