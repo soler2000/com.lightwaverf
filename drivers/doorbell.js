@@ -471,10 +471,11 @@ function sendOnOff(deviceIn, onoff) {
 var timeout = 3200;  //3.2 seonds to send all message
 var lastfired = 0 ;
 
-Homey.manager('flow').on('action.Choose_tune', function( callback, args ){
+// TODO this flow is never explicitly called, so it probably doesn't have state.device
+Homey.manager('flow').on('action.Choose_tune', function( callback, args, state ){
 	
 	console.log('Choose_tune fired in flow. args:', args);
-	var devices = getDeviceByAddress(args.device.address );
+	var devices = getDeviceByAddress(state.device.address );
 	var dataToSend = args.tune;
 	
 	//Sends to all devices as currently no clear pairing method for door bell.
