@@ -1,7 +1,7 @@
 {
     "id": "com.lightwaverf",
-    "version": "0.0.7",
-    "compatibility": ">=0.9",
+    "version": "0.0.8",
+    "compatibility": ">=1.2.0",
     "category": ["appliances", "lights"],
     "name": {
         "en": "Lightwave RF"
@@ -652,7 +652,7 @@
                 "manchesterMaxUnits": 9,
                 "interval": 10500,
                 "repetitions": 20,
-                "sensitivity": 2, 
+                "sensitivity": 0.5, 
                 "minimalLength": 90,
                 "maximalLength": 90
         	},
@@ -669,7 +669,7 @@
 							[320,320,730,320,730,730,320,320,730]],
 				"interval": 6050,
 				"repetitions": 60,
-				"sensitivity": 0.2,
+				"sensitivity": 0.3,
 				"minimalLength": 1,
                 "maximalLength": 1
         	}
