@@ -12,7 +12,6 @@
 	display: block;
 	transition: all 0.3s;
 }
-
 .onoff:before {
 	content: "";
 	box-sizing: border-box;
@@ -38,49 +37,48 @@ body.on .onoff:before {
 
 
 <script type="text/javascript">
+	window.selected_devices = [ 'dummy' ];
+	window.found_devices = {
+	    'dummy': {
+	        name: 'LightwaveRF socket',
+	        data: {
+	            id: 'dummy'
+	        }
+	    }
+	}
 	Homey.emit('generate', function(err, onoff) { //Send signal
 	});	
-
 	Homey.on('received_on', function() { //Set dipswitch to on
 		updateState(true);
 	});
-
 	Homey.on('received_off', function() { //Set dipswitch to off
 		updateState(false);
 	});
-
 	Homey.emit('test_device', function(err, onoff) { //Get device status
 		updateState(onoff);
 	});			
-
 	document.querySelector('.onoff').addEventListener('click', function(){
 		Homey.emit('sendSignal', !state, function(err, onoff) { //Send signal
 		});	
 		updateState(!state);
 	});
-
 	function updateState( value ) {
 	if(value){
 		document.getElementById("onoff").style.display = 'block'; //Should also be done when the dipswitch is set to on
 	}else{
 		document.getElementById("onoff").style.display = 'none'; //Should also be done when the dipswitch is set to on
-
 	}
-
 	// add animating class to show something has changed externally
 	document.body.classList.add('animating');
 	
 	// set the state variable
 	state = value;
-
 	document.body.classList.toggle('on', state);
 	
 	setTimeout(function(){
 		document.body.classList.remove('animating');			
 	}, 300);
 }
-
-
 </script>
 <img src="light.svg" alt="" style="z-index: 1; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
 <img id="onoff" src="light_on.svg" alt="" style="z-index: 2; width: 40vw; left: 30vw; position: absolute; margin: 0;"/>
