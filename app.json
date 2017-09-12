@@ -1,6 +1,6 @@
 {
     "id": "com.lightwaverf",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "compatibility": ">=1.2.0",
     "category": ["appliances", "lights"],
     "name": {
@@ -210,7 +210,7 @@
 				"large": "./drivers/lw321/assets/images/large.png",
 				"small": "./drivers/lw321/assets/images/small.png"
 		    },
-		    "class": "light",
+		    "class": "socket",
 		    "capabilities": [ "onoff" ],
 	    "pair": [
 				{
