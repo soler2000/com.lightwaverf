@@ -3,7 +3,7 @@
 
  This app supports LightwaveRF devices, this currently supports switching of sockets and lamps, dimming, flashing of lights and door bell sensing.
  
- Version 0.0.7
+ Version 0.0.9
  
 **Current Features**  
 - Tuning on and off plugs and lamps  
@@ -32,6 +32,7 @@
   * Other Lightwave products
  
 **Version Changes**
+  * 0.0.9 Fixed Issue with LW321 showing up as a light
   * 0.0.7 Fixed Issue with new Athom API for firmware 0.10 and onwards.
   * 0.0.6 Fixed Issue with new Athom API for firmware 0.9 and onwards.
   * 0.0.5 Fixed Issue with off command with newer lightwave devices, Updated icons
